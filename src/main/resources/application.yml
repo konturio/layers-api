@@ -1,6 +1,6 @@
 server:
   servlet:
-    context-path: '/layers'
+    context-path: '/layers/v2'
   port: 8630
 
 springdoc:
