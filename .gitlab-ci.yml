@@ -15,6 +15,7 @@ build:
   extends: .default-job-settings
   stage: build
   script:
+    - ln -svf /usr/local/jdk-17/bin/* /usr/bin/
     - |-
       set -x
       for t in check build; do
