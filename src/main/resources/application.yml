@@ -1,0 +1,9 @@
+server:
+  servlet:
+    context-path: '/layers'
+  port: 8630
+
+springdoc:
+  swagger-ui:
+    path: 'doc'
+    disable-swagger-default-url: true

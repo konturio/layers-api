@@ -1,4 +1,4 @@
-package io.kontur.layersapi;
+package io.kontur.layers;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
