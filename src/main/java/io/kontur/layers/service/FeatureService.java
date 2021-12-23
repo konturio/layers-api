@@ -50,7 +50,7 @@ public class FeatureService {
         final String title = layerMapper.getLayerName(collectionId).orElseThrow(
                 () -> new WebApplicationException(NOT_FOUND, Err.errorFmt("Collection '%s' not found", collectionId)));
 
-        var list = propFilterList.stream().map(c -> new PropFilter(
+        List<PropFilter> list = propFilterList.stream().map(c -> new PropFilter(
                 c.getFieldName(),
                 Arrays.stream(c.getPattern()).map(p -> p.replace("%", "\\%")
                         .replace("_", "\\_").replace("*", "%")).toArray(String[]::new))
