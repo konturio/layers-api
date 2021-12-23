@@ -1,6 +1,6 @@
 package io.kontur.layers.controller;
 
-import io.kontur.layers.model.LandingPage;
+import io.kontur.layers.dto.LandingPage;
 import io.kontur.layers.service.LandingPageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

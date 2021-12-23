@@ -3,7 +3,28 @@ server:
     context-path: '/layers/v2'
   port: 8630
 
+spring:
+  datasource:
+    url: 'jdbc:postgresql://localhost:5432/postgres'
+    username: postgres
+    password: postgres
+    hikari:
+      register-mbeans: true
+      pool-name: HikariPool-1
+      minimum-idle: 2
+      maximum-pool-size: 10
+      connection-timeout: 60000
+      idle-timeout: 300000
+      max-lifetime: 600000
+  jackson:
+    default-property-inclusion: non_null
+
 springdoc:
   swagger-ui:
     path: 'doc'
     disable-swagger-default-url: true
+
+mybatis:
+  mapper-locations: classpath:db/mappers/*Mapper.xml
+  type-handlers-package: io.kontur.layers.repository.typehandler
+

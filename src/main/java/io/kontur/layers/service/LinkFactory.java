@@ -1,7 +1,8 @@
 package io.kontur.layers.service;
 
 import io.kontur.layers.ApiConstants;
-import io.kontur.layers.model.Link;
+import io.kontur.layers.dto.Link;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -53,7 +54,7 @@ public class LinkFactory {
         final UriBuilder uriBuilder = UriComponentsBuilder.fromPath(ApiConstants.COLLECTIONS_ENDPOINT)
                 .queryParam("limit", limit)
                 .queryParam("offset", offset);
-        return createLocal(uriBuilder.toString(), rel, Type.APPLICATION_JSON, title);
+        return createLocal(uriBuilder.build().toString(), rel, Type.APPLICATION_JSON, title);
     }
 
     /**
@@ -85,9 +86,9 @@ public class LinkFactory {
     }
 
     public enum Type {
-        APPLICATION_YAML("application/yaml"),
-        APPLICATION_JSON("application/json"),
-        APPLICATION_GEO_JSON("application/geo+json");
+        APPLICATION_YAML(ApiConstants.APPLICATION_YAML),
+        APPLICATION_JSON(MediaType.APPLICATION_JSON_VALUE),
+        APPLICATION_GEO_JSON(ApiConstants.APPLICATION_GEO_JSON);
         private String str;
 
         Type(final String str) {

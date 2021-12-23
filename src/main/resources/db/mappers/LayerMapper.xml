@@ -1,0 +1,49 @@
+<!DOCTYPE mapper     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.kontur.layers.repository.LayerMapper">
+
+    <select id="getLayerName" resultType="string">
+        select name from layers where public_id = #{publicId}
+    </select>
+
+    <select id="getLayers" resultType="io.kontur.layers.repository.model.Layer">
+        with lrs as (select l.id,
+                          l.public_id as publicid,
+                          l.name as name,
+                          l.description,
+                          l.last_updated as lastupdated,
+                          l.source_updated as sourcelastupdated,
+                          count(*) OVER() AS numberMatched
+                   from layers l
+                   <if test="publicIds != null">
+                       <foreach collection="publicIds" item="id" open="where l.public_id in (" separator="," close=")">
+                       #{id}
+                       </foreach>
+                   </if>
+                   group by l.id limit #{limit} offset #{offset}),
+        ext as (select f.layer_id,
+                   st_3dextent(f.geom) as spat,
+                   (select f2.last_updated
+                         from layers_features f2
+                         where f2.last_updated is not null and f2.layer_id = f.layer_id
+                         order by f2.last_updated asc nulls first
+                         limit 1) as lowerdt,
+                   (select f2.last_updated
+                         from layers_features f2
+                         where f2.last_updated is not null and f2.layer_id = f.layer_id
+                         order by f2.last_updated desc nulls first
+                         limit 1) as upperdt
+                   from layers_features f join lrs on lrs.id = f.layer_id
+                   group by f.layer_id)
+        select lrs.*,
+               case when ext.spat is not null then
+                    format('[%s,%s,%s,%s,%s,%s]',
+                           st_xmin(ext.spat), st_ymin(ext.spat), st_zmin(ext.spat),
+                           st_xmax(ext.spat), st_ymax(ext.spat), st_zmax(ext.spat))
+               end as spatialextent,
+               case when (lowerdt is not null or upperdt is not null ) then
+                    tstzrange(lowerdt, upperdt, format('%s%s', '[', ']' ))
+               end as temporalextent
+        from lrs left join ext on lrs.id = ext.layer_id
+    </select>
+
+</mapper>
