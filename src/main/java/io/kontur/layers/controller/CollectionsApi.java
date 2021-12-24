@@ -3,7 +3,6 @@ package io.kontur.layers.controller;
 import io.kontur.layers.controller.exceptions.Err;
 import io.kontur.layers.controller.exceptions.WebApplicationException;
 import io.kontur.layers.controller.validation.ValidBbox;
-import io.kontur.layers.controller.validation.ValidGeometry;
 import io.kontur.layers.dto.*;
 import io.kontur.layers.service.CollectionService;
 import io.kontur.layers.service.FeatureService;
@@ -17,11 +16,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import java.lang.Exception;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +33,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
+@Validated
 @RequestMapping("/collections")
 public class CollectionsApi {
 
@@ -134,43 +134,6 @@ public class CollectionsApi {
                 .getFeatureCollection(collectionId, lmt, offset,
                         bbox != null && bbox.getBbox() != null ? bbox.getBbox() : java.util.Collections.emptyList(),
                         datetime, getCriteriaList());
-        return ResponseEntity.ok(fc.orElse(new FeatureCollectionGeoJSON()));
-    }
-
-    @GetMapping("/{collectionId}/itemsByMultipoint")
-    @Operation(summary = "fetch features", description = "Fetch features of the feature collection with id `collectionId`. Every feature in a dataset belongs to a collection. A dataset may consist of multiple feature collections. A feature collection is often a collection of features of a similar type, based on a common schema.  Use content negotiation to request HTML or GeoJSON.", tags = {"Data"})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The response is a document consisting of features in the collection. The features included in the response are determined by the server based on the query parameters of the request. To support access to larger collections without overloading the client, the API supports paged access with links to the next page, if more features are selected that the page size.  The `bbox` and `datetime` parameter can be used to select only a subset of the features in the collection (the features that are in the bounding box or time interval). The `bbox` parameter matches all features in the collection that are not associated with a location, too. The `datetime` parameter matches all features in the collection that are not associated with a time stamp or interval, too.  The `limit` parameter may be used to control the subset of the selected features that should be returned in the response, the page size. Each page may include information about the number of selected and returned features (`numberMatched` and `numberReturned`) as well as links to support paging (link relation `next`).", content = @Content(schema = @Schema(implementation = FeatureCollectionGeoJSON.class))),
-            @ApiResponse(responseCode = "400", description = "A query parameter has an invalid value.", content = @Content(schema = @Schema(implementation = Exception.class))),
-            @ApiResponse(responseCode = "404", description = "The requested URI was not found."),
-            @ApiResponse(responseCode = "500", description = "A server error occurred.", content = @Content(schema = @Schema(implementation = Exception.class)))})
-    public ResponseEntity getFeaturesByMultipoint(
-            @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
-            @PathVariable("collectionId")
-                    String collectionId,
-            @Parameter(in = ParameterIn.QUERY, description = "The optional limit parameter limits the number of items that are presented in the response document.  Only items are counted that are on the first level of the collection in the response document. Nested objects contained within the explicitly requested items shall not be counted.  Minimum = 1. Maximum = 100000. Default = 10.", schema = @Schema(allowableValues = {}, minimum = "1", maximum = "100000"))
-            @Min(1)
-            @RequestParam(value = "limit", defaultValue = "10")
-                    Integer limit,
-            @Parameter(in = ParameterIn.QUERY, description = "The optional offset parameter specifies the index within the result set from which the server begins presenting results in the response. Minimum = 0", schema = @Schema(allowableValues = {}, minimum = "0"))
-            @Min(0)
-            @RequestParam(value = "offset", defaultValue = "0")
-                    Integer offset,
-            @Parameter(in = ParameterIn.QUERY, description = "Only features that have a geometry that contains all points from geom.", required = true)
-            @NotBlank
-            @ValidGeometry
-            @RequestParam("geom")
-                    String geom,
-            @Parameter(in = ParameterIn.QUERY, description = "Either a date-time or an interval, open or closed. Date and time expressions adhere to RFC 3339. Open intervals are expressed using double-dots.  Examples:  * A date-time: \"2018-02-12T23:20:50Z\" * A closed interval: \"2018-02-12T00:00:00Z/2018-03-18T12:31:12Z\" * Open intervals: \"2018-02-12T00:00:00Z/..\" or \"../2018-03-18T12:31:12Z\"  Only features that have a temporal property that intersects the value of `datetime` are selected.  If a feature has multiple temporal properties, it is the decision of the server whether only a single temporal property is used to determine the extent or all relevant temporal properties.")
-            @RequestParam("datetime")
-                    DateTimeRange datetime,
-            @Parameter(in = ParameterIn.QUERY, description = "Removes geometry from response.")
-            @RequestParam("excludeGeometry")
-                    boolean excludeGeometry) {
-        int lmt = Math.min(limit == null ? COLLECTION_ITEMS_DEFAULT_LIMIT : limit, COLLECTION_ITEMS_LIMIT);
-        Optional<FeatureCollectionGeoJSON> fc = featureService
-                .getFeatureCollectionByMultipoint(collectionId, lmt, offset, geom, datetime, getCriteriaList(),
-                        excludeGeometry);
         return ResponseEntity.ok(fc.orElse(new FeatureCollectionGeoJSON()));
     }
 

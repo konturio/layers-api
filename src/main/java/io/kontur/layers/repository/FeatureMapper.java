@@ -22,14 +22,6 @@ public interface FeatureMapper {
                                      @Param("propFilterList") List<FeatureService.PropFilter> propFilterList,
                                      FeatureCollectionResultHandler featureCollectionResultHandler);
 
-    List<Feature> getFeaturesByMultipoint(@Param("collectionId") String collectionId,
-                                          @Param("limit") Integer limit,
-                                          @Param("offset") Integer offset,
-                                          @Param("geom") String geom,
-                                          @Param("dateTime") DateTimeRange dateTime,
-                                          @Param("propFilterList") List<FeatureService.PropFilter> propFilterList,
-                                          @Param("excludeGeometry") boolean excludeGeometry);
-
     Optional<Feature> getFeature(@Param("collectionId") String collectionId, @Param("featureId") String featureId);
 
     Optional<Integer> getFeaturesTotal(@Param("collectionId") String collectionId,

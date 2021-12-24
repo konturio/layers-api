@@ -328,18 +328,20 @@ public class CollectionsListGetIT extends AbstractIntegrationTest {
         //THEN
         assertThat(json, hasJsonPath("$.fieldErrors.limit.msg", not(emptyOrNullString())));
     }
-//
-//    @Test
-//    @DisplayName("offset should be positive ")
-//    public void offsetShouldBePositive() {
-//        //GIVEN
-//        //WHEN
-//        final Response response = webClient.path("/layers/collections").queryParam("offset", -1)
-//                .request(MediaType.APPLICATION_JSON_TYPE)
-//                .get();
-//        //THEN
-//        final String json = assertStatusAndReadBody(response, BAD_REQUEST);
-//        assertThat(json, hasJsonPath("$.fieldErrors.offset.msg", not(emptyOrNullString())));
-//    }
+
+    @Test
+    @DisplayName("offset should be positive ")
+    public void offsetShouldBePositive() throws Exception {
+        //GIVEN
+        //WHEN
+        final String json = mockMvc.perform(get("/collections")
+                        .queryParam("offset", "-10"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
+        assertThat(json, hasJsonPath("$.fieldErrors.offset.msg", not(emptyOrNullString())));
+    }
 
 }

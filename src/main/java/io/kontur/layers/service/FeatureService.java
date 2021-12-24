@@ -61,44 +61,6 @@ public class FeatureService {
         return Optional.of(fc).filter(collection -> collection.getNumberReturned() > 0);
     }
 
-    public Optional<FeatureCollectionGeoJSON> getFeatureCollectionByMultipoint(
-            String collectionId,
-            Integer limit,
-            Integer offset,
-            String geom,
-            DateTimeRange dateTimeRange,
-            List<PropFilter> propFilterList,
-            boolean excludeGeometry) {
-
-        final String title = layerMapper.getLayerName(collectionId).orElseThrow(
-                () -> new WebApplicationException(NOT_FOUND, Err.errorFmt("Collection '%s' not found", collectionId)));
-
-        var list = propFilterList.stream().map(c -> new PropFilter(
-                c.getFieldName(),
-                Arrays.stream(c.getPattern()).map(p -> p.replace("%", "\\%")
-                        .replace("_", "\\_").replace("*", "%")).toArray(String[]::new))
-        ).collect(Collectors.toList());
-
-        List<Feature> features = featureMapper.getFeaturesByMultipoint(collectionId, limit, offset, geom, dateTimeRange,
-                list, excludeGeometry);
-
-        if (features.isEmpty()) {
-            return Optional.empty();
-        }
-
-        Integer numberMatched = features.get(0).getNumberMatched();
-        FeatureCollectionGeoJSON fc = new FeatureCollectionGeoJSON()
-                .links(featureServiceHelper.getCollectionLinks(collectionId, title, limit, offset, numberMatched,
-                        new ArrayList<>(), propFilterList))
-                .timeStamp(OffsetDateTime.now(ZoneOffset.UTC).format(dateTimeFormatter))
-                .numberMatched(numberMatched)
-                .numberReturned(features.size());
-
-        fc.setFeatures(features.stream().map(f -> featureServiceHelper.toFeatureGeoJson(f, collectionId, title))
-                .collect(Collectors.toList()));
-        return Optional.of(fc);
-    }
-
     public Optional<FeatureGeoJSON> getFeature(String collectionId, String featureId) {
         final String title = layerMapper.getLayerName(collectionId)
                 .orElseThrow(
