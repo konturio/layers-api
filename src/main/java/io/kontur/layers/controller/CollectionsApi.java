@@ -40,10 +40,10 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequestMapping("/collections")
 public class CollectionsApi {
 
-    private static final int COLLECTION_ITEMS_LIMIT = 100000;
-    private static final int COLLECTIONS_LIMIT = 100000;
-    private static final int COLLECTION_ITEMS_DEFAULT_LIMIT = 10;
-    private static final int COLLECTIONS_DEFAULT_LIMIT = 10;
+    protected static final int COLLECTION_ITEMS_LIMIT = 100000;
+    protected static final int COLLECTIONS_LIMIT = 100000;
+    protected static final int COLLECTION_ITEMS_DEFAULT_LIMIT = 10;
+    protected static final int COLLECTIONS_DEFAULT_LIMIT = 10;
     private static final Set<String> PREDEFINED_FIELDS = Set.of("limit", "offset", "bbox", "datetime", "geom",
             "excludeGeometry");
 
@@ -133,8 +133,7 @@ public class CollectionsApi {
             @RequestParam(value = "datetime", required = false)
                     DateTimeRange datetime) {
         int lmt = Math.min(limit == null ? COLLECTION_ITEMS_DEFAULT_LIMIT : limit, COLLECTION_ITEMS_LIMIT);
-        Optional<FeatureCollectionGeoJSON> fc = featureService
-                .getFeatureCollection(collectionId, lmt, offset,
+        Optional<FeatureCollectionGeoJSON> fc = featureService.getFeatureCollection(collectionId, lmt, offset,
                         bbox != null ? bbox : java.util.Collections.emptyList(),
                         datetime, getCriteriaList());
         return ResponseEntity.ok(fc.orElse(new FeatureCollectionGeoJSON()));

@@ -22,7 +22,7 @@ public abstract class AbstractIntegrationTest {
     protected String BASE_URL;
 
     @BeforeEach
-    public void setup() throws Exception {
+    public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
         BASE_URL = "http://localhost:80";
     }

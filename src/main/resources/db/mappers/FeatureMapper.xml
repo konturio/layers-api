@@ -27,7 +27,7 @@
             </when>
         </choose>
         <if test="dateTime != null">
-            AND (last_updated ISNULL or (last_updated &amp;&amp; #{dateTime}::tstzrange))
+            AND (last_updated ISNULL or (last_updated &lt;@ #{dateTime}::tstzrange))
         </if>
         <foreach collection="propFilterList" item="item">
             AND properties #>> (#{item.fieldName}::text[]) ilike any (array
@@ -58,7 +58,7 @@
             </when>
         </choose>
         <if test="dateTime != null">
-            AND (last_updated ISNULL or (last_updated &amp;&amp; #{dateTime}::tstzrange))
+            AND (last_updated ISNULL or (last_updated &lt;@ #{dateTime}::tstzrange))
         </if>
         <foreach collection="propFilterList" item="item">
             AND properties #>> (#{item.fieldName}::text[]) ilike any (array

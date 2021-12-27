@@ -24,7 +24,7 @@ public interface TestDataMapper {
     String insertFeature(@Param("collectionId") long collectionId, @Param("feature") Feature feature);
 
     @Insert({"<script>",
-            "insert into layers_features (layer_id, feature_id, geometry, properties, last_updated) values ",
+            "insert into layers_features (layer_id, feature_id, geom, properties, last_updated) values ",
             "<foreach item='feature' collection='features' separator=','> ",
             "(#{collectionId},#{feature.featureId},#{feature.geometry}::geometry,#{feature.properties}::jsonb,#{feature.lastUpdated}) ",
             "</foreach> ",

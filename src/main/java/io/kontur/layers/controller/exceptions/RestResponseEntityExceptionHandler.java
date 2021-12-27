@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.validation.ConstraintViolation;
@@ -41,8 +42,18 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleHttpClientErrorException(Throwable ex, WebRequest request) {
-            LOG.error(ex.getMessage(), ex);
+        LOG.error(ex.getMessage(), ex);
         return new ResponseEntity<>(Err.error("internal server error"), INTERNAL_SERVER_ERROR);
+    }
+
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Object> handleHttpClientErrorException(MethodArgumentTypeMismatchException ex, WebRequest request) {
+        String msg = "invalid field value";
+        if (ex.getCause() instanceof NumberFormatException) {
+            msg = "invalid numeric value";
+        }
+        return new ResponseEntity<>(Err.objectError(null, Err.fieldError(ex.getName(), Err.error(msg))), BAD_REQUEST);
     }
 
     @ExceptionHandler(WebApplicationException.class)
