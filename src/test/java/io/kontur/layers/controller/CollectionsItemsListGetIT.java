@@ -443,7 +443,7 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.numberMatched", is(102102)));
         assertThat(json, hasJsonPath("$.numberReturned", is(100000)));
         assertThat(json, hasJsonPath("$.links[?(@.rel=='next' && @.type=='application/geo+json')].href",
-                                     contains(BASE_URL + "/collections/pubId_1/items?limit=100000&offset=100000")));
+                contains(BASE_URL + "/collections/pubId_1/items?limit=100000&offset=100000")));
     }
 
     @Test
@@ -614,7 +614,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
                 .andExpect(content().contentType(APPLICATION_GEO_JSON))
                 .andReturn().getResponse().getContentAsString();
 
-        final List<String> nextLinks = JsonPath.read(json, "$.links[?(@.rel=='next' && @.type=='application/geo+json')].href");
+        final List<String> nextLinks = JsonPath.read(json,
+                "$.links[?(@.rel=='next' && @.type=='application/geo+json')].href");
         String s = mockMvc.perform(get(nextLinks.get(0)))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -716,7 +717,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath(
                 "$.features[?(@.properties.prop1=='propValue1_1' && @.properties.prop2=='propValue2_1')]", hasSize(1)));
         assertThat(json, hasJsonPath(
-                "$.features[?(@.properties.prop1=='propValue1_11' && @.properties.prop2=='propValue2_11')]", hasSize(1)));
+                "$.features[?(@.properties.prop1=='propValue1_11' && @.properties.prop2=='propValue2_11')]",
+                hasSize(1)));
     }
 
     @Test
@@ -729,7 +731,7 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
             testDataMapper.insertFeature(id, buildPolygonN(i));
         });
         //WHEN
-         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
+        String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
                         .queryParam("prop1", "*1"))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -777,7 +779,7 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         testDataMapper.insertFeature(id, buildPolygonN(3));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
-                .queryParam("datetime", feature1.getLastUpdated() + "/" + feature2.getLastUpdated()))
+                        .queryParam("datetime", feature1.getLastUpdated() + "/" + feature2.getLastUpdated()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_GEO_JSON))

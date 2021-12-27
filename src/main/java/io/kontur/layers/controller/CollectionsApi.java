@@ -90,7 +90,7 @@ public class CollectionsApi {
         return ResponseEntity.ok(collections);
     }
 
-    @GetMapping("/{collectionId}/items/{featureId}")
+    @GetMapping(value = "/{collectionId}/items/{featureId}", produces = APPLICATION_GEO_JSON)
     @Operation(summary = "fetch a single feature", description = "Fetch the feature with id `featureId` in the feature collection with id `collectionId`.  Use content negotiation to request HTML or GeoJSON.", tags = {"Data"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "fetch the feature with id `featureId` in the feature collection with id `collectionId`", content = @Content(schema = @Schema(implementation = FeatureGeoJSON.class))),
