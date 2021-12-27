@@ -39,6 +39,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<>(errors, status);
     }
 
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity<Object> handleHttpClientErrorException(Throwable ex, WebRequest request) {
+            LOG.error(ex.getMessage(), ex);
+        return new ResponseEntity<>(Err.error("internal server error"), INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(WebApplicationException.class)
     public ResponseEntity<Object> handleHttpClientErrorException(WebApplicationException ex, WebRequest request) {
         if (ex.getStatus().equals(INTERNAL_SERVER_ERROR) && ex.getCause() != null) {

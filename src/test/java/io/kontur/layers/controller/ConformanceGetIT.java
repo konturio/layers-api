@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("GET /conformance")
@@ -17,6 +18,7 @@ public class ConformanceGetIT extends AbstractIntegrationTest {
     @DisplayName("should work")
     public void testGetCollection() throws Exception {
         mockMvc.perform(get("/conformance"))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.conformsTo").value(hasSize(3)))

@@ -13,10 +13,6 @@ import io.kontur.layers.repository.typehandler.FeatureCollectionResultHandler;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +26,6 @@ public class FeatureService {
     private final FeatureMapper featureMapper;
     private final LayerMapper layerMapper;
     private final FeatureServiceHelper featureServiceHelper;
-    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
     public FeatureService(FeatureMapper featureMapper, final LayerMapper layerMapper,
                           FeatureServiceHelper featureServiceHelper) {
@@ -51,9 +46,10 @@ public class FeatureService {
                 () -> new WebApplicationException(NOT_FOUND, Err.errorFmt("Collection '%s' not found", collectionId)));
 
         List<PropFilter> list = propFilterList.stream().map(c -> new PropFilter(
-                c.getFieldName(),
-                Arrays.stream(c.getPattern()).map(p -> p.replace("%", "\\%")
-                        .replace("_", "\\_").replace("*", "%")).toArray(String[]::new))
+                String.format("{%s}", c.getFieldName()),
+                Arrays.stream(c.getPattern())
+                        .map(p -> p.replace("%", "\\%")
+                                .replace("_", "\\_").replace("*", "%")).toArray(String[]::new))
         ).collect(Collectors.toList());
 
         FeatureCollectionGeoJSON fc = getGeoJsonFeatureCollectionInParallel(collectionId, limit, offset, bbox,

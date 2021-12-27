@@ -4,6 +4,7 @@ import io.kontur.layers.ApiConstants;
 import io.kontur.layers.dto.Link;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -33,16 +34,11 @@ public class LinkFactory {
                                        List<FeatureService.PropFilter> propFilterList) {
         final UriBuilder uriBuilder = UriComponentsBuilder.fromPath(ApiConstants.COLLECTION_ITEMS_ENDPOINT)
                 .queryParam("limit", limit)
-                .queryParam("offset", offset)
-                .queryParam("bbox", bbox.toArray());
-        propFilterList.forEach(p -> {
-            try {
-                String encodedFieldName = URLEncoder.encode(p.getFieldName(), StandardCharsets.UTF_8.toString());
-                uriBuilder.queryParam(encodedFieldName, p.getPattern());
-            } catch (UnsupportedEncodingException e) {
-                throw new IllegalArgumentException("Error while building link for item collection", e);
-            }
-        });
+                .queryParam("offset", offset);
+        if (!CollectionUtils.isEmpty(bbox)) {
+            uriBuilder.queryParam("bbox", bbox.toArray());
+        }
+        propFilterList.forEach(p -> uriBuilder.queryParam(p.getFieldName(), (Object[]) p.getPattern()));
         final String url = uriBuilder.build(collectionId).toString();
         return createLocal(url, rel, Type.APPLICATION_GEO_JSON, collectionTitle);
     }

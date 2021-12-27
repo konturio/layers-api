@@ -6,32 +6,33 @@ import io.kontur.layers.dto.Bbox;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.math.BigDecimal;
+import java.util.List;
 
-public class BboxValidator implements ConstraintValidator<ValidBbox, Bbox> {
+public class BboxValidator implements ConstraintValidator<ValidBbox, List<BigDecimal>> {
     @Override
     public void initialize(ValidBbox value) {
     }
 
     @Override
-    public boolean isValid(Bbox bbox, ConstraintValidatorContext ctx) {
-        if (bbox == null || bbox.getBbox() == null || bbox.getBbox().isEmpty()) {
+    public boolean isValid(List<BigDecimal> bbox, ConstraintValidatorContext ctx) {
+        if (bbox == null || bbox.isEmpty()) {
             return true;
         }
-        if (bbox.getBbox().size() != 4 && bbox.getBbox().size() != 6) {
+        if (bbox.size() != 4 && bbox.size() != 6) {
             ctx.buildConstraintViolationWithTemplate("bbox should be provided as 4 or 6 numbers.")
                     .addConstraintViolation();
             return false;
         }
-        var b = (bbox.getBbox().size() == 4
-                && checkLon(bbox.getBbox().get(0))
-                && checkLat(bbox.getBbox().get(1))
-                && checkLon(bbox.getBbox().get(2))
-                && checkLat(bbox.getBbox().get(3)))
-                || (bbox.getBbox().size() == 6
-                && checkLon(bbox.getBbox().get(0))
-                && checkLat(bbox.getBbox().get(1))
-                && checkLon(bbox.getBbox().get(3))
-                && checkLat(bbox.getBbox().get(4)));
+        var b = (bbox.size() == 4
+                && checkLon(bbox.get(0))
+                && checkLat(bbox.get(1))
+                && checkLon(bbox.get(2))
+                && checkLat(bbox.get(3)))
+                || (bbox.size() == 6
+                && checkLon(bbox.get(0))
+                && checkLat(bbox.get(1))
+                && checkLon(bbox.get(3))
+                && checkLat(bbox.get(4)));
         if (!b) {
             ctx.buildConstraintViolationWithTemplate("bbox coordinates doesn't conform to WGS84 coordinate system")
                     .addConstraintViolation();
