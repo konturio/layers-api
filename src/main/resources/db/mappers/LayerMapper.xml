@@ -10,6 +10,10 @@
                           l.public_id as publicid,
                           l.name as name,
                           l.description,
+                          l.copyrights,
+                          l.properties,
+                          l.group_id,
+                          l.category_id,
                           l.last_updated as lastupdated,
                           l.source_updated as sourcelastupdated,
                           count(*) OVER() AS numberMatched
@@ -42,8 +46,23 @@
                end as spatialextent,
                case when (lowerdt is not null or upperdt is not null ) then
                     tstzrange(lowerdt, upperdt, format('%s%s', '[', ']' ))
-               end as temporalextent
-        from lrs left join ext on lrs.id = ext.layer_id
+               end as temporalextent,
+               ls.style_rule as legend,
+               json_strip_nulls(json_build_object(
+                   'name', gp."name",
+                   'is_opened', gp.is_opened,
+                   'mutually_exclusive', gp.mutually_exclusive,
+                   'order', gp."order")) as group,
+               json_strip_nulls(json_build_object(
+                   'name', cp."name",
+                   'is_opened', cp.is_opened,
+                   'mutually_exclusive', cp.mutually_exclusive,
+                   'order', cp."order")) as category
+        from lrs
+            left join ext on lrs.id = ext.layer_id
+            left join layers_style ls on ls.layer_id = lrs.id
+            left join layers_group_properties gp on gp.id = lrs.group_id
+            left join layers_category_properties cp on cp.id = lrs.category_id
     </select>
 
 </mapper>

@@ -1,5 +1,6 @@
 package io.kontur.layers.repository.model;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.layers.dto.DateTimeRange;
 
 import java.time.OffsetDateTime;
@@ -11,6 +12,11 @@ public class Layer {
     private String publicId;
     private String name;
     private String description;
+    private String copyrights;
+    private ObjectNode properties;
+    private ObjectNode legend;
+    private ObjectNode group;
+    private ObjectNode category;
     private OffsetDateTime lastUpdated;
     private OffsetDateTime sourceLastUpdated;
     private String spatialExtent;
@@ -20,17 +26,18 @@ public class Layer {
     public Layer() {
     }
 
-    public Layer(final String publicId,
-                 final String name,
-                 final String description,
-                 final OffsetDateTime lastUpdated,
-                 final OffsetDateTime sourceLastUpdated,
-                 final String spatialExtent,
-                 final DateTimeRange temporalExtent,
-                 final Integer numberMatched) {
+    public Layer(String publicId, String name, String description, String copyrights,
+                 ObjectNode properties, ObjectNode legend, ObjectNode group,
+                 ObjectNode category, OffsetDateTime lastUpdated, OffsetDateTime sourceLastUpdated,
+                 String spatialExtent, DateTimeRange temporalExtent, Integer numberMatched) {
         this.publicId = publicId;
         this.name = name;
         this.description = description;
+        this.copyrights = copyrights;
+        this.properties = properties;
+        this.legend = legend;
+        this.group = group;
+        this.category = category;
         this.lastUpdated = lastUpdated;
         this.sourceLastUpdated = sourceLastUpdated;
         this.spatialExtent = spatialExtent;
@@ -52,6 +59,26 @@ public class Layer {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getCopyrights() {
+        return copyrights;
+    }
+
+    public ObjectNode getProperties() {
+        return properties;
+    }
+
+    public ObjectNode getLegend() {
+        return legend;
+    }
+
+    public ObjectNode getGroup() {
+        return group;
+    }
+
+    public ObjectNode getCategory() {
+        return category;
     }
 
     public OffsetDateTime getLastUpdated() {

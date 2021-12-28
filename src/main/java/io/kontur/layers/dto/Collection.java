@@ -1,6 +1,7 @@
 package io.kontur.layers.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
@@ -18,6 +19,21 @@ public class Collection {
 
     @JsonProperty("description")
     private String description;
+
+    @JsonProperty("copyrights")
+    private String copyrights;
+
+    @JsonProperty("properties")
+    private Object properties;
+
+    @JsonProperty("legend")
+    private ObjectNode legend;
+
+    @JsonProperty("group")
+    private ObjectNode group;
+
+    @JsonProperty("category")
+    private ObjectNode category;
 
     @JsonProperty("links")
     private List<Link> links = new ArrayList<>();
@@ -75,6 +91,71 @@ public class Collection {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Collection copyrights(String copyrights) {
+        this.copyrights = copyrights;
+        return this;
+    }
+
+    public String getCopyrights() {
+        return copyrights;
+    }
+
+    public void setCopyrights(String copyrights) {
+        this.copyrights = copyrights;
+    }
+
+    public Collection properties(Object properties) {
+        this.properties = properties;
+        return this;
+    }
+
+    public Object getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Object properties) {
+        this.properties = properties;
+    }
+
+    public Collection legend(ObjectNode legend) {
+        this.legend = legend;
+        return this;
+    }
+
+    public ObjectNode getLegend() {
+        return legend;
+    }
+
+    public void setLegend(ObjectNode legend) {
+        this.legend = legend;
+    }
+
+    public Collection group(ObjectNode group) {
+        this.group = group;
+        return this;
+    }
+
+    public ObjectNode getGroup() {
+        return group;
+    }
+
+    public void setGroup(ObjectNode group) {
+        this.group = group;
+    }
+
+    public Collection category(ObjectNode category) {
+        this.category = category;
+        return this;
+    }
+
+    public ObjectNode getCategory() {
+        return category;
+    }
+
+    public void setCategory(ObjectNode category) {
+        this.category = category;
     }
 
     public Collection links(List<Link> links) {

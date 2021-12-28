@@ -75,6 +75,11 @@ public class CollectionService {
                 .id(layer.getPublicId())
                 .title(layer.getName())
                 .description(layer.getDescription())
+                .copyrights(layer.getCopyrights())
+                .properties(layer.getProperties())
+                .legend(layer.getLegend())
+                .group(layer.getGroup())
+                .category(layer.getCategory())
                 .crs(List.of("http://www.opengis.net/def/crs/OGC/1.3/CRS84"))
                 .links(List.of(items))
                 .extent(getExtent(layer));

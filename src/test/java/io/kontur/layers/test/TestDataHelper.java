@@ -16,7 +16,21 @@ public class TestDataHelper {
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     public static Layer buildLayerN(int n) {
-        return new Layer("pubId_" + n, "name_" + n, "description_" + n,
+        final ObjectNode props = objectMapper.createObjectNode();
+        props.put("prop1", "propValue1_" + n);
+        props.put("prop2", "propValue2_" + n);
+//        final ObjectNode legend = objectMapper.createObjectNode();
+//        props.put("legend1", "legendValue1_" + n);
+//        props.put("legend2", "legendValue2_" + n);
+//        final ObjectNode group = objectMapper.createObjectNode();
+//        props.put("group1", "groupValue1_" + n);
+//        props.put("group2", "groupValue2_" + n);
+//        final ObjectNode category = objectMapper.createObjectNode();
+//        props.put("category1", "categoryValue1_" + n);
+//        props.put("category2", "categoryValue2_" + n);
+
+        return new Layer("pubId_" + n, "name_" + n, "description_" + n, "copyrights_" + n,
+                         props, null, null, null,
                          OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusSeconds(n),
                          OffsetDateTime.of(2020, 4, 15, 15, 0, 0, 0, offset()).plusSeconds(n), null, null, null);
     }
