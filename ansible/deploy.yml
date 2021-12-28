@@ -66,6 +66,7 @@
         - find:
             paths: '{{ app_home }}/current'
             patterns: layers-api-*.jar
+            exclude: '*-plain.jar'
             recurse: true
             depth: 2
           register: find_ret
