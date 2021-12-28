@@ -4,7 +4,7 @@
   vars:
     app_name: layers-api
     home: '{{ ansible_env.HOME }}'
-    app_home: '{{ home }}/{{ app_name }}'
+    app_home: '{{ home }}'
   tasks:
     - name: Creating app directory if it does not exist
       file:
