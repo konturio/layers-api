@@ -27,7 +27,11 @@ build:
                }
       done
       set +x
-    - 'tar --show-transformed-names --transform="s@^build/libs/@@;s@^build/resources/main/external/@@;" -cvf - build/libs/*.jar build/resources/main/external/* | xz -1 > layers-api-${CI_COMMIT_REF_SLUG}.tar.xz'
+    - >-
+      tar --show-transformed-names
+      --transform="s@^build/libs/@@;s@^build/resources/main/external/@@;"
+      -cvf - build/libs/*.jar build/resources/main/external/*
+      | xz -1 > layers-api-${CI_COMMIT_REF_SLUG}.tar.xz
   artifacts:
     when: always
     name: layers-api-$CI_COMMIT_REF_SLUG
@@ -46,7 +50,7 @@ deploy-zigzag:
     path_to_dist=$(find $CI_PROJECT_DIR -maxdepth 1 -name layers-api\*.tar.xz -print -quit)"
     --limit=zigzag_layers_api ansible/deploy.yml
   environment:
-    name: 'DEV'
+    name: DEV
     url: 'https://test-api02.konturlabs.com/layers/v2/'
   when: manual
   dependencies:
@@ -62,7 +66,7 @@ deploy-sonic:
     path_to_dist=$(find $CI_PROJECT_DIR -maxdepth 1 -name layers-api\*.tar.xz -print -quit)"
     --limit=sonic_layers_api ansible/deploy.yml
   environment:
-    name: 'TEST'
+    name: TEST
     url: 'https://test-api.konturlabs.com/layers/v2/'
   when: manual
   dependencies:
@@ -78,7 +82,7 @@ deploy-lima:
     path_to_dist=$(find $CI_PROJECT_DIR -maxdepth 1 -name layers-api\*.tar.xz -print -quit)"
     --limit=lima_layers_api ansible/deploy.yml
   environment:
-    name: 'PROD'
+    name: PROD
     url: 'https://api.kontur.io/layers/v2/'
   only:
     - /^release-.*$/
