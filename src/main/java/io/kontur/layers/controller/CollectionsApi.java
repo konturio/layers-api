@@ -15,12 +15,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.lang.Exception;
 import java.math.BigDecimal;
@@ -58,21 +58,6 @@ public class CollectionsApi {
         this.servletRequest = servletRequest;
     }
 
-    @GetMapping("/{collectionId}")
-    @Operation(summary = "describe the feature collection with id `collectionId`", description = "", tags = {"Capabilities"})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Information about the feature collection with id `collectionId`.  The response contains a linkto the items in the collection (path `/collections/{collectionId}/items`,link relation `items`) as well as key information about the collection. This information includes:  * A local identifier for the collection that is unique for the dataset; * A list of coordinate reference systems (CRS) in which geometries may be returned by the server. The first CRS is the default coordinate reference system (the default is always WGS 84 with axis order longitude/latitude); * An optional title and description for the collection; * An optional extent that can be used to provide an indication of the spatial and temporal extent of the collection - typically derived from the data; * An optional indicator about the type of the items in the collection (the default value, if the indicator is not provided, is 'feature').", content = @Content(schema = @Schema(implementation = Collection.class))),
-            @ApiResponse(responseCode = "404", description = "The requested URI was not found."),
-            @ApiResponse(responseCode = "500", description = "A server error occurred.", content = @Content(schema = @Schema(implementation = Exception.class)))})
-    public ResponseEntity describeCollection(
-            @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
-            @PathVariable("collectionId") String collectionId) {
-        Optional<Collection> collection = collectionService.getCollection(collectionId);
-        final Collection entity = collection.orElseThrow(
-                () -> new WebApplicationException(NOT_FOUND, Err.errorFmt("Collection '%s' not found", collectionId)));
-        return ResponseEntity.ok(entity);
-    }
-
     @GetMapping
     @Operation(summary = "the feature collections in the dataset", description = "", tags = {"Capabilities"})
     @ApiResponses(value = {
@@ -86,8 +71,35 @@ public class CollectionsApi {
             @Min(0)
             @RequestParam(value = "offset", defaultValue = "0") Integer offset) {
         int lmt = Math.min(limit == null ? COLLECTIONS_DEFAULT_LIMIT : limit, COLLECTIONS_LIMIT);
-        Collections collections = collectionService.getCollections(lmt, offset);
+        Collections collections = collectionService.getCollections(null, lmt, offset, true);
         return ResponseEntity.ok(collections);
+    }
+
+    @PostMapping("/search")
+    @Operation(summary = "seacrh feature collections in the dataset", description = "", tags = {"Capabilities"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "The feature collections shared by this API.  The dataset is organized as one or more feature collections. This resource provides information about and access to the collections.  The response contains the list of collections. For each collection, a link to the items in the collection (path `/collections/{collectionId}/items`, link relation `items`) as well as key information about the collection. This information includes:  * A local identifier for the collection that is unique for the dataset; * A list of coordinate reference systems (CRS) in which geometries may be returned by the server. The first CRS is the default coordinate reference system (the default is always WGS 84 with axis order longitude/latitude); * An optional title and description for the collection; * An optional extent that can be used to provide an indication of the spatial and temporal extent of the collection - typically derived from the data; * An optional indicator about the type of the items in the collection (the default value, if the indicator is not provided, is 'feature').", content = @Content(schema = @Schema(implementation = Collections.class))),
+            @ApiResponse(responseCode = "500", description = "A server error occurred.", content = @Content(schema = @Schema(implementation = Exception.class)))})
+    public ResponseEntity searchCollections(
+            @RequestBody @Valid CollectionsSearchDto body) {
+        int lmt = Math.min(body.getLimit() == null ? COLLECTIONS_DEFAULT_LIMIT : body.getLimit(), COLLECTIONS_LIMIT);
+        Collections collections = collectionService.getCollections(body.getGeometry(), lmt, body.getOffset(), false);
+        return ResponseEntity.ok(collections);
+    }
+
+    @GetMapping("/{collectionId}")
+    @Operation(summary = "describe the feature collection with id `collectionId`", description = "", tags = {"Capabilities"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Information about the feature collection with id `collectionId`.  The response contains a linkto the items in the collection (path `/collections/{collectionId}/items`,link relation `items`) as well as key information about the collection. This information includes:  * A local identifier for the collection that is unique for the dataset; * A list of coordinate reference systems (CRS) in which geometries may be returned by the server. The first CRS is the default coordinate reference system (the default is always WGS 84 with axis order longitude/latitude); * An optional title and description for the collection; * An optional extent that can be used to provide an indication of the spatial and temporal extent of the collection - typically derived from the data; * An optional indicator about the type of the items in the collection (the default value, if the indicator is not provided, is 'feature').", content = @Content(schema = @Schema(implementation = Collection.class))),
+            @ApiResponse(responseCode = "404", description = "The requested URI was not found."),
+            @ApiResponse(responseCode = "500", description = "A server error occurred.", content = @Content(schema = @Schema(implementation = Exception.class)))})
+    public ResponseEntity describeCollection(
+            @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
+            @PathVariable("collectionId") String collectionId) {
+        Optional<Collection> collection = collectionService.getCollection(collectionId);
+        final Collection entity = collection.orElseThrow(
+                () -> new WebApplicationException(NOT_FOUND, Err.errorFmt("Collection '%s' not found", collectionId)));
+        return ResponseEntity.ok(entity);
     }
 
     @GetMapping(value = "/{collectionId}/items/{featureId}", produces = APPLICATION_GEO_JSON)

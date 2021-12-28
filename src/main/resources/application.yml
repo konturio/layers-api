@@ -23,6 +23,8 @@ springdoc:
   swagger-ui:
     path: 'doc'
     disable-swagger-default-url: true
+    tags-sorter: alpha
+    operations-sorter: alpha
 
 mybatis:
   mapper-locations: classpath:db/mappers/*Mapper.xml

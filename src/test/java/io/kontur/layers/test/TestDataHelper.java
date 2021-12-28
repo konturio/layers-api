@@ -29,10 +29,11 @@ public class TestDataHelper {
 //        props.put("category1", "categoryValue1_" + n);
 //        props.put("category2", "categoryValue2_" + n);
 
-        return new Layer("pubId_" + n, "name_" + n, "description_" + n, "copyrights_" + n,
-                         props, null, null, null,
-                         OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusSeconds(n),
-                         OffsetDateTime.of(2020, 4, 15, 15, 0, 0, 0, offset()).plusSeconds(n), null, null, null);
+        return new Layer("pubId_" + n, "name_" + n, "description_" + n,
+                String.format("SRID=4326;POLYGON((0 0, %1$d 0, %1$d %1$d, 0 %1$d, 0 0))", n),
+                "copyrights_" + n, props, null, null, null,
+                OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusSeconds(n),
+                OffsetDateTime.of(2020, 4, 15, 15, 0, 0, 0, offset()).plusSeconds(n), null, null, null);
     }
 
     public static Feature buildPointN(int n) {
@@ -53,11 +54,13 @@ public class TestDataHelper {
 
     public static Feature buildMultiPolygonN(int n) {
         return buildFeatureN(n, String.format(
-                "SRID=4326;MULTIPOLYGON(((0 0, %1$d 0, %1$d %1$d, 0 %1$d, 0 0)),((0 0, %2$d 0, %2$d %2$d, 0 %2$d, 0 0)))", n, n + 10));
+                "SRID=4326;MULTIPOLYGON(((0 0, %1$d 0, %1$d %1$d, 0 %1$d, 0 0)),((0 0, %2$d 0, %2$d %2$d, 0 %2$d, 0 0)))",
+                n, n + 10));
     }
 
     public static Feature buildGeometryCollectionN(int n) {
-        return buildFeatureN(n, String.format("SRID=4326;GEOMETRYCOLLECTION(POINT(0 %1$d),LINESTRING(0 0, %1$d 0, %1$d %1$d))", n));
+        return buildFeatureN(n,
+                String.format("SRID=4326;GEOMETRYCOLLECTION(POINT(0 %1$d),LINESTRING(0 0, %1$d 0, %1$d %1$d))", n));
     }
 
     public static Feature buildPolygonN(int n) {

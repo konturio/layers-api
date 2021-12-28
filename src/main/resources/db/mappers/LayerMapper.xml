@@ -18,10 +18,15 @@
                           l.source_updated as sourcelastupdated,
                           count(*) OVER() AS numberMatched
                    from layers l
+                   where 1 = 1
                    <if test="publicIds != null">
-                       <foreach collection="publicIds" item="id" open="where l.public_id in (" separator="," close=")">
+                       <foreach collection="publicIds" item="id" open="and l.public_id in (" separator="," close=")">
                        #{id}
                        </foreach>
+                   </if>
+                   <if test="geometry != null">
+                       and (l.geom ISNULL
+                           or ST_Intersects(l.geom, ST_SetSRID(ST_GeomFromGeoJSON(#{geometry}), 4326)))
                    </if>
                    group by l.id limit #{limit} offset #{offset}),
         ext as (select f.layer_id,
