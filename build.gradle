@@ -38,3 +38,7 @@ test {
     useJUnitPlatform()
     maxHeapSize = "512m"
 }
+
+jar {
+    enabled = false
+}
