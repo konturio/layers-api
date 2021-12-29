@@ -1,6 +1,6 @@
 package io.kontur.layers.controller;
 
-import io.kontur.layers.controller.exceptions.Err;
+import io.kontur.layers.controller.exceptions.Error;
 import io.kontur.layers.controller.exceptions.WebApplicationException;
 import io.kontur.layers.controller.validation.ValidBbox;
 import io.kontur.layers.dto.*;
@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +30,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static io.kontur.layers.ApiConstants.APPLICATION_GEO_JSON;
-import static io.kontur.layers.controller.exceptions.Err.*;
+import static io.kontur.layers.controller.exceptions.Error.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -69,7 +68,7 @@ public class CollectionsApi {
             @PathVariable("collectionId") String collectionId) {
         Optional<Collection> collection = collectionService.getCollection(collectionId);
         final Collection entity = collection.orElseThrow(
-                () -> new WebApplicationException(NOT_FOUND, Err.errorFmt("Collection '%s' not found", collectionId)));
+                () -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found", collectionId)));
         return ResponseEntity.ok(entity);
     }
 
@@ -102,7 +101,7 @@ public class CollectionsApi {
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a feature", required = true)
             @PathVariable("featureId") String featureId) {
         final FeatureGeoJSON featureGeoJSON = featureService.getFeature(collectionId, featureId).orElseThrow(
-                () -> new WebApplicationException(NOT_FOUND, Err.errorFmt("Feature '%s' not found", featureId)));
+                () -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Feature '%s' not found", featureId)));
         return ResponseEntity.ok(featureGeoJSON);
     }
 
@@ -125,7 +124,7 @@ public class CollectionsApi {
             @Min(0)
             @RequestParam(value = "offset", defaultValue = "0")
                     Integer offset,
-            @Parameter(explode = Explode.FALSE, style = ParameterStyle.FORM, in = ParameterIn.QUERY, description = "Only features that have a geometry that intersects the bounding box are selected. The bounding box is provided as four or six numbers, depending on whether the coordinate reference system includes a vertical axis (height or depth):  * Lower left corner, coordinate axis 1 * Lower left corner, coordinate axis 2 * Minimum value, coordinate axis 3 (optional) * Upper right corner, coordinate axis 1 * Upper right corner, coordinate axis 2 * Maximum value, coordinate axis 3 (optional)  The coordinate reference system of the values is WGS 84 longitude/latitude (http://www.opengis.net/def/crs/OGC/1.3/CRS84) unless a different coordinate reference system is specified in the parameter `bbox-crs`.  For WGS 84 longitude/latitude the values are in most cases the sequence of minimum longitude, minimum latitude, maximum longitude and maximum latitude. However, in cases where the box spans the antimeridian the first value (west-most box edge) is larger than the third value (east-most box edge).  If the vertical axis is included, the third and the sixth number are the bottom and the top of the 3-dimensional bounding box.  If a feature has multiple spatial geometry properties, it is the decision of the server whether only a single spatial geometry property is used to determine the extent or all relevant geometries.")
+            @Parameter(explode = Explode.FALSE, style = ParameterStyle.FORM, in = ParameterIn.QUERY, description = "Only features that have a geometry that intersects the bounding box are selected. The bounding box is provided as four or six numbers, depending on whether the coordinate reference system includes a vertical axis (height or depth):  * Lower left corner, coordinate axis 1 * Lower left corner, coordinate axis 2 * Minimum value, coordinate axis 3 (optional) * Upper right corner, coordinate axis 1 * Upper right corner, coordinate axis 2 * Maximum value, coordinate axis 3 (optional)  The coordinate reference system of the values is WGS 84 longitude/latitude (http://www.opengis.net/def/crs/OGC/1.3/CRS84).  For WGS 84 longitude/latitude the values are in most cases the sequence of minimum longitude, minimum latitude, maximum longitude and maximum latitude. However, in cases where the box spans the antimeridian the first value (west-most box edge) is larger than the third value (east-most box edge).  If the vertical axis is included, the third and the sixth number are the bottom and the top of the 3-dimensional bounding box.  If a feature has multiple spatial geometry properties, it is the decision of the server whether only a single spatial geometry property is used to determine the extent or all relevant geometries.")
             @ValidBbox
             @RequestParam(value = "bbox", required = false)
                     List<BigDecimal> bbox,

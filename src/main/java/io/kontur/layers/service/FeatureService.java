@@ -1,6 +1,6 @@
 package io.kontur.layers.service;
 
-import io.kontur.layers.controller.exceptions.Err;
+import io.kontur.layers.controller.exceptions.Error;
 import io.kontur.layers.controller.exceptions.WebApplicationException;
 import io.kontur.layers.dto.DateTimeRange;
 import io.kontur.layers.dto.FeatureCollectionGeoJSON;
@@ -43,7 +43,7 @@ public class FeatureService {
             List<PropFilter> propFilterList) {
 
         final String title = layerMapper.getLayerName(collectionId).orElseThrow(
-                () -> new WebApplicationException(NOT_FOUND, Err.errorFmt("Collection '%s' not found", collectionId)));
+                () -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found", collectionId)));
 
         List<PropFilter> list = propFilterList.stream().map(c -> new PropFilter(
                 String.format("{%s}", c.getFieldName()),
@@ -60,7 +60,7 @@ public class FeatureService {
     public Optional<FeatureGeoJSON> getFeature(String collectionId, String featureId) {
         final String title = layerMapper.getLayerName(collectionId)
                 .orElseThrow(
-                        () -> new WebApplicationException(NOT_FOUND, Err.errorFmt("Collection '%s' not found", collectionId)));
+                        () -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found", collectionId)));
         Optional<Feature> feature = featureMapper.getFeature(collectionId, featureId);
 
         return feature.map(f -> featureServiceHelper.toFeatureGeoJson(f, collectionId, title));

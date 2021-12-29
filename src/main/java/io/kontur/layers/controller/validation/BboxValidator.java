@@ -1,8 +1,5 @@
 package io.kontur.layers.controller.validation;
 
-
-import io.kontur.layers.dto.Bbox;
-
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.math.BigDecimal;

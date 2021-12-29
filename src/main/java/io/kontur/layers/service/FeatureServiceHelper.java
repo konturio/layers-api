@@ -3,7 +3,7 @@ package io.kontur.layers.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.layers.ApiConstants;
-import io.kontur.layers.controller.exceptions.Err;
+import io.kontur.layers.controller.exceptions.Error;
 import io.kontur.layers.controller.exceptions.WebApplicationException;
 import io.kontur.layers.dto.FeatureGeoJSON;
 import io.kontur.layers.dto.GeometryGeoJSON;
@@ -71,7 +71,7 @@ public class FeatureServiceHelper {
                     .properties(feature.getProperties())
                     .type(FeatureGeoJSON.TypeEnum.FEATURE);
         } catch (JsonProcessingException e) {
-            throw new WebApplicationException(INTERNAL_SERVER_ERROR, Err.error("internal server error"), e);
+            throw new WebApplicationException(INTERNAL_SERVER_ERROR, Error.error("internal server error"), e);
         }
     }
 }
