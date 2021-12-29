@@ -4,12 +4,14 @@ import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import io.kontur.layers.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
+import io.kontur.layers.repository.model.Layer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static io.kontur.layers.test.TestDataHelper.buildLayerN;
+import static io.kontur.layers.test.TestDataHelper.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -127,6 +129,57 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json.read("$.collections"), hasSize(1));
         assertThat(json, hasJsonPath("$.collections[0].id", is("pubId_3")));
+    }
+
+    @Test
+    @DisplayName("geometry intersection shouldn't find layers with null geometry")
+    public void testGetCollectionNullGeometryIntersection() throws Exception {
+        //GIVEN
+        testDataMapper.insertLayer(buildLayerN(1));
+        Layer layer = buildLayerN(2);
+        ReflectionTestUtils.setField(layer, "geometry", null);
+        testDataMapper.insertLayer(layer);
+
+        testDataMapper.insertLayer(buildLayerN(3));
+        //WHEN
+        String response = mockMvc.perform(post("/collections/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"geometry\":{\"type\":\"Point\",\"coordinates\":[0,3]}}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json.read("$.collections"), hasSize(1));
+        assertThat(json, hasJsonPath("$.collections[0].id", is("pubId_3")));
+    }
+
+    @Test
+    @DisplayName("geometry intersection should find layers by feature geometry")
+    public void testGetCollectionFeatureGeometryIntersection() throws Exception {
+        //GIVEN
+        testDataMapper.insertLayer(buildLayerN(1));
+
+        Layer layer = buildLayerN(2);
+        ReflectionTestUtils.setField(layer, "geometry", null);
+        long id = testDataMapper.insertLayer(layer);
+        testDataMapper.insertFeature(id, buildPolygonN(3));
+
+        testDataMapper.insertLayer(buildLayerN(3));
+        //WHEN
+        String response = mockMvc.perform(post("/collections/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"geometry\":{\"type\":\"Point\",\"coordinates\":[0,3]}}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json.read("$.collections"), hasSize(2));
     }
 
     @Test
