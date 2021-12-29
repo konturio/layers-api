@@ -25,22 +25,17 @@
                        </foreach>
                    </if>
                    <if test="geometry != null">
-                       and (l.geom ISNULL
+                       and ((l.geom isnull
+                                and l.id in (select layer_id
+                                            from layers_features ls
+                                            where ST_Intersects(ls.geom, ST_SetSRID(ST_GeomFromGeoJSON(#{geometry}), 4326))))
                            or ST_Intersects(l.geom, ST_SetSRID(ST_GeomFromGeoJSON(#{geometry}), 4326)))
                    </if>
                    group by l.id limit #{limit} offset #{offset}),
         ext as (select f.layer_id,
                    st_3dextent(f.geom) as spat,
-                   (select f2.last_updated
-                         from layers_features f2
-                         where f2.last_updated is not null and f2.layer_id = f.layer_id
-                         order by f2.last_updated asc nulls first
-                         limit 1) as lowerdt,
-                   (select f2.last_updated
-                         from layers_features f2
-                         where f2.last_updated is not null and f2.layer_id = f.layer_id
-                         order by f2.last_updated desc nulls first
-                         limit 1) as upperdt
+                   min(f.last_updated) as lowerdt,
+                   max(f.last_updated) as upperdt
                    from layers_features f join lrs on lrs.id = f.layer_id
                    group by f.layer_id)
         select lrs.*,
