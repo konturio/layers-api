@@ -27,6 +27,7 @@ build:
                }
       done
       set +x
+    - awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, " instructions covered"; print 100*covered/instructions, "% covered" }' build/jacoco.csv
     - >-
       tar --show-transformed-names
       --transform="s@^build/libs/@@;s@^build/resources/main/external/@@;"
