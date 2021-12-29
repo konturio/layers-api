@@ -62,7 +62,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                                                                   WebRequest request) {
         String msg = "invalid field value";
 
-        return new ResponseEntity<>(Error.objectError(null, Err.fieldError("", Err.error(msg))), BAD_REQUEST);
+        return new ResponseEntity<>(Error.objectError(null, Error.fieldError("", Error.error(msg))), BAD_REQUEST);
     }
 
     @ExceptionHandler(WebApplicationException.class)

@@ -17,6 +17,7 @@ public interface FeatureMapper {
     void getFeatures(@Param("collectionId") String collectionId,
                                      @Param("limit") Integer limit,
                                      @Param("offset") Integer offset,
+                                     @Param("geometry") String geometry,
                                      @Param("bbox") List<BigDecimal> bbox,
                                      @Param("dateTime") DateTimeRange dateTime,
                                      @Param("propFilterList") List<FeatureService.PropFilter> propFilterList,
@@ -25,6 +26,7 @@ public interface FeatureMapper {
     Optional<Feature> getFeature(@Param("collectionId") String collectionId, @Param("featureId") String featureId);
 
     Optional<Integer> getFeaturesTotal(@Param("collectionId") String collectionId,
+                                       @Param("geometry") String geometry,
                                        @Param("bbox") List<BigDecimal> bbox,
                                        @Param("dateTime") DateTimeRange dateTime,
                                        @Param("propFilterList") List<FeatureService.PropFilter> propFilterList);

@@ -2,14 +2,12 @@ package io.kontur.layers.service;
 
 import io.kontur.layers.controller.exceptions.Error;
 import io.kontur.layers.controller.exceptions.WebApplicationException;
-import io.kontur.layers.dto.DateTimeRange;
-import io.kontur.layers.dto.FeatureCollectionGeoJSON;
-import io.kontur.layers.dto.FeatureGeoJSON;
-import io.kontur.layers.dto.Link;
+import io.kontur.layers.dto.*;
 import io.kontur.layers.repository.FeatureMapper;
 import io.kontur.layers.repository.LayerMapper;
 import io.kontur.layers.repository.model.Feature;
 import io.kontur.layers.repository.typehandler.FeatureCollectionResultHandler;
+import io.kontur.layers.util.JsonUtil;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -38,9 +36,11 @@ public class FeatureService {
             String collectionId,
             Integer limit,
             Integer offset,
+            GeometryGeoJSON geometry,
             List<BigDecimal> bbox,
             DateTimeRange dateTimeRange,
-            List<PropFilter> propFilterList) {
+            List<PropFilter> propFilterList,
+            boolean includeLinks) {
 
         final String title = layerMapper.getLayerName(collectionId).orElseThrow(
                 () -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found", collectionId)));
@@ -52,8 +52,9 @@ public class FeatureService {
                                 .replace("_", "\\_").replace("*", "%")).toArray(String[]::new))
         ).collect(Collectors.toList());
 
-        FeatureCollectionGeoJSON fc = getGeoJsonFeatureCollectionInParallel(collectionId, limit, offset, bbox,
-                dateTimeRange, list, title, propFilterList);
+        FeatureCollectionGeoJSON fc = getGeoJsonFeatureCollectionInParallel(collectionId, limit, offset,
+                geometry != null ? JsonUtil.writeJson(geometry) : null, bbox,
+                dateTimeRange, list, title, propFilterList, includeLinks);
         return Optional.of(fc).filter(collection -> collection.getNumberReturned() > 0);
     }
 
@@ -69,22 +70,27 @@ public class FeatureService {
     private FeatureCollectionGeoJSON getGeoJsonFeatureCollectionInParallel(String collectionId,
                                                                            Integer limit,
                                                                            Integer offset,
+                                                                           String geometry,
                                                                            List<BigDecimal> bbox,
                                                                            DateTimeRange dateTimeRange,
-                                                                           List<FeatureService.PropFilter> list,
+                                                                           List<PropFilter> list,
                                                                            String title,
-                                                                           List<PropFilter> propFilterList) {
-        Integer numberMatched = featureMapper.getFeaturesTotal(collectionId, bbox, dateTimeRange, list)
+                                                                           List<PropFilter> propFilterList,
+                                                                           boolean includeLinks) {
+        Integer numberMatched = featureMapper.getFeaturesTotal(collectionId, geometry, bbox, dateTimeRange, list)
                 .orElse(null);
         FeatureCollectionResultHandler resultHandler = new FeatureCollectionResultHandler(featureServiceHelper,
                 collectionId, title);
-        featureMapper.getFeatures(collectionId, limit, offset, bbox, dateTimeRange, list,
+        featureMapper.getFeatures(collectionId, limit, offset, geometry, bbox, dateTimeRange, list,
                 resultHandler);
         FeatureCollectionGeoJSON fc = resultHandler.getResult();
         fc.setNumberMatched(numberMatched);
-        List<Link> links = featureServiceHelper.getCollectionLinks(collectionId, title, limit, offset, numberMatched,
-                bbox, propFilterList);
-        fc.setLinks(links);
+        if (includeLinks) {
+            List<Link> links = featureServiceHelper.getCollectionLinks(collectionId, title, limit, offset,
+                    numberMatched,
+                    bbox, propFilterList);
+            fc.setLinks(links);
+        }
 
         return fc;
     }
