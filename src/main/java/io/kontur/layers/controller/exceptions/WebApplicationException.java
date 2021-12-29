@@ -4,15 +4,15 @@ import org.springframework.http.HttpStatus;
 
 public class WebApplicationException extends RuntimeException {
     private HttpStatus status;
-    private Err err;
+    private Error err;
 
-    public WebApplicationException(final HttpStatus status, final Err err, final Throwable cause) {
+    public WebApplicationException(final HttpStatus status, final Error err, final Throwable cause) {
         super(err.getMsg(), cause);
         this.status = status;
         this.err = err;
     }
 
-    public WebApplicationException(final HttpStatus status, final Err err) {
+    public WebApplicationException(final HttpStatus status, final Error err) {
         this(status, err, null);
     }
 
@@ -20,7 +20,7 @@ public class WebApplicationException extends RuntimeException {
         return status;
     }
 
-    public Err getErr() {
+    public Error getErr() {
         return err;
     }
 }

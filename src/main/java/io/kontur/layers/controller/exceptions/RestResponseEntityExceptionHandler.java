@@ -32,11 +32,11 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers, HttpStatus status,
                                                                   WebRequest request) {
-        List<Err> errors = new ArrayList<>();
+        List<Error> errors = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
-            errors.add(Err.objectError(null, Err.fieldError(fieldName, Err.error(errorMessage))));
+            errors.add(Error.objectError(null, Error.fieldError(fieldName, Error.error(errorMessage))));
         });
         return new ResponseEntity<>(errors, status);
     }
@@ -44,7 +44,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleThrowable(Throwable ex, WebRequest request) {
         LOG.error(ex.getMessage(), ex);
-        return new ResponseEntity<>(Err.error("internal server error"), INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(Error.error("internal server error"), INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -53,7 +53,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         if (ex.getCause() instanceof NumberFormatException) {
             msg = "invalid numeric value";
         }
-        return new ResponseEntity<>(Err.objectError(null, Err.fieldError(ex.getName(), Err.error(msg))), BAD_REQUEST);
+        return new ResponseEntity<>(Error.objectError(null, Error.fieldError(ex.getName(), Error.error(msg))), BAD_REQUEST);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                                                                   WebRequest request) {
         String msg = "invalid field value";
 
-        return new ResponseEntity<>(Err.objectError(null, Err.fieldError("", Err.error(msg))), BAD_REQUEST);
+        return new ResponseEntity<>(Error.objectError(null, Err.fieldError("", Err.error(msg))), BAD_REQUEST);
     }
 
     @ExceptionHandler(WebApplicationException.class)
@@ -75,11 +75,11 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request) {
-        var errors = new ArrayList<Err.FieldErr<String>>();
+        var errors = new ArrayList<Error.FieldErr<String>>();
         for (ConstraintViolation<?> v : ex.getConstraintViolations()) {
             String prop = StringUtils.substringAfterLast(v.getPropertyPath().toString(), ".");
-            errors.add(Err.fieldError(prop, Err.error(v.getMessage())));
+            errors.add(Error.fieldError(prop, Error.error(v.getMessage())));
         }
-        return new ResponseEntity<>(Err.objectError(null, errors), BAD_REQUEST);
+        return new ResponseEntity<>(Error.objectError(null, errors), BAD_REQUEST);
     }
 }

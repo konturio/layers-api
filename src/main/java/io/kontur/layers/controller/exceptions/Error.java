@@ -4,27 +4,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Err {
+public class Error {
     private String msg;
-    private Map<String, Err> fieldErrors;
-    private Map<Integer, Err> indexErrors;
+    private Map<String, Error> fieldErrors;
+    private Map<Integer, Error> indexErrors;
 
-    public static Err error(String message) {
-        final Err errorResponse = new Err();
+    public static Error error(String message) {
+        final Error errorResponse = new Error();
         errorResponse.setMsg(message);
         return errorResponse;
     }
 
-    public static Err errorFmt(String message, Object... stringFormatParams) {
+    public static Error errorFmt(String message, Object... stringFormatParams) {
         return error(String.format(message, stringFormatParams));
     }
 
-    public static Err objectError(String message, List<FieldErr<String>> fieldErrors) {
+    public static Error objectError(String message, List<FieldErr<String>> fieldErrors) {
         return objectError(message, fieldErrors.toArray(new FieldErr[fieldErrors.size()]));
     }
 
-    public static Err objectError(String message, FieldErr<String>... fieldErrors) {
-        final Err err = new Err();
+    public static Error objectError(String message, FieldErr<String>... fieldErrors) {
+        final Error err = new Error();
         err.setMsg(message);
         if (fieldErrors.length > 0) {
             if (err.getFieldErrors() == null) {
@@ -37,8 +37,8 @@ public class Err {
         return err;
     }
 
-    public static Err arrayError(String message, FieldErr<Integer>... fieldErrors) {
-        final Err err = new Err();
+    public static Error arrayError(String message, FieldErr<Integer>... fieldErrors) {
+        final Error err = new Error();
         err.setMsg(message);
         if (fieldErrors.length > 0) {
             if (err.getIndexErrors() == null) {
@@ -51,15 +51,15 @@ public class Err {
         return err;
     }
 
-    public static <T> FieldErr<T> fieldError(T name, Err value) {
+    public static <T> FieldErr<T> fieldError(T name, Error value) {
         return new FieldErr<>(name, value);
     }
 
     public static class FieldErr<T> {
         private T key;
-        private Err value;
+        private Error value;
 
-        public FieldErr(final T key, final Err value) {
+        public FieldErr(final T key, final Error value) {
             this.key = key;
             this.value = value;
         }
@@ -68,7 +68,7 @@ public class Err {
             return key;
         }
 
-        public Err getValue() {
+        public Error getValue() {
             return value;
         }
     }
@@ -81,19 +81,19 @@ public class Err {
         this.msg = msg;
     }
 
-    public Map<String, Err> getFieldErrors() {
+    public Map<String, Error> getFieldErrors() {
         return fieldErrors;
     }
 
-    public void setFieldErrors(final Map<String, Err> fieldErrors) {
+    public void setFieldErrors(final Map<String, Error> fieldErrors) {
         this.fieldErrors = fieldErrors;
     }
 
-    public Map<Integer, Err> getIndexErrors() {
+    public Map<Integer, Error> getIndexErrors() {
         return indexErrors;
     }
 
-    public void setIndexErrors(final Map<Integer, Err> indexErrors) {
+    public void setIndexErrors(final Map<Integer, Error> indexErrors) {
         this.indexErrors = indexErrors;
     }
 }

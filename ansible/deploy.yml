@@ -4,7 +4,7 @@
   vars:
     app_name: layers-api
     home: '{{ ansible_env.HOME }}'
-    app_home: '{{ home }}/{{ app_name }}'
+    app_home: '{{ home }}'
   tasks:
     - name: Creating app directory if it does not exist
       file:
@@ -66,6 +66,7 @@
         - find:
             paths: '{{ app_home }}/current'
             patterns: layers-api-*.jar
+            exclude: '*-plain.jar'
             recurse: true
             depth: 2
           register: find_ret
