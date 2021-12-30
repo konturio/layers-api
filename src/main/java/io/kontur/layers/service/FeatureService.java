@@ -39,13 +39,13 @@ public class FeatureService {
             GeometryGeoJSON geometry,
             List<BigDecimal> bbox,
             DateTimeRange dateTimeRange,
-            List<PropFilter> propFilterList,
+            List<FeaturePropertiesFilter> propFilterList,
             boolean includeLinks) {
 
         final String title = layerMapper.getLayerName(collectionId).orElseThrow(
                 () -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found", collectionId)));
 
-        List<PropFilter> list = propFilterList.stream().map(c -> new PropFilter(
+        List<FeaturePropertiesFilter> list = propFilterList.stream().map(c -> new FeaturePropertiesFilter(
                 String.format("{%s}", c.getFieldName()),
                 Arrays.stream(c.getPattern())
                         .map(p -> p.replace("%", "\\%")
@@ -73,9 +73,9 @@ public class FeatureService {
                                                                            String geometry,
                                                                            List<BigDecimal> bbox,
                                                                            DateTimeRange dateTimeRange,
-                                                                           List<PropFilter> list,
+                                                                           List<FeaturePropertiesFilter> list,
                                                                            String title,
-                                                                           List<PropFilter> propFilterList,
+                                                                           List<FeaturePropertiesFilter> propFilterList,
                                                                            boolean includeLinks) {
         Integer numberMatched = featureMapper.getFeaturesTotal(collectionId, geometry, bbox, dateTimeRange, list)
                 .orElse(null);
@@ -93,25 +93,6 @@ public class FeatureService {
         }
 
         return fc;
-    }
-
-    public static class PropFilter {
-
-        private String fieldName;
-        private String[] pattern;
-
-        public PropFilter(final String fieldName, final String[] pattern) {
-            this.fieldName = fieldName;
-            this.pattern = pattern;
-        }
-
-        public String getFieldName() {
-            return fieldName;
-        }
-
-        public String[] getPattern() {
-            return pattern;
-        }
     }
 
 }

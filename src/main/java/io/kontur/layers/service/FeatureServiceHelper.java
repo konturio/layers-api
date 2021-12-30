@@ -6,6 +6,7 @@ import io.kontur.layers.ApiConstants;
 import io.kontur.layers.controller.exceptions.Error;
 import io.kontur.layers.controller.exceptions.WebApplicationException;
 import io.kontur.layers.dto.FeatureGeoJSON;
+import io.kontur.layers.dto.FeaturePropertiesFilter;
 import io.kontur.layers.dto.GeometryGeoJSON;
 import io.kontur.layers.dto.Link;
 import io.kontur.layers.repository.model.Feature;
@@ -38,7 +39,7 @@ public class FeatureServiceHelper {
                                          Integer offset,
                                          Integer numberMatched,
                                          List<BigDecimal> bbox,
-                                         List<FeatureService.PropFilter> filterList) {
+                                         List<FeaturePropertiesFilter> filterList) {
         List<Link> linkList = new ArrayList<>();
 
         linkList.add(linkFactory.linkForCollectionItems(SELF, collectionId, collectionTitle, limit, offset, bbox, filterList));

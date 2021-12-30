@@ -1,9 +1,9 @@
 package io.kontur.layers.repository;
 
 import io.kontur.layers.dto.DateTimeRange;
+import io.kontur.layers.dto.FeaturePropertiesFilter;
 import io.kontur.layers.repository.model.Feature;
 import io.kontur.layers.repository.typehandler.FeatureCollectionResultHandler;
-import io.kontur.layers.service.FeatureService;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,7 +20,7 @@ public interface FeatureMapper {
                                      @Param("geometry") String geometry,
                                      @Param("bbox") List<BigDecimal> bbox,
                                      @Param("dateTime") DateTimeRange dateTime,
-                                     @Param("propFilterList") List<FeatureService.PropFilter> propFilterList,
+                                     @Param("propFilterList") List<FeaturePropertiesFilter> propFilterList,
                                      FeatureCollectionResultHandler featureCollectionResultHandler);
 
     Optional<Feature> getFeature(@Param("collectionId") String collectionId, @Param("featureId") String featureId);
@@ -29,6 +29,6 @@ public interface FeatureMapper {
                                        @Param("geometry") String geometry,
                                        @Param("bbox") List<BigDecimal> bbox,
                                        @Param("dateTime") DateTimeRange dateTime,
-                                       @Param("propFilterList") List<FeatureService.PropFilter> propFilterList);
+                                       @Param("propFilterList") List<FeaturePropertiesFilter> propFilterList);
 
 }
