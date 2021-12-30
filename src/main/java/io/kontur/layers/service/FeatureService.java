@@ -2,10 +2,7 @@ package io.kontur.layers.service;
 
 import io.kontur.layers.controller.exceptions.Error;
 import io.kontur.layers.controller.exceptions.WebApplicationException;
-import io.kontur.layers.dto.DateTimeRange;
-import io.kontur.layers.dto.FeatureCollectionGeoJSON;
-import io.kontur.layers.dto.FeatureGeoJSON;
-import io.kontur.layers.dto.Link;
+import io.kontur.layers.dto.*;
 import io.kontur.layers.repository.FeatureMapper;
 import io.kontur.layers.repository.LayerMapper;
 import io.kontur.layers.repository.model.Feature;
@@ -40,12 +37,12 @@ public class FeatureService {
             Integer offset,
             List<BigDecimal> bbox,
             DateTimeRange dateTimeRange,
-            List<PropFilter> propFilterList) {
+            List<FeaturePropertiesFilter> propFilterList) {
 
         final String title = layerMapper.getLayerName(collectionId).orElseThrow(
                 () -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found", collectionId)));
 
-        List<PropFilter> list = propFilterList.stream().map(c -> new PropFilter(
+        List<FeaturePropertiesFilter> list = propFilterList.stream().map(c -> new FeaturePropertiesFilter(
                 String.format("{%s}", c.getFieldName()),
                 Arrays.stream(c.getPattern())
                         .map(p -> p.replace("%", "\\%")
@@ -71,9 +68,9 @@ public class FeatureService {
                                                                            Integer offset,
                                                                            List<BigDecimal> bbox,
                                                                            DateTimeRange dateTimeRange,
-                                                                           List<FeatureService.PropFilter> list,
+                                                                           List<FeaturePropertiesFilter> list,
                                                                            String title,
-                                                                           List<PropFilter> propFilterList) {
+                                                                           List<FeaturePropertiesFilter> propFilterList) {
         Integer numberMatched = featureMapper.getFeaturesTotal(collectionId, bbox, dateTimeRange, list)
                 .orElse(null);
         FeatureCollectionResultHandler resultHandler = new FeatureCollectionResultHandler(featureServiceHelper,
@@ -87,25 +84,6 @@ public class FeatureService {
         fc.setLinks(links);
 
         return fc;
-    }
-
-    public static class PropFilter {
-
-        private String fieldName;
-        private String[] pattern;
-
-        public PropFilter(final String fieldName, final String[] pattern) {
-            this.fieldName = fieldName;
-            this.pattern = pattern;
-        }
-
-        public String getFieldName() {
-            return fieldName;
-        }
-
-        public String[] getPattern() {
-            return pattern;
-        }
     }
 
 }

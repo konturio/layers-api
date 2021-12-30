@@ -1,6 +1,7 @@
 package io.kontur.layers.service;
 
 import io.kontur.layers.ApiConstants;
+import io.kontur.layers.dto.FeaturePropertiesFilter;
 import io.kontur.layers.dto.Link;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -10,10 +11,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Service
@@ -31,7 +29,7 @@ public class LinkFactory {
                                        Integer limit,
                                        Integer offset,
                                        List<BigDecimal> bbox,
-                                       List<FeatureService.PropFilter> propFilterList) {
+                                       List<FeaturePropertiesFilter> propFilterList) {
         final UriBuilder uriBuilder = UriComponentsBuilder.fromPath(ApiConstants.COLLECTION_ITEMS_ENDPOINT)
                 .queryParam("limit", limit)
                 .queryParam("offset", offset);

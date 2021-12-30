@@ -7,7 +7,6 @@ import java.util.Map;
 public class Error {
     private String msg;
     private Map<String, Error> fieldErrors;
-    private Map<Integer, Error> indexErrors;
 
     public static Error error(String message) {
         final Error errorResponse = new Error();
@@ -32,20 +31,6 @@ public class Error {
             }
             for (FieldErr<String> fieldError : fieldErrors) {
                 err.getFieldErrors().put(fieldError.getKey(), fieldError.getValue());
-            }
-        }
-        return err;
-    }
-
-    public static Error arrayError(String message, FieldErr<Integer>... fieldErrors) {
-        final Error err = new Error();
-        err.setMsg(message);
-        if (fieldErrors.length > 0) {
-            if (err.getIndexErrors() == null) {
-                err.setIndexErrors(new HashMap<>());
-            }
-            for (FieldErr<Integer> fieldError : fieldErrors) {
-                err.getIndexErrors().put(fieldError.getKey(), fieldError.getValue());
             }
         }
         return err;
@@ -87,13 +72,5 @@ public class Error {
 
     public void setFieldErrors(final Map<String, Error> fieldErrors) {
         this.fieldErrors = fieldErrors;
-    }
-
-    public Map<Integer, Error> getIndexErrors() {
-        return indexErrors;
-    }
-
-    public void setIndexErrors(final Map<Integer, Error> indexErrors) {
-        this.indexErrors = indexErrors;
     }
 }

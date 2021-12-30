@@ -139,7 +139,7 @@ public class CollectionsApi {
         return ResponseEntity.ok(fc.orElse(new FeatureCollectionGeoJSON()));
     }
 
-    private List<FeatureService.PropFilter> getCriteriaList() {
+    private List<FeaturePropertiesFilter> getCriteriaList() {
         final Map<String, String[]> map = Optional.ofNullable(servletRequest.getParameterMap())
                 .orElse(Map.of());
 
@@ -150,7 +150,7 @@ public class CollectionsApi {
                         throw new WebApplicationException(BAD_REQUEST, objectError("incorrect query parameter", fieldError(
                                 e.getKey(), error("must not appear multiple times"))));
                     } else {
-                        return new FeatureService.PropFilter(
+                        return new FeaturePropertiesFilter(
                                 e.getKey(), e.getValue().length == 0 ? null : e.getValue()[0].split(","));
                     }
                 })
