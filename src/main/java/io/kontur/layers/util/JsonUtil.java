@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -35,14 +34,6 @@ public class JsonUtil {
     public static <T> T readJson(String json, TypeReference<T> valueTypeRef) {
         try {
             return mapper.readValue(json, valueTypeRef);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static JsonNode readTree(String json) {
-        try {
-            return mapper.readTree(json);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
