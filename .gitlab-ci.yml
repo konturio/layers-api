@@ -37,6 +37,8 @@ build:
     name: layers-api-$CI_COMMIT_REF_SLUG
     paths:
       - '*.tar.xz'
+    reports:
+      junit: build/test-results/test/**/TEST-*.xml
 
 deploy-zigzag:
   tags:

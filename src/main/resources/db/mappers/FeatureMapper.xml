@@ -1,0 +1,73 @@
+<!DOCTYPE mapper     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.kontur.layers.repository.FeatureMapper">
+
+    <select id="getFeature" resultType="io.kontur.layers.repository.model.Feature">
+        select feature_id             as featureid,
+               layer_id               as layerid,
+               properties,
+               ST_AsGeoJSON(geom)     as geometry,
+               last_updated           as lastupdated
+        from layers_features
+        where layer_id = (select id from layers where public_id = #{collectionId})
+          and feature_id = #{featureId}
+    </select>
+
+    <select id="getFeaturesTotal" resultType="java.lang.Integer">
+        select count(*) AS numberMatched
+        from layers_features where layer_id = (select id from layers where public_id = #{collectionId})
+        <choose>
+            <when test="bbox!=null &amp;&amp; bbox.size == 4">
+                AND (geom ISNULL or ST_Intersects(geom, ST_MakeEnvelope(
+                #{bbox[0]},#{bbox[1]},#{bbox[2]},#{bbox[3]},4326)))
+            </when>
+            <when test="bbox!=null &amp;&amp; bbox.size == 6">
+                AND (geom ISNULL or ST_3DIntersects(ST_Force3D(geom), ST_SetSRID(ST_3DMakeBox(
+                ST_MakePoint(#{bbox[0]},#{bbox[1]},#{bbox[2]}),
+                ST_MakePoint(#{bbox[3]},#{bbox[4]},#{bbox[5]})), 4326)))
+            </when>
+        </choose>
+        <if test="dateTime != null">
+            AND (last_updated ISNULL or (last_updated &lt;@ #{dateTime}::tstzrange))
+        </if>
+        <foreach collection="propFilterList" item="item">
+            AND properties #>> (#{item.fieldName}::text[]) ilike any (array
+            <foreach item="item1" index="index" collection="item.pattern"
+                     open="[" separator="," close="]">
+                #{item1}
+            </foreach>
+            )
+        </foreach>
+    </select>
+
+    <select id="getFeatures" resultType="io.kontur.layers.repository.model.Feature" useCache="false">
+        select feature_id as featureId,
+        layer_id as layerId,
+        properties,
+        ST_AsGeoJSON(geom) as geometry,
+        last_updated as lastUpdated
+        from layers_features where layer_id = (select id from layers where public_id = #{collectionId})
+        <choose>
+            <when test="bbox!=null &amp;&amp; bbox.size == 4">
+                AND (geom ISNULL or ST_Intersects(geom, ST_MakeEnvelope(
+                #{bbox[0]},#{bbox[1]},#{bbox[2]},#{bbox[3]},4326)))
+            </when>
+            <when test="bbox!=null &amp;&amp; bbox.size == 6">
+                AND (geom ISNULL or ST_3DIntersects(ST_Force3D(geom), ST_SetSRID(ST_3DMakeBox(
+                ST_MakePoint(#{bbox[0]},#{bbox[1]},#{bbox[2]}),
+                ST_MakePoint(#{bbox[3]},#{bbox[4]},#{bbox[5]})), 4326)))
+            </when>
+        </choose>
+        <if test="dateTime != null">
+            AND (last_updated ISNULL or (last_updated &lt;@ #{dateTime}::tstzrange))
+        </if>
+        <foreach collection="propFilterList" item="item">
+            AND properties #>> (#{item.fieldName}::text[]) ilike any (array
+            <foreach item="item1" index="index" collection="item.pattern"
+                     open="[" separator="," close="]">
+                #{item1}
+            </foreach>
+            )
+        </foreach>
+        order by feature_id limit #{limit} offset #{offset}
+    </select>
+</mapper>

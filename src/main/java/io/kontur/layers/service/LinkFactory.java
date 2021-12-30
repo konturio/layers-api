@@ -1,17 +1,17 @@
 package io.kontur.layers.service;
 
 import io.kontur.layers.ApiConstants;
-import io.kontur.layers.model.Link;
+import io.kontur.layers.dto.FeaturePropertiesFilter;
+import io.kontur.layers.dto.Link;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Service
@@ -29,19 +29,14 @@ public class LinkFactory {
                                        Integer limit,
                                        Integer offset,
                                        List<BigDecimal> bbox,
-                                       List<FeatureService.PropFilter> propFilterList) {
+                                       List<FeaturePropertiesFilter> propFilterList) {
         final UriBuilder uriBuilder = UriComponentsBuilder.fromPath(ApiConstants.COLLECTION_ITEMS_ENDPOINT)
                 .queryParam("limit", limit)
-                .queryParam("offset", offset)
-                .queryParam("bbox", bbox.toArray());
-        propFilterList.forEach(p -> {
-            try {
-                String encodedFieldName = URLEncoder.encode(p.getFieldName(), StandardCharsets.UTF_8.toString());
-                uriBuilder.queryParam(encodedFieldName, p.getPattern());
-            } catch (UnsupportedEncodingException e) {
-                throw new IllegalArgumentException("Error while building link for item collection", e);
-            }
-        });
+                .queryParam("offset", offset);
+        if (!CollectionUtils.isEmpty(bbox)) {
+            uriBuilder.queryParam("bbox", bbox.toArray());
+        }
+        propFilterList.forEach(p -> uriBuilder.queryParam(p.getFieldName(), (Object[]) p.getPattern()));
         final String url = uriBuilder.build(collectionId).toString();
         return createLocal(url, rel, Type.APPLICATION_GEO_JSON, collectionTitle);
     }
@@ -53,7 +48,7 @@ public class LinkFactory {
         final UriBuilder uriBuilder = UriComponentsBuilder.fromPath(ApiConstants.COLLECTIONS_ENDPOINT)
                 .queryParam("limit", limit)
                 .queryParam("offset", offset);
-        return createLocal(uriBuilder.toString(), rel, Type.APPLICATION_JSON, title);
+        return createLocal(uriBuilder.build().toString(), rel, Type.APPLICATION_JSON, title);
     }
 
     /**
@@ -85,9 +80,9 @@ public class LinkFactory {
     }
 
     public enum Type {
-        APPLICATION_YAML("application/yaml"),
-        APPLICATION_JSON("application/json"),
-        APPLICATION_GEO_JSON("application/geo+json");
+        APPLICATION_YAML(ApiConstants.APPLICATION_YAML),
+        APPLICATION_JSON(MediaType.APPLICATION_JSON_VALUE),
+        APPLICATION_GEO_JSON(ApiConstants.APPLICATION_GEO_JSON);
         private String str;
 
         Type(final String str) {

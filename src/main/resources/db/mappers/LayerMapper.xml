@@ -1,0 +1,68 @@
+<!DOCTYPE mapper     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.kontur.layers.repository.LayerMapper">
+
+    <select id="getLayerName" resultType="string">
+        select name from layers where public_id = #{publicId}
+    </select>
+
+    <select id="getLayers" resultType="io.kontur.layers.repository.model.Layer">
+        with lrs as (select l.id,
+                          l.public_id as publicid,
+                          l.name as name,
+                          l.description,
+                          l.copyrights,
+                          l.properties,
+                          l.group_id,
+                          l.category_id,
+                          l.last_updated as lastupdated,
+                          l.source_updated as sourcelastupdated,
+                          count(*) OVER() AS numberMatched
+                   from layers l
+                   <if test="publicIds != null">
+                       <foreach collection="publicIds" item="id" open="where l.public_id in (" separator="," close=")">
+                       #{id}
+                       </foreach>
+                   </if>
+                   group by l.id limit #{limit} offset #{offset}),
+        ext as (select f.layer_id,
+                   st_3dextent(f.geom) as spat,
+                   (select f2.last_updated
+                         from layers_features f2
+                         where f2.last_updated is not null and f2.layer_id = f.layer_id
+                         order by f2.last_updated asc nulls first
+                         limit 1) as lowerdt,
+                   (select f2.last_updated
+                         from layers_features f2
+                         where f2.last_updated is not null and f2.layer_id = f.layer_id
+                         order by f2.last_updated desc nulls first
+                         limit 1) as upperdt
+                   from layers_features f join lrs on lrs.id = f.layer_id
+                   group by f.layer_id)
+        select lrs.*,
+               case when ext.spat is not null then
+                    format('[%s,%s,%s,%s,%s,%s]',
+                           st_xmin(ext.spat), st_ymin(ext.spat), st_zmin(ext.spat),
+                           st_xmax(ext.spat), st_ymax(ext.spat), st_zmax(ext.spat))
+               end as spatialextent,
+               case when (lowerdt is not null or upperdt is not null ) then
+                    tstzrange(lowerdt, upperdt, format('%s%s', '[', ']' ))
+               end as temporalextent,
+               ls.style_rule as legend,
+               json_strip_nulls(json_build_object(
+                   'name', gp."name",
+                   'is_opened', gp.is_opened,
+                   'mutually_exclusive', gp.mutually_exclusive,
+                   'order', gp."order")) as group,
+               json_strip_nulls(json_build_object(
+                   'name', cp."name",
+                   'is_opened', cp.is_opened,
+                   'mutually_exclusive', cp.mutually_exclusive,
+                   'order', cp."order")) as category
+        from lrs
+            left join ext on lrs.id = ext.layer_id
+            left join layers_style ls on ls.layer_id = lrs.id
+            left join layers_group_properties gp on gp.id = lrs.group_id
+            left join layers_category_properties cp on cp.id = lrs.category_id
+    </select>
+
+</mapper>

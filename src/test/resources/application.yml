@@ -1,0 +1,14 @@
+server:
+  servlet:
+    context-path: '/layers/v2'
+spring:
+  datasource:
+    driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: 'jdbc:tc:postgis:13-3.1-alpine:///layers-db?TC_INITSCRIPT=db/init_test_db.sql'
+  jackson:
+    default-property-inclusion: non_null
+
+
+mybatis:
+  mapper-locations: classpath:db/mappers/*Mapper.xml
+  type-handlers-package: io.kontur.layers.repository.typehandler

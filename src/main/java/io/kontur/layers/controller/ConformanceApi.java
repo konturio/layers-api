@@ -1,6 +1,6 @@
 package io.kontur.layers.controller;
 
-import io.kontur.layers.model.ConfClasses;
+import io.kontur.layers.dto.ConfClasses;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

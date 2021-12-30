@@ -1,6 +1,6 @@
 package io.kontur.layers.service;
 
-import io.kontur.layers.model.LandingPage;
+import io.kontur.layers.dto.LandingPage;
 import org.springframework.stereotype.Service;
 
 import static io.kontur.layers.service.LinkFactory.Relation.*;
@@ -19,14 +19,14 @@ public class LandingPageService {
     public LandingPage getLandingPage() {
         final LandingPage landingPage = new LandingPage();
         landingPage.addLinksItem(linkFactory.createLocal(
-                "/doc/layers", SERVICE_DESC, APPLICATION_YAML, "OGC Features API definition"));
+                "/doc", SERVICE_DESC, APPLICATION_YAML, "OGC Features API definition"));
         landingPage.addLinksItem(linkFactory.createLocal(
-                "/layers", SELF, APPLICATION_JSON, "this document"));
+                "", SELF, APPLICATION_JSON, "this document"));
         landingPage.addLinksItem(linkFactory.createLocal(
-                "/layers/conformance", CONFORMANCE, APPLICATION_JSON,
+                "/conformance", CONFORMANCE, APPLICATION_JSON,
                 "OGC API conformance classes implemented by this server"));
         landingPage.addLinksItem(linkFactory.createLocal(
-                "/layers/collections", DATA, APPLICATION_JSON, "Information about the feature collections"));
+                "/collections", DATA, APPLICATION_JSON, "Information about the feature collections"));
         return landingPage;
     }
 }
