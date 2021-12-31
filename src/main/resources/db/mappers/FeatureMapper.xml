@@ -15,6 +15,10 @@
     <select id="getFeaturesTotal" resultType="java.lang.Integer">
         select count(*) AS numberMatched
         from layers_features where layer_id = (select id from layers where public_id = #{collectionId})
+        <if test="geometry != null">
+            and (geom ISNULL
+                or ST_Intersects(geom, ST_SetSRID(ST_GeomFromGeoJSON(#{geometry}), 4326)))
+        </if>
         <choose>
             <when test="bbox!=null &amp;&amp; bbox.size == 4">
                 AND (geom ISNULL or ST_Intersects(geom, ST_MakeEnvelope(
@@ -46,6 +50,10 @@
         ST_AsGeoJSON(geom) as geometry,
         last_updated as lastUpdated
         from layers_features where layer_id = (select id from layers where public_id = #{collectionId})
+        <if test="geometry != null">
+            and (geom ISNULL
+                or ST_Intersects(geom, ST_SetSRID(ST_GeomFromGeoJSON(#{geometry}), 4326)))
+        </if>
         <choose>
             <when test="bbox!=null &amp;&amp; bbox.size == 4">
                 AND (geom ISNULL or ST_Intersects(geom, ST_MakeEnvelope(

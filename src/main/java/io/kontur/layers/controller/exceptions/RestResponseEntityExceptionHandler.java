@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -41,14 +42,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @ExceptionHandler(Throwable.class)
-    public ResponseEntity<Object> handleHttpClientErrorException(Throwable ex, WebRequest request) {
+    public ResponseEntity<Object> handleThrowable(Throwable ex, WebRequest request) {
         LOG.error(ex.getMessage(), ex);
         return new ResponseEntity<>(Error.error("internal server error"), INTERNAL_SERVER_ERROR);
     }
 
-
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Object> handleHttpClientErrorException(MethodArgumentTypeMismatchException ex, WebRequest request) {
+    public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex, WebRequest request) {
         String msg = "invalid field value";
         if (ex.getCause() instanceof NumberFormatException) {
             msg = "invalid numeric value";
@@ -56,8 +56,17 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<>(Error.objectError(null, Error.fieldError(ex.getName(), Error.error(msg))), BAD_REQUEST);
     }
 
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+                                                                  HttpHeaders headers, HttpStatus status,
+                                                                  WebRequest request) {
+        String msg = "invalid field value";
+
+        return new ResponseEntity<>(Error.objectError(null, Error.fieldError("", Error.error(msg))), BAD_REQUEST);
+    }
+
     @ExceptionHandler(WebApplicationException.class)
-    public ResponseEntity<Object> handleHttpClientErrorException(WebApplicationException ex, WebRequest request) {
+    public ResponseEntity<Object> handleWebApplicationException(WebApplicationException ex, WebRequest request) {
         if (ex.getStatus().equals(INTERNAL_SERVER_ERROR) && ex.getCause() != null) {
             LOG.error(ex.getMessage(), ex);
         }
@@ -65,7 +74,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> handleHttpClientErrorException(ConstraintViolationException ex, WebRequest request) {
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request) {
         var errors = new ArrayList<Error.FieldErr<String>>();
         for (ConstraintViolation<?> v : ex.getConstraintViolations()) {
             String prop = StringUtils.substringAfterLast(v.getPropertyPath().toString(), ".");

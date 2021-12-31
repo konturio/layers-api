@@ -2,6 +2,7 @@ package io.kontur.layers.repository.model;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.layers.dto.DateTimeRange;
+import io.kontur.layers.dto.GeometryGeoJSON;
 
 import java.time.OffsetDateTime;
 
@@ -12,6 +13,7 @@ public class Layer {
     private String publicId;
     private String name;
     private String description;
+    private String geometry;
     private String copyrights;
     private ObjectNode properties;
     private ObjectNode legend;
@@ -26,13 +28,14 @@ public class Layer {
     public Layer() {
     }
 
-    public Layer(String publicId, String name, String description, String copyrights,
+    public Layer(String publicId, String name, String description, String geometry, String copyrights,
                  ObjectNode properties, ObjectNode legend, ObjectNode group,
                  ObjectNode category, OffsetDateTime lastUpdated, OffsetDateTime sourceLastUpdated,
                  String spatialExtent, DateTimeRange temporalExtent, Integer numberMatched) {
         this.publicId = publicId;
         this.name = name;
         this.description = description;
+        this.geometry = geometry;
         this.copyrights = copyrights;
         this.properties = properties;
         this.legend = legend;
@@ -59,6 +62,10 @@ public class Layer {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getGeometry() {
+        return geometry;
     }
 
     public String getCopyrights() {

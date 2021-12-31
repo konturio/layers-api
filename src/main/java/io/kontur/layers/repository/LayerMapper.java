@@ -12,10 +12,11 @@ public interface LayerMapper {
     Optional<String> getLayerName(@Param("publicId") String publicId);
 
     default Optional<Layer> getLayer(String publicId) {
-        return getLayers(1, 0, publicId).stream().findFirst();
+        return getLayers(null,1, 0, publicId).stream().findFirst();
     }
 
-    List<Layer> getLayers(@Param("limit") Integer limit,
+    List<Layer> getLayers(@Param("geometry") String geometry,
+                          @Param("limit") Integer limit,
                           @Param("offset") Integer offset,
                           @Param("publicIds") String... publicIds);
 }

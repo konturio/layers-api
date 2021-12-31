@@ -1,15 +1,12 @@
 package io.kontur.layers.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.kontur.layers.ApiConstants;
-import io.kontur.layers.controller.exceptions.Error;
-import io.kontur.layers.controller.exceptions.WebApplicationException;
 import io.kontur.layers.dto.FeatureGeoJSON;
 import io.kontur.layers.dto.FeaturePropertiesFilter;
 import io.kontur.layers.dto.GeometryGeoJSON;
 import io.kontur.layers.dto.Link;
 import io.kontur.layers.repository.model.Feature;
+import io.kontur.layers.util.JsonUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -20,17 +17,14 @@ import java.util.List;
 
 import static io.kontur.layers.service.LinkFactory.Relation.*;
 import static io.kontur.layers.service.LinkFactory.Type.APPLICATION_GEO_JSON;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Service
 public class FeatureServiceHelper {
 
     private final LinkFactory linkFactory;
-    private final ObjectMapper objectMapper;
 
-    public FeatureServiceHelper(LinkFactory linkFactory, ObjectMapper objectMapper) {
+    public FeatureServiceHelper(LinkFactory linkFactory) {
         this.linkFactory = linkFactory;
-        this.objectMapper = objectMapper;
     }
 
     public List<Link> getCollectionLinks(String collectionId,
@@ -62,17 +56,13 @@ public class FeatureServiceHelper {
 
         Link collectionLink = linkFactory.createLocal(UriComponentsBuilder.fromPath(ApiConstants.COLLECTION_ID_ENDPOINT).build(collectionId).toString(),
                 COLLECTION, APPLICATION_GEO_JSON, title);
-        try {
-            return new FeatureGeoJSON()
-                    .id(feature.getFeatureId())
-                    .geometry(feature.getGeometry() == null
-                            ? null
-                            : objectMapper.readValue(feature.getGeometry(), GeometryGeoJSON.class))
-                    .links(Arrays.asList(selfLink, collectionLink))
-                    .properties(feature.getProperties())
-                    .type(FeatureGeoJSON.TypeEnum.FEATURE);
-        } catch (JsonProcessingException e) {
-            throw new WebApplicationException(INTERNAL_SERVER_ERROR, Error.error("internal server error"), e);
-        }
+        return new FeatureGeoJSON()
+                .id(feature.getFeatureId())
+                .geometry(feature.getGeometry() == null
+                        ? null
+                        : JsonUtil.readJson(feature.getGeometry(), GeometryGeoJSON.class))
+                .links(Arrays.asList(selfLink, collectionLink))
+                .properties(feature.getProperties())
+                .type(FeatureGeoJSON.TypeEnum.FEATURE);
     }
 }
