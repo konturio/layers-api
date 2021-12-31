@@ -1,6 +1,6 @@
 package io.kontur.layers.controller;
 
-import io.kontur.layers.AbstractIntegrationTest;
+import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
 import io.kontur.layers.repository.model.Feature;
 import io.kontur.layers.repository.model.Layer;
@@ -12,7 +12,7 @@ import java.util.List;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasNoJsonPath;
-import static io.kontur.layers.CustomMatchers.url;
+import static io.kontur.layers.test.CustomMatchers.url;
 import static io.kontur.layers.test.TestDataHelper.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;

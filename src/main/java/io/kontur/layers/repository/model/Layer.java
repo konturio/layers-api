@@ -24,6 +24,8 @@ public class Layer {
     private String spatialExtent;
     private DateTimeRange temporalExtent;
     private Integer numberMatched;
+    private boolean isPublic;
+    private String owner;
 
     public Layer() {
     }
@@ -31,7 +33,8 @@ public class Layer {
     public Layer(String publicId, String name, String description, String geometry, String copyrights,
                  ObjectNode properties, ObjectNode legend, ObjectNode group,
                  ObjectNode category, OffsetDateTime lastUpdated, OffsetDateTime sourceLastUpdated,
-                 String spatialExtent, DateTimeRange temporalExtent, Integer numberMatched) {
+                 String spatialExtent, DateTimeRange temporalExtent, Integer numberMatched, boolean isPublic,
+                 String owner) {
         this.publicId = publicId;
         this.name = name;
         this.description = description;
@@ -46,6 +49,8 @@ public class Layer {
         this.spatialExtent = spatialExtent;
         this.temporalExtent = temporalExtent;
         this.numberMatched = numberMatched;
+        this.isPublic = isPublic;
+        this.owner = owner;
     }
 
     public Long getId() {
@@ -106,5 +111,13 @@ public class Layer {
 
     public Integer getNumberMatched() {
         return numberMatched;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public String getOwner() {
+        return owner;
     }
 }

@@ -1,6 +1,6 @@
 package io.kontur.layers.controller;
 
-import io.kontur.layers.AbstractIntegrationTest;
+import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
 import io.kontur.layers.repository.model.Feature;
 import io.kontur.layers.repository.model.Layer;
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static io.kontur.layers.ApiConstants.APPLICATION_GEO_JSON;
-import static io.kontur.layers.CustomMatchers.url;
+import static io.kontur.layers.test.CustomMatchers.url;
 import static io.kontur.layers.test.TestDataHelper.buildLayerN;
 import static io.kontur.layers.test.TestDataHelper.buildPolygonN;
 import static org.hamcrest.MatcherAssert.assertThat;

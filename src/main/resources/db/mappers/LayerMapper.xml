@@ -3,6 +3,14 @@
 
     <select id="getLayerName" resultType="string">
         select name from layers where public_id = #{publicId}
+        <choose>
+            <when test="userName != null">
+                and (is_public or owner = #{userName})
+            </when>
+            <otherwise>
+                and is_public
+            </otherwise>
+        </choose>
     </select>
 
     <select id="getLayers" resultType="io.kontur.layers.repository.model.Layer">
@@ -31,6 +39,14 @@
                                             where ST_Intersects(ls.geom, ST_SetSRID(ST_GeomFromGeoJSON(#{geometry}), 4326))))
                            or ST_Intersects(l.geom, ST_SetSRID(ST_GeomFromGeoJSON(#{geometry}), 4326)))
                    </if>
+                   <choose>
+                       <when test="userName != null">
+                           and (is_public or owner = #{userName})
+                       </when>
+                       <otherwise>
+                           and is_public
+                       </otherwise>
+                   </choose>
                    group by l.id limit #{limit} offset #{offset}),
         ext as (select f.layer_id,
                    st_3dextent(f.geom) as spat,

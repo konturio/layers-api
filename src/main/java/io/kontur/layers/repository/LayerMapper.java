@@ -9,13 +9,15 @@ import java.util.Optional;
 
 @Mapper
 public interface LayerMapper {
-    Optional<String> getLayerName(@Param("publicId") String publicId);
+    Optional<String> getLayerName(@Param("publicId") String publicId,
+                                  @Param("userName") String userName);
 
-    default Optional<Layer> getLayer(String publicId) {
-        return getLayers(null,1, 0, publicId).stream().findFirst();
+    default Optional<Layer> getLayer(String publicId, String userName) {
+        return getLayers(null, userName,1, 0, publicId).stream().findFirst();
     }
 
     List<Layer> getLayers(@Param("geometry") String geometry,
+                          @Param("userName") String userName,
                           @Param("limit") Integer limit,
                           @Param("offset") Integer offset,
                           @Param("publicIds") String... publicIds);

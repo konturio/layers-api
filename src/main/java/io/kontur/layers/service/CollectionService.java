@@ -5,6 +5,7 @@ import io.kontur.layers.ApiConstants;
 import io.kontur.layers.dto.*;
 import io.kontur.layers.repository.LayerMapper;
 import io.kontur.layers.repository.model.Layer;
+import io.kontur.layers.util.AuthorizationUtils;
 import io.kontur.layers.util.JsonUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -35,7 +36,7 @@ public class CollectionService {
     public Collections getCollections(GeometryGeoJSON geometry, Integer limit,
                                       Integer offset, boolean includeLinks) {
         String geometryString = geometry != null ? JsonUtil.writeJson(geometry) : null;
-        final List<Layer> layers = layerMapper.getLayers(geometryString, limit, offset);
+        final List<Layer> layers = layerMapper.getLayers(geometryString, AuthorizationUtils.getAuthenticatedUserName(), limit, offset);
         int numberMatched = layers.isEmpty() ? 0 : layers.get(0).getNumberMatched();
 
         final List<Collection> collections = layers.stream().map(this::toCollection).collect(Collectors.toList());
@@ -63,7 +64,7 @@ public class CollectionService {
     }
 
     public Optional<Collection> getCollection(String collectionId) {
-        return layerMapper.getLayer(collectionId).map(this::toCollection);
+        return layerMapper.getLayer(collectionId, AuthorizationUtils.getAuthenticatedUserName()).map(this::toCollection);
     }
 
     private Collection toCollection(Layer layer) {

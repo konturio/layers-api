@@ -1,4 +1,4 @@
-package io.kontur.layers;
+package io.kontur.layers.test;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;

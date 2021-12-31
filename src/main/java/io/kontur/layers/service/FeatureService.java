@@ -7,6 +7,7 @@ import io.kontur.layers.repository.FeatureMapper;
 import io.kontur.layers.repository.LayerMapper;
 import io.kontur.layers.repository.model.Feature;
 import io.kontur.layers.repository.typehandler.FeatureCollectionResultHandler;
+import io.kontur.layers.util.AuthorizationUtils;
 import io.kontur.layers.util.JsonUtil;
 import org.springframework.stereotype.Service;
 
@@ -42,7 +43,7 @@ public class FeatureService {
             List<FeaturePropertiesFilter> propFilterList,
             boolean includeLinks) {
 
-        final String title = layerMapper.getLayerName(collectionId).orElseThrow(
+        final String title = layerMapper.getLayerName(collectionId, AuthorizationUtils.getAuthenticatedUserName()).orElseThrow(
                 () -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found", collectionId)));
 
         List<FeaturePropertiesFilter> list = propFilterList.stream().map(c -> new FeaturePropertiesFilter(
@@ -59,7 +60,7 @@ public class FeatureService {
     }
 
     public Optional<FeatureGeoJSON> getFeature(String collectionId, String featureId) {
-        final String title = layerMapper.getLayerName(collectionId)
+        final String title = layerMapper.getLayerName(collectionId, AuthorizationUtils.getAuthenticatedUserName())
                 .orElseThrow(
                         () -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found", collectionId)));
         Optional<Feature> feature = featureMapper.getFeature(collectionId, featureId);
