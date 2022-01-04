@@ -86,7 +86,7 @@ public class CollectionService {
     public Collection updateCollection(String id, CollectionUpdateDto collection) {
         Layer layer = layerMapper.updateLayer(toLayer(collection, id));
         if (layer == null) {
-            throw new WebApplicationException(HttpStatus.NOT_FOUND, "Collection with such id can not be found");
+            throw new WebApplicationException(HttpStatus.NOT_FOUND, "Layer with such id can not be found");
         }
         return toCollection(layer);
     }
@@ -95,7 +95,7 @@ public class CollectionService {
     public void deleteCollection(String id) {
         Layer layer = layerMapper.deleteLayer(AuthorizationUtils.getAuthenticatedUserName(), id);
         if (layer == null) {
-            throw new WebApplicationException(HttpStatus.NOT_FOUND, "Collection with such id can not be found");
+            throw new WebApplicationException(HttpStatus.NOT_FOUND, "Layer with such id can not be found");
         }
     }
 
