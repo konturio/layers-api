@@ -1,6 +1,6 @@
 package io.kontur.layers.controller;
 
-import io.kontur.layers.AbstractIntegrationTest;
+import io.kontur.layers.test.AbstractIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;

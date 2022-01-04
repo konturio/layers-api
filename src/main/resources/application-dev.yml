@@ -1,0 +1,7 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://keycloak01.konturlabs.com/auth/realms/zigzag
+          jwk-set-uri: https://keycloak01.konturlabs.com/auth/realms/zigzag/protocol/openid-connect/certs

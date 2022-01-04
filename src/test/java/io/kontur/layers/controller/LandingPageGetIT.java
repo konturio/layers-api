@@ -1,11 +1,11 @@
 package io.kontur.layers.controller;
 
-import io.kontur.layers.AbstractIntegrationTest;
+import io.kontur.layers.test.AbstractIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-import static io.kontur.layers.CustomMatchers.url;
+import static io.kontur.layers.test.CustomMatchers.url;
 import static org.hamcrest.Matchers.contains;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

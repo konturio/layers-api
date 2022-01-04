@@ -1,17 +1,19 @@
 package io.kontur.layers.controller;
 
-import io.kontur.layers.AbstractIntegrationTest;
+import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.service.FeatureService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static io.kontur.layers.ApiConstants.APPLICATION_GEO_JSON;
-import static io.kontur.layers.CustomMatchers.matchesRfc3339DatePattern;
-import static io.kontur.layers.CustomMatchers.url;
+import static io.kontur.layers.test.CustomMatchers.matchesRfc3339DatePattern;
+import static io.kontur.layers.test.CustomMatchers.url;
 import static io.kontur.layers.test.TestDataHelper.buildLayerN;
 import static io.kontur.layers.test.TestDataHelper.buildPolygonN;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -151,6 +153,69 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.numberMatched", is(1)));
         assertThat(json, hasJsonPath("$.numberReturned", is(1)));
         assertThat(json, hasJsonPath("$.features[0].id", is("featureId_3")));
+    }
+
+    @Test
+    @DisplayName("should return items for user's private collection")
+    @WithMockUser("owner_1")
+    public void featuresFromPrivateCollections() throws Exception {
+        //GIVEN
+        final Layer layer = buildLayerN(1);
+        ReflectionTestUtils.setField(layer, "isPublic", false);
+        final long id = testDataMapper.insertLayer(layer);
+        testDataMapper.insertFeature(id, buildPolygonN(1));
+        //WHEN
+        String json = mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_GEO_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
+
+        assertThat(json, hasJsonPath("$.type", is("FeatureCollection")));
+        assertThat(json, hasJsonPath("$.features", hasSize(1)));
+        assertThat(json, hasJsonPath("$.features[0].id", is("featureId_1")));
+    }
+
+    @Test
+    @DisplayName("shouldn't return items for other user's private collection")
+    @WithMockUser("some_user")
+    public void featuresFromPrivateCollections_OtherUser() throws Exception {
+        //GIVEN
+        final Layer layer = buildLayerN(1);
+        ReflectionTestUtils.setField(layer, "isPublic", false);
+        final long id = testDataMapper.insertLayer(layer);
+        testDataMapper.insertFeature(id, buildPolygonN(1));
+        //WHEN
+        mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{}"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
+    }
+
+    @Test
+    @DisplayName("features from private collections should not be public")
+    public void featuresFromPrivateCollections_AnonymousUser() throws Exception {
+        //GIVEN
+        final Layer layer = buildLayerN(1);
+        ReflectionTestUtils.setField(layer, "isPublic", false);
+        final long id = testDataMapper.insertLayer(layer);
+        testDataMapper.insertFeature(id, buildPolygonN(1));
+        //WHEN
+        mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{}"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
     }
 
 }

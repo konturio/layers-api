@@ -2,12 +2,13 @@ package io.kontur.layers.controller;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import io.kontur.layers.AbstractIntegrationTest;
+import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
 import io.kontur.layers.repository.model.Layer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
@@ -201,5 +202,32 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
         //THEN
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json, hasJsonPath("$.fieldErrors", not(emptyOrNullString())));
+    }
+
+    @Test
+    @DisplayName("should return collections owned by a user")
+    @WithMockUser("owner_3")
+    public void testGetOwnedCollection() throws Exception {
+        //GIVEN
+        testDataMapper.insertLayer(buildLayerN(1));
+        Layer layer2 = buildLayerN(2);
+        ReflectionTestUtils.setField(layer2, "isPublic", false);
+        testDataMapper.insertLayer(layer2);
+        Layer layer3 = buildLayerN(3);
+        ReflectionTestUtils.setField(layer3, "isPublic", false);
+        testDataMapper.insertLayer(layer3);
+        //WHEN
+        String response = mockMvc.perform(post("/collections/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json.read("$.collections"), hasSize(2));
+        assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_1", "pubId_3"));
     }
 }

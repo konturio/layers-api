@@ -2,7 +2,7 @@ package io.kontur.layers.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
-import io.kontur.layers.AbstractIntegrationTest;
+import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.LayerMapper;
 import io.kontur.layers.repository.TestDataMapper;
 import io.kontur.layers.repository.model.Feature;
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.OffsetDateTime;
@@ -21,8 +22,8 @@ import java.util.stream.IntStream;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static io.kontur.layers.ApiConstants.APPLICATION_GEO_JSON;
-import static io.kontur.layers.CustomMatchers.matchesRfc3339DatePattern;
-import static io.kontur.layers.CustomMatchers.url;
+import static io.kontur.layers.test.CustomMatchers.matchesRfc3339DatePattern;
+import static io.kontur.layers.test.CustomMatchers.url;
 import static io.kontur.layers.controller.CollectionsApi.COLLECTION_ITEMS_LIMIT;
 import static io.kontur.layers.test.TestDataHelper.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -179,7 +180,7 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void error500() throws Exception {
         //GIVEN
         LayerMapper layerMapperMock = Mockito.mock(LayerMapper.class);
-        when(layerMapperMock.getLayerName(any())).thenThrow(new RuntimeException("test"));
+        when(layerMapperMock.getLayerName(any(), any())).thenThrow(new RuntimeException("test"));
 
         LayerMapper originalLayerMapper = (LayerMapper) ReflectionTestUtils.getField(featureService, "layerMapper");
         ReflectionTestUtils.setField(featureService, "layerMapper", layerMapperMock);
@@ -970,5 +971,62 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
 
         assertThat(json, hasJsonPath("$.type", is("FeatureCollection")));
         assertThat(json, hasJsonPath("$.features", empty()));
+    }
+
+    @Test
+    @DisplayName("should return items for user's private collection")
+    @WithMockUser("owner_1")
+    public void featuresFromPrivateCollections() throws Exception {
+        //GIVEN
+        final Layer layer = buildLayerN(1);
+        ReflectionTestUtils.setField(layer, "isPublic", false);
+        final long id = testDataMapper.insertLayer(layer);
+        testDataMapper.insertFeature(id, buildPolygonN(1));
+        //WHEN
+        String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_GEO_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
+
+        assertThat(json, hasJsonPath("$.type", is("FeatureCollection")));
+        assertThat(json, hasJsonPath("$.features", hasSize(1)));
+        assertThat(json, hasJsonPath("$.features[0].id", is("featureId_1")));
+    }
+
+    @Test
+    @DisplayName("shouldn't return items for other user's private collection")
+    @WithMockUser("some_user")
+    public void featuresFromPrivateCollections_OtherUser() throws Exception {
+        //GIVEN
+        final Layer layer = buildLayerN(1);
+        ReflectionTestUtils.setField(layer, "isPublic", false);
+        final long id = testDataMapper.insertLayer(layer);
+        testDataMapper.insertFeature(id, buildPolygonN(1));
+        //WHEN
+        mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
+    }
+
+    @Test
+    @DisplayName("features from private collections should not be public")
+    public void featuresFromPrivateCollections_AnonymousUser() throws Exception {
+        //GIVEN
+        final Layer layer = buildLayerN(1);
+        ReflectionTestUtils.setField(layer, "isPublic", false);
+        final long id = testDataMapper.insertLayer(layer);
+        testDataMapper.insertFeature(id, buildPolygonN(1));
+        //WHEN
+        mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
     }
 }

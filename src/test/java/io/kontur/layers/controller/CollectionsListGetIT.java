@@ -2,7 +2,8 @@ package io.kontur.layers.controller;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import io.kontur.layers.AbstractIntegrationTest;
+import io.kontur.layers.repository.model.Layer;
+import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
 import io.kontur.layers.repository.model.Feature;
 import net.minidev.json.JSONArray;
@@ -10,12 +11,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
-import static io.kontur.layers.CustomMatchers.url;
+import static io.kontur.layers.test.CustomMatchers.url;
 import static io.kontur.layers.test.TestDataHelper.buildLayerN;
 import static io.kontur.layers.test.TestDataHelper.buildPolygonN;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -342,6 +345,31 @@ public class CollectionsListGetIT extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
         //THEN
         assertThat(json, hasJsonPath("$.fieldErrors.offset.msg", not(emptyOrNullString())));
+    }
+
+    @Test
+    @DisplayName("only owner should obtain theirs collection")
+    @WithMockUser("owner_3")
+    public void testGetOwnedCollection() throws Exception {
+        //GIVEN
+        testDataMapper.insertLayer(buildLayerN(1));
+        Layer layer2 = buildLayerN(2);
+        ReflectionTestUtils.setField(layer2, "isPublic", false);
+        testDataMapper.insertLayer(layer2);
+        Layer layer3 = buildLayerN(3);
+        ReflectionTestUtils.setField(layer3, "isPublic", false);
+        testDataMapper.insertLayer(layer3);
+        //WHEN
+        String response = mockMvc.perform(get("/collections"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json.read("$.collections"), hasSize(2));
+        assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_1", "pubId_3"));
     }
 
 }
