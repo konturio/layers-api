@@ -10,7 +10,7 @@ public class CollectionUpdateDto {
     private String title;
     @JsonProperty("description")
     private String description;
-    @JsonProperty("links")
+    @JsonProperty("link")
     private Link link;
     @JsonProperty("itemType")
     private Layer.Type itemType = Layer.Type.feature;

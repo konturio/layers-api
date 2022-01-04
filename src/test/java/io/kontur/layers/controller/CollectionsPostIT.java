@@ -114,4 +114,26 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
     }
 
+    @Test
+    @DisplayName("save new layer without geometry")
+    @WithMockUser("pigeon")
+    public void testPostCollectionWithoutGeometry() throws Exception {
+        //GIVEN
+        CollectionUpdateDto collection = buildCollectionCreateDtoN(1);
+        collection.setGeometry(null);
+        //WHEN
+        String response = mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.writeJson(collection)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.id", is("pubId_1")));
+        assertThat(json, hasJsonPath("$.title", is("name_1")));
+    }
+
 }

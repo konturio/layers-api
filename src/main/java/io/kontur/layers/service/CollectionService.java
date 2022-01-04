@@ -111,7 +111,7 @@ public class CollectionService {
                 .description(c.getDescription())
                 .url(url)
                 .type(c.getItemType())
-                .geometry(JsonUtil.writeJson(c.getGeometry()))
+                .geometry(c.getGeometry() != null ? JsonUtil.writeJson(c.getGeometry()) : null)
                 .copyrights(c.getCopyrights())
                 .properties(c.getProperties())
                 .legend(c.getLegend())
