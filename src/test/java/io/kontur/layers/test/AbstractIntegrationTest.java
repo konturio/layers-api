@@ -6,10 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -22,6 +23,8 @@ public abstract class AbstractIntegrationTest {
     protected WebApplicationContext webApplicationContext;
     @Autowired
     private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private PlatformTransactionManager transactionManager;
 
     protected MockMvc mockMvc;
     protected String BASE_URL;
@@ -36,8 +39,10 @@ public abstract class AbstractIntegrationTest {
 
     @AfterEach
     public void cleanDB() {
-        JdbcTestUtils
-                .deleteFromTables(jdbcTemplate, "layers", "layers_features", "layers_group_properties",
-                        "layers_category_properties", "layers_style", "layers_dependencies");
+        new TransactionTemplate(transactionManager)
+                .execute(status ->
+                        JdbcTestUtils.deleteFromTables(jdbcTemplate, "layers", "layers_features",
+                                "layers_group_properties", "layers_category_properties", "layers_style",
+                                "layers_dependencies"));
     }
 }

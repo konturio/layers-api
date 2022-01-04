@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -20,8 +21,7 @@ import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
@@ -32,13 +32,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers, HttpStatus status,
                                                                   WebRequest request) {
-        List<Error> errors = new ArrayList<>();
+        List<Error.FieldErr<String>> errors = new ArrayList<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
-            errors.add(Error.objectError(null, Error.fieldError(fieldName, Error.error(errorMessage))));
+            errors.add(Error.fieldError(fieldName, Error.error(errorMessage)));
         });
-        return new ResponseEntity<>(errors, status);
+        return new ResponseEntity<>(Error.objectError(null, errors), BAD_REQUEST);
     }
 
     @ExceptionHandler(Throwable.class)
@@ -71,6 +71,11 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             LOG.error(ex.getMessage(), ex);
         }
         return new ResponseEntity<>(ex.getErr(), ex.getStatus());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
+        return new ResponseEntity<>(Error.error(ex.getMessage()), UNAUTHORIZED);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

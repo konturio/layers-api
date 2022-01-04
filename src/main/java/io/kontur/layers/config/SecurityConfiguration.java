@@ -62,7 +62,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-                .csrf().disable()
+                .csrf()
+                .ignoringAntMatchers("/**/search")
+                .and()
                 .headers().cacheControl().disable()
                 .and()
                 .oauth2ResourceServer(resourceServerConfigurer -> resourceServerConfigurer

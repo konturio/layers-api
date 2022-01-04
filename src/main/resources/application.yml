@@ -16,6 +16,7 @@ spring:
       connection-timeout: 60000
       idle-timeout: 300000
       max-lifetime: 600000
+      auto-commit: false
   jackson:
     default-property-inclusion: non_null
   security:
