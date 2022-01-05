@@ -23,7 +23,7 @@ public class TestDataHelper {
         props.put("prop1", "propValue1_" + n);
         props.put("prop2", "propValue2_" + n);
 
-        return new Layer("pubId_" + n, "name_" + n, "description_" + n, null, null,
+        return new Layer(null, "pubId_" + n, "name_" + n, "description_" + n, null, null,
                 String.format("SRID=4326;POLYGON((0 0, %1$d 0, %1$d %1$d, 0 %1$d, 0 0))", n),
                 "copyrights_" + n, props, null, null, null,
                 OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusSeconds(n),
