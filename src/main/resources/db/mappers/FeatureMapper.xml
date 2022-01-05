@@ -96,4 +96,20 @@
             last_updated           as lastupdated
         from ins;
     </select>
+
+    <select id="deleteFeature" resultType="io.kontur.layers.repository.model.Feature">
+        with del as (delete from layers_features
+            where feature_id = #{featureId}
+                      and layer_id = (select id from layers
+                        where public_id = #{collectionId}
+                          and owner = #{owner})
+            returning *)
+        select
+            feature_id             as featureid,
+            layer_id               as layerid,
+            properties,
+            ST_AsGeoJSON(geom)     as geometry,
+            last_updated           as lastupdated
+        from del
+    </select>
 </mapper>

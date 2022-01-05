@@ -30,4 +30,8 @@ public interface FeatureMapper {
                                        @Param("propFilterList") List<FeaturePropertiesFilter> propFilterList);
 
     List<Feature> upsertFeatures(List<Feature> features);
+
+    Optional<Feature> deleteFeature(@Param("owner") String owner,
+                          @Param("collectionId") String collectionId,
+                          @Param("featureId") String featureId);
 }

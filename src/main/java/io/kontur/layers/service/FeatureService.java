@@ -9,6 +9,7 @@ import io.kontur.layers.repository.model.Feature;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.util.AuthorizationUtils;
 import io.kontur.layers.util.JsonUtil;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.wololo.geojson.FeatureCollection;
@@ -116,5 +117,12 @@ public class FeatureService {
         List<Feature> featureList = featureMapper.upsertFeatures(features);
 
         return convertFeatures(collectionId, layer.getName(), featureList);
+    }
+
+    @Transactional
+    public void deleteItem(String collectionId, String featureId) {
+        featureMapper.deleteFeature(AuthorizationUtils.getAuthenticatedUserName(), collectionId,
+                        featureId)
+                .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Feature can not be found"));
     }
 }
