@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static io.kontur.layers.service.LinkFactory.Relation.*;
 import static io.kontur.layers.service.LinkFactory.Type.APPLICATION_GEO_JSON;
@@ -47,6 +48,12 @@ public class FeatureServiceHelper {
         }
 
         return linkList;
+    }
+
+    public List<FeatureGeoJSON> toFeatureGeoJson(List<Feature> features, String collectionId, String title) {
+        return features.stream()
+                .map(f -> toFeatureGeoJson(f, collectionId, title))
+                .collect(Collectors.toList());
     }
 
     public FeatureGeoJSON toFeatureGeoJson(Feature feature, String collectionId, String title) {

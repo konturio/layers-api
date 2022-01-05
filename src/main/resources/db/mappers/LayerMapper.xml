@@ -13,6 +13,23 @@
         </choose>
     </select>
 
+    <select id="getOwnedLayer" resultType="io.kontur.layers.repository.model.Layer">
+        select id,
+               public_id as publicid,
+               name as name,
+               description,
+               copyrights,
+               properties,
+               group_id,
+               category_id,
+               last_updated as lastupdated,
+               source_updated as sourcelastupdated
+        from layers
+        where owner = #{userName} and public_id = #{publicId}
+        for update
+    </select>
+
+
     <select id="getLayers" resultType="io.kontur.layers.repository.model.Layer">
         with lrs as (select l.id,
                           l.public_id as publicid,

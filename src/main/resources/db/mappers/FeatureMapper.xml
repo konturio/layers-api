@@ -78,4 +78,22 @@
         </foreach>
         order by feature_id limit #{limit} offset #{offset}
     </select>
+
+    <select id="upsertFeatures" parameterType="java.util.List"  resultType="io.kontur.layers.repository.model.Feature">
+        with ins as (INSERT INTO layers_features (feature_id, layer_id, properties, geom)
+        VALUES
+               <foreach collection="features" item="item" open="(" separator="),(" close=")">
+                   #{item.featureId}, ${item.layerId}, #{item.properties}::jsonb, #{item.geometry}::geometry
+               </foreach>
+        ON CONFLICT (feature_id, layer_id, zoom) DO UPDATE SET (feature_id, layer_id, properties, geom) =
+            (EXCLUDED.feature_id, EXCLUDED.layer_id, EXCLUDED.properties, EXCLUDED.geom)
+        RETURNING *)
+        select
+            feature_id             as featureid,
+            layer_id               as layerid,
+            properties,
+            ST_AsGeoJSON(geom)     as geometry,
+            last_updated           as lastupdated
+        from ins;
+    </select>
 </mapper>

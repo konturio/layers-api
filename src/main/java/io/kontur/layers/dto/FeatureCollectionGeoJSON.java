@@ -1,11 +1,12 @@
 package io.kontur.layers.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -13,13 +14,16 @@ import java.util.Objects;
 public class FeatureCollectionGeoJSON {
 
     @JsonProperty("type")
+    @NotNull
     private TypeEnum type;
     @JsonProperty("features")
+    @NotNull
     private List<FeatureGeoJSON> features;
     @JsonProperty("links")
     private List<Link> links;
     @JsonProperty("timeStamp")
-    private String timeStamp;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    private OffsetDateTime timeStamp;
     @JsonProperty("numberMatched")
     private Integer numberMatched;
     @JsonProperty("numberReturned")
@@ -30,9 +34,6 @@ public class FeatureCollectionGeoJSON {
         this.type = TypeEnum.FEATURECOLLECTION;
     }
 
-    @JsonProperty("type")
-    @Schema(required = true, description = "")
-    @NotNull
     public TypeEnum getType() {
         return type;
     }
@@ -47,9 +48,6 @@ public class FeatureCollectionGeoJSON {
         return this;
     }
 
-    @JsonProperty("features")
-    @Schema(required = true, description = "")
-    @NotNull
     public List<FeatureGeoJSON> getFeatures() {
         return features;
     }
@@ -71,8 +69,6 @@ public class FeatureCollectionGeoJSON {
         return this;
     }
 
-    @JsonProperty("links")
-    @Schema(description = "")
     public List<Link> getLinks() {
         return links;
     }
@@ -81,18 +77,16 @@ public class FeatureCollectionGeoJSON {
         this.links = links;
     }
 
-    public FeatureCollectionGeoJSON timeStamp(String timeStamp) {
+    public FeatureCollectionGeoJSON timeStamp(OffsetDateTime timeStamp) {
         this.timeStamp = timeStamp;
         return this;
     }
 
-    @JsonProperty("timeStamp")
-    @Schema(description = "This property indicates the time and date when the response was generated.")
-    public String getTimeStamp() {
+    public OffsetDateTime getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(String timeStamp) {
+    public void setTimeStamp(OffsetDateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
 
@@ -101,8 +95,6 @@ public class FeatureCollectionGeoJSON {
         return this;
     }
 
-    @JsonProperty("numberMatched")
-    @Schema(description = "The number of features of the feature type that match the selection parameters like `bbox`.")
     public Integer getNumberMatched() {
         return numberMatched;
     }
@@ -116,8 +108,6 @@ public class FeatureCollectionGeoJSON {
         return this;
     }
 
-    @JsonProperty("numberReturned")
-    @Schema(description = "The number of features in the feature collection.  A server may omit this information in a response, if the information about the number of features is not known or difficult to compute.  If the value is provided, the value shall be identical to the number of items in the \"features\" array.")
     public Integer getNumberReturned() {
         return numberReturned;
     }
