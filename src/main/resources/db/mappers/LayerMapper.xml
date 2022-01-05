@@ -81,4 +81,69 @@
             left join layers_category_properties cp on cp.id = lrs.category_id
     </select>
 
+    <select id="insertLayer" resultType="io.kontur.layers.repository.model.Layer">
+        with ins as (insert into layers (public_id, name, description, url, type, geom, last_updated, source_updated,
+                                         copyrights, properties, is_public, owner, display_rule)
+            values (#{publicId}, #{name}, #{description}, #{url}, #{type}, #{geometry}::geometry, #{lastUpdated},
+                    #{sourceLastUpdated}, #{copyrights}, #{properties}::jsonb, #{isPublic}, #{owner}, #{legend}::jsonb)
+            returning *)
+        select public_id      as publicId,
+               name,
+               description,
+               url,
+               type,
+               geom           as geometry,
+               last_updated   as lastUpdated,
+               source_updated as sourceLastUpdated,
+               copyrights,
+               properties,
+               is_public      as isPublic,
+               owner,
+               display_rule   as legend
+        from ins
+    </select>
+
+    <select id="updateLayer" resultType="io.kontur.layers.repository.model.Layer">
+        with upd as (update layers set (name, description, url, type, geom, last_updated, source_updated,
+                                        copyrights, properties, is_public, display_rule) =
+                (#{name}, #{description}, #{url}, #{type}, #{geometry}::geometry, #{lastUpdated}, #{sourceLastUpdated},
+                 #{copyrights}, #{properties}::jsonb, #{isPublic}, #{legend}::jsonb)
+            where public_id = #{publicId} and owner = #{owner}
+            returning *)
+        select public_id      as publicId,
+               name,
+               description,
+               url,
+               type,
+               geom           as geometry,
+               last_updated   as lastUpdated,
+               source_updated as sourceLastUpdated,
+               copyrights,
+               properties,
+               is_public      as isPublic,
+               owner,
+               display_rule   as legend
+        from upd
+    </select>
+
+
+    <select id="deleteLayer" resultType="io.kontur.layers.repository.model.Layer">
+        with del as (delete from layers
+            where public_id = #{id} and owner = #{owner}
+            returning *)
+        select public_id      as publicId,
+               name,
+               description,
+               url,
+               type,
+               geom           as geometry,
+               last_updated   as lastUpdated,
+               source_updated as sourceLastUpdated,
+               copyrights,
+               properties,
+               is_public      as isPublic,
+               owner,
+               display_rule   as legend
+        from del
+    </select>
 </mapper>

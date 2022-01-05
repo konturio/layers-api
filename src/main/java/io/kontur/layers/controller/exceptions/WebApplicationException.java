@@ -12,6 +12,10 @@ public class WebApplicationException extends RuntimeException {
         this.err = err;
     }
 
+    public WebApplicationException(final HttpStatus status, final String err) {
+        this(status, Error.error(err));
+    }
+
     public WebApplicationException(final HttpStatus status, final Error err) {
         this(status, err, null);
     }

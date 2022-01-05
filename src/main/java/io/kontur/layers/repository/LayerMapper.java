@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @Mapper
 public interface LayerMapper {
+
     Optional<String> getLayerName(@Param("publicId") String publicId,
                                   @Param("userName") String userName);
 
@@ -21,4 +22,11 @@ public interface LayerMapper {
                           @Param("limit") Integer limit,
                           @Param("offset") Integer offset,
                           @Param("publicIds") String... publicIds);
+
+    Layer insertLayer(Layer layer);
+
+    Layer updateLayer(Layer layer);
+
+    Layer deleteLayer(@Param("owner") String owner,
+                      @Param("id") String id);
 }

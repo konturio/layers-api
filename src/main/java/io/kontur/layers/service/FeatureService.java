@@ -10,6 +10,7 @@ import io.kontur.layers.repository.typehandler.FeatureCollectionResultHandler;
 import io.kontur.layers.util.AuthorizationUtils;
 import io.kontur.layers.util.JsonUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -33,6 +34,7 @@ public class FeatureService {
         this.featureServiceHelper = featureServiceHelper;
     }
 
+    @Transactional(readOnly = true)
     public Optional<FeatureCollectionGeoJSON> getFeatureCollection(
             String collectionId,
             Integer limit,
@@ -59,6 +61,7 @@ public class FeatureService {
         return Optional.of(fc).filter(collection -> collection.getNumberReturned() > 0);
     }
 
+    @Transactional(readOnly = true)
     public Optional<FeatureGeoJSON> getFeature(String collectionId, String featureId) {
         final String title = layerMapper.getLayerName(collectionId, AuthorizationUtils.getAuthenticatedUserName())
                 .orElseThrow(
