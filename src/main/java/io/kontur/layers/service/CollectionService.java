@@ -105,7 +105,7 @@ public class CollectionService {
             url = c.getLink().getHref();
         }
 
-        return new Layer.Builder()
+        return Layer.builder()
                 .publicId(id)
                 .name(c.getTitle())
                 .description(c.getDescription())
@@ -119,7 +119,7 @@ public class CollectionService {
                 .sourceLastUpdated(OffsetDateTime.now())
                 .isPublic(false) //TODO how do we create public kontur layers?
                 .owner(AuthorizationUtils.getAuthenticatedUserName())
-                .createLayer();
+                .build();
     }
 
     private Collection toCollection(Layer layer) {
