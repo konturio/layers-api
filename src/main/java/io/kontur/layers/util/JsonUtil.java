@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class JsonUtil {
@@ -47,4 +48,7 @@ public class JsonUtil {
         }
     }
 
+    public static ObjectNode writeObjectNode(Object object) {
+        return mapper.valueToTree(object);
+    }
 }

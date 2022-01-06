@@ -23,12 +23,13 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-ui:1.5.12'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
     runtimeOnly 'org.postgresql:postgresql'
+    implementation 'org.locationtech.jts.io:jts-io-common:1.18.2'
+    implementation 'org.wololo:jts2geojson:0.16.1'
 
     //health
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'io.micrometer:micrometer-registry-prometheus:1.8.1'
 
-    implementation 'org.locationtech.jts.io:jts-io-common:1.18.2'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'

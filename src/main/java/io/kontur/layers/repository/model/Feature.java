@@ -12,7 +12,6 @@ public class Feature {
     private String geometry;
     private ObjectNode properties;
     private OffsetDateTime lastUpdated;
-    private Integer numberMatched;
 
     public Feature() {
     }
@@ -47,10 +46,6 @@ public class Feature {
         return lastUpdated;
     }
 
-    public Integer getNumberMatched() {
-        return numberMatched;
-    }
-
     public void setLayerId(final Long layerId) {
         this.layerId = layerId;
     }
@@ -71,7 +66,4 @@ public class Feature {
         this.lastUpdated = lastUpdated;
     }
 
-    public void setNumberMatched(final Integer numberMatched) {
-        this.numberMatched = numberMatched;
-    }
 }

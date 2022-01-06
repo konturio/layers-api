@@ -13,6 +13,8 @@ public interface LayerMapper {
     Optional<String> getLayerName(@Param("publicId") String publicId,
                                   @Param("userName") String userName);
 
+    Optional<Layer> getOwnedLayer(String publicId, String userName);
+
     default Optional<Layer> getLayer(String publicId, String userName) {
         return getLayers(null, userName,1, 0, publicId).stream().findFirst();
     }

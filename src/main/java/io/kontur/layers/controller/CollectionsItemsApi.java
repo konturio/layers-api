@@ -14,9 +14,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.wololo.geojson.FeatureCollection;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -124,6 +127,34 @@ public class CollectionsItemsApi {
                 null,
                 itemsSearchDto.getDatetime(), getCriteriaList(), false);
         return ResponseEntity.ok(fc.orElse(new FeatureCollectionGeoJSON()));
+    }
+
+    @PutMapping(produces = APPLICATION_GEO_JSON)
+    @Operation(summary = "Insert or update features", tags = {"Data"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "fetch the upserted features", content = @Content(schema = @Schema(implementation = FeatureGeoJSON.class))),
+            @ApiResponse(responseCode = "404", description = "The requested URI was not found.")})
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity upsertFeatures(
+            @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
+            @PathVariable("collectionId") String collectionId,
+            @RequestBody @Valid FeatureCollection body) {
+        FeatureCollectionGeoJSON fc = featureService.upsertFeatures(collectionId, body);
+        return ResponseEntity.ok(fc);
+    }
+
+    @DeleteMapping("/{featureId}")
+    @Operation(summary = "Remove items from the layer", tags = {"Data"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Success")})
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity deleteCollection(
+            @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
+            @PathVariable("collectionId") String collectionId,
+            @Parameter(in = ParameterIn.PATH, description = "local identifier of a feature", required = true)
+            @PathVariable("featureId") String featureId) {
+        featureService.deleteItem(collectionId, featureId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     private List<FeaturePropertiesFilter> getCriteriaList() {
