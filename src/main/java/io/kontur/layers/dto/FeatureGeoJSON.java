@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.oas.annotations.media.Schema;
+import org.wololo.geojson.Geometry;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class FeatureGeoJSON {
     @JsonProperty("type")
     private TypeEnum type;
     @JsonProperty("geometry")
-    private GeometryGeoJSON geometry;
+    private Geometry geometry;
     @JsonProperty("properties")
     private Object properties;
     @JsonProperty("id")
@@ -39,7 +40,7 @@ public class FeatureGeoJSON {
         this.type = type;
     }
 
-    public FeatureGeoJSON geometry(GeometryGeoJSON geometry) {
+    public FeatureGeoJSON geometry(Geometry geometry) {
         this.geometry = geometry;
         return this;
     }
@@ -47,11 +48,11 @@ public class FeatureGeoJSON {
     @JsonProperty("geometry")
     @Schema(required = true, description = "")
     @NotNull
-    public GeometryGeoJSON getGeometry() {
+    public Geometry getGeometry() {
         return geometry;
     }
 
-    public void setGeometry(GeometryGeoJSON geometry) {
+    public void setGeometry(Geometry geometry) {
         this.geometry = geometry;
     }
 

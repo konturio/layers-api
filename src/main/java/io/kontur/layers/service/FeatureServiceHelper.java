@@ -65,9 +65,7 @@ public class FeatureServiceHelper {
                 COLLECTION, APPLICATION_GEO_JSON, title);
         return new FeatureGeoJSON()
                 .id(feature.getFeatureId())
-                .geometry(feature.getGeometry() == null
-                        ? null
-                        : JsonUtil.readJson(feature.getGeometry(), GeometryGeoJSON.class))
+                .geometry(feature.getGeometry())
                 .links(Arrays.asList(selfLink, collectionLink))
                 .properties(feature.getProperties())
                 .type(FeatureGeoJSON.TypeEnum.FEATURE);

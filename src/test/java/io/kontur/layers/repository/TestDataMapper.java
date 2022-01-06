@@ -19,14 +19,14 @@ public interface TestDataMapper {
     long insertLayer(Layer layer);
 
     @Select({"with ins as (insert into layers_features (layer_id, feature_id, geom, properties, last_updated) values ",
-            "(#{collectionId},#{feature.featureId},#{feature.geometry}::geometry,#{feature.properties}::jsonb,#{feature.lastUpdated}) returning feature_id) ",
+            "(#{collectionId},#{feature.featureId},ST_GeomFromGeoJSON(#{feature.geometry}),#{feature.properties}::jsonb,#{feature.lastUpdated}) returning feature_id) ",
             "select * from ins"})
     String insertFeature(@Param("collectionId") long collectionId, @Param("feature") Feature feature);
 
     @Insert({"<script>",
             "insert into layers_features (layer_id, feature_id, geom, properties, last_updated) values ",
             "<foreach item='feature' collection='features' separator=','> ",
-            "(#{collectionId},#{feature.featureId},#{feature.geometry}::geometry,#{feature.properties}::jsonb,#{feature.lastUpdated}) ",
+            "(#{collectionId},#{feature.featureId},ST_GeomFromGeoJSON(#{feature.geometry}),#{feature.properties}::jsonb,#{feature.lastUpdated}) ",
             "</foreach> ",
             "</script>"})
     void insertFeatures(@Param("collectionId") long collectionId, @Param("features") List<Feature> features);

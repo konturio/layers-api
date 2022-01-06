@@ -109,7 +109,7 @@ public class FeatureService {
         List<Feature> features = Arrays.stream(fc.getFeatures())
                 .map(f -> new Feature(layer.getId(),
                         String.valueOf(f.getId()),
-                        f.getGeometry() != null ? JsonUtil.writeJson(f.getGeometry()) : null,
+                        f.getGeometry(),
                         f.getProperties() != null ? JsonUtil.writeObjectNode(f.getProperties()) : null,
                         OffsetDateTime.now()))
                 .collect(Collectors.toList());

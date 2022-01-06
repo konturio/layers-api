@@ -10,10 +10,12 @@ import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.service.FeatureService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.locationtech.jts.io.WKTReader;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.wololo.jts2geojson.GeoJSONWriter;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -481,7 +483,7 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         //THEN
         assertThat(json, hasJsonPath("$.features", hasSize(1)));
         assertThat(json, hasJsonPath("$.features[0].geometry.type", is("Point")));
-        assertThat(json, hasJsonPath("$.features[0].geometry.coordinates", contains(0, 1)));
+        assertThat(json, hasJsonPath("$.features[0].geometry.coordinates", contains(0.0, 1.0)));
     }
 
     @Test
@@ -501,10 +503,10 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.features", hasSize(1)));
         assertThat(json, hasJsonPath("$.features[0].geometry.type", is("GeometryCollection")));
         assertThat(json, hasJsonPath("$.features[0].geometry.geometries[0].type", is("Point")));
-        assertThat(json, hasJsonPath("$.features[0].geometry.geometries[0].coordinates", contains(0, 1)));
+        assertThat(json, hasJsonPath("$.features[0].geometry.geometries[0].coordinates", contains(0.0, 1.0)));
         assertThat(json, hasJsonPath("$.features[0].geometry.geometries[1].type", is("LineString")));
         assertThat(json, hasJsonPath("$.features[0].geometry.geometries[1].coordinates", contains(
-                contains(0, 0), contains(1, 0), contains(1, 1))));
+                contains(0.0, 0.0), contains(1.0, 0.0), contains(1.0, 1.0))));
     }
 
     @Test
@@ -524,7 +526,7 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.features", hasSize(1)));
         assertThat(json, hasJsonPath("$.features[0].geometry.type", is("LineString")));
         assertThat(json, hasJsonPath("$.features[0].geometry.coordinates", contains(
-                contains(0, 0), contains(1, 0), contains(1, 1))));
+                contains(0.0, 0.0), contains(1.0, 0.0), contains(1.0, 1.0))));
     }
 
     @Test
@@ -569,9 +571,9 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
-        final String featureWkt = "SRID=4326;MULTIPOLYGON(((0 0,4 0,4 4,0 4,0 0),(1 1,2 1,2 2,1 2,1 1)), ((-1 -1,-1 -2,-2 -2,-2 -1,-1 -1)))";
+        final String wkt = "MULTIPOLYGON(((0 0,4 0,4 4,0 4,0 0),(1 1,2 1,2 2,1 2,1 1)), ((-1 -1,-1 -2,-2 -2,-2 -1,-1 -1)))";
         final OffsetDateTime lastUpdated = OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusMinutes(10);
-        testDataMapper.insertFeature(id, new Feature(null, "featureId_" + 10, featureWkt, null, lastUpdated));
+        testDataMapper.insertFeature(id, new Feature(null, "featureId_" + 10, new GeoJSONWriter().write(new WKTReader().read(wkt)), null, lastUpdated));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
                 .andDo(print())
@@ -935,11 +937,11 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
-        testDataMapper.insertFeature(id, buildFeatureN(1, "SRID=4326;POINT(0 1 1000)"));
-        testDataMapper.insertFeature(id, buildFeatureN(2, "SRID=4326;POINT(0 1 0)"));
-        testDataMapper.insertFeature(id, buildFeatureN(3, "SRID=4326;POINT(0 2 -2000)"));
-        testDataMapper.insertFeature(id, buildFeatureN(4, "SRID=4326;POINT(0 3)"));
-        testDataMapper.insertFeature(id, buildFeatureN(5, "SRID=4326;POINT(0 1 1001)"));
+        testDataMapper.insertFeature(id, buildFeatureN(1, "POINT(0 1 1000)"));
+        testDataMapper.insertFeature(id, buildFeatureN(2, "POINT(0 1 0)"));
+        testDataMapper.insertFeature(id, buildFeatureN(3, "POINT(0 2 -2000)"));
+        testDataMapper.insertFeature(id, buildFeatureN(4, "POINT(0 3)"));
+        testDataMapper.insertFeature(id, buildFeatureN(5, "POINT(0 1 1001)"));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
                         .queryParam("bbox", "0,0,0,3,3,1000"))
