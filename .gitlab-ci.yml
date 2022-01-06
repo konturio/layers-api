@@ -41,7 +41,7 @@ build:
     reports:
       junit: build/test-results/test/**/TEST-*.xml
 
-deploy-zigzag:
+deploy-dev:
   tags:
     - kontur
     - ansible
@@ -57,7 +57,7 @@ deploy-zigzag:
   dependencies:
     - build
 
-deploy-sonic:
+deploy-test:
   tags:
     - kontur
     - ansible
@@ -73,7 +73,7 @@ deploy-sonic:
   dependencies:
     - build
 
-deploy-lima:
+deploy-prod:
   tags:
     - kontur
     - ansible

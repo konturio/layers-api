@@ -3,5 +3,5 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://keycloak01.konturlabs.com/auth/realms/sonic
-          jwk-set-uri: https://keycloak01.konturlabs.com/auth/realms/sonic/protocol/openid-connect/certs
+          issuer-uri: https://keycloak01.konturlabs.com/auth/realms/test
+          jwk-set-uri: https://keycloak01.konturlabs.com/auth/realms/test/protocol/openid-connect/certs
