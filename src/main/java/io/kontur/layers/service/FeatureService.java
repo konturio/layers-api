@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.wololo.geojson.FeatureCollection;
+import org.wololo.geojson.Geometry;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -43,7 +44,7 @@ public class FeatureService {
             String collectionId,
             Integer limit,
             Integer offset,
-            GeometryGeoJSON geometry,
+            Geometry geometry,
             List<BigDecimal> bbox,
             DateTimeRange dateTimeRange,
             List<FeaturePropertiesFilter> propFilterList,
@@ -109,7 +110,7 @@ public class FeatureService {
         List<Feature> features = Arrays.stream(fc.getFeatures())
                 .map(f -> new Feature(layer.getId(),
                         String.valueOf(f.getId()),
-                        f.getGeometry() != null ? JsonUtil.writeJson(f.getGeometry()) : null,
+                        f.getGeometry(),
                         f.getProperties() != null ? JsonUtil.writeObjectNode(f.getProperties()) : null,
                         OffsetDateTime.now()))
                 .collect(Collectors.toList());

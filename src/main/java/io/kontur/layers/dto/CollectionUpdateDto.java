@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.layers.repository.model.Layer;
 import lombok.Data;
+import org.wololo.geojson.Geometry;
 
 @Data
 public class CollectionUpdateDto {
@@ -19,7 +20,7 @@ public class CollectionUpdateDto {
     @JsonProperty("copyrights")
     private String copyrights;
     @JsonProperty("geometry")
-    private GeometryGeoJSON geometry;
+    private Geometry geometry;
     @JsonProperty("properties")
     private ObjectNode properties;
     @JsonProperty("legend")

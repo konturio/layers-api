@@ -48,7 +48,7 @@ public class CollectionsItemsGetIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.id", is("featureId_1")));
         assertThat(json, hasJsonPath("$.geometry.type", is("Polygon")));
         assertThat(json, hasJsonPath("$.geometry.coordinates", contains(contains(
-                contains(0, 0), contains(1, 0), contains(1, 1), contains(0, 1), contains(0, 0)))));
+                contains(0.0, 0.0), contains(1.0, 0.0), contains(1.0, 1.0), contains(0.0, 1.0), contains(0.0, 0.0)))));
         assertThat(json, hasJsonPath("$.links[?(@.rel=='self' && @.type=='application/geo+json')].href",
                 contains(url(BASE_URL + "/collections/pubId_1/items/featureId_1"))));
         assertThat(json, hasJsonPath("$.links[?(@.rel=='collection' && @.type=='application/geo+json')].href",

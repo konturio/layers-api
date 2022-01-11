@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.wololo.geojson.Geometry;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -38,7 +39,7 @@ public class CollectionService {
     }
 
     @Transactional(readOnly = true)
-    public Collections getCollections(GeometryGeoJSON geometry, Integer limit,
+    public Collections getCollections(Geometry geometry, Integer limit,
                                       Integer offset, boolean includeLinks) {
         String geometryString = geometry != null ? JsonUtil.writeJson(geometry) : null;
         final List<Layer> layers = layerMapper.getLayers(geometryString, AuthorizationUtils.getAuthenticatedUserName(), limit, offset);

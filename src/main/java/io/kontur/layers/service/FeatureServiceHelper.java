@@ -3,10 +3,8 @@ package io.kontur.layers.service;
 import io.kontur.layers.ApiConstants;
 import io.kontur.layers.dto.FeatureGeoJSON;
 import io.kontur.layers.dto.FeaturePropertiesFilter;
-import io.kontur.layers.dto.GeometryGeoJSON;
 import io.kontur.layers.dto.Link;
 import io.kontur.layers.repository.model.Feature;
-import io.kontur.layers.util.JsonUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -65,9 +63,7 @@ public class FeatureServiceHelper {
                 COLLECTION, APPLICATION_GEO_JSON, title);
         return new FeatureGeoJSON()
                 .id(feature.getFeatureId())
-                .geometry(feature.getGeometry() == null
-                        ? null
-                        : JsonUtil.readJson(feature.getGeometry(), GeometryGeoJSON.class))
+                .geometry(feature.getGeometry())
                 .links(Arrays.asList(selfLink, collectionLink))
                 .properties(feature.getProperties())
                 .type(FeatureGeoJSON.TypeEnum.FEATURE);

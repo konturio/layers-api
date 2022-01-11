@@ -72,11 +72,11 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
-        testDataMapper.insertFeature(id, buildFeatureN(1, "SRID=4326;POINT(0 1 1000)"));
-        testDataMapper.insertFeature(id, buildFeatureN(2, "SRID=4326;POINT(0 1 0)"));
-        testDataMapper.insertFeature(id, buildFeatureN(3, "SRID=4326;POINT(0 2 -2000)"));
-        testDataMapper.insertFeature(id, buildFeatureN(4, "SRID=4326;POINT(0 3)"));
-        testDataMapper.insertFeature(id, buildFeatureN(5, "SRID=4326;POINT(0 1 1001)"));
+        testDataMapper.insertFeature(id, buildFeatureN(1, "POINT(0 1 1000)"));
+        testDataMapper.insertFeature(id, buildFeatureN(2, "POINT(0 1 0)"));
+        testDataMapper.insertFeature(id, buildFeatureN(3, "POINT(0 2 -2000)"));
+        testDataMapper.insertFeature(id, buildFeatureN(4, "POINT(0 3)"));
+        testDataMapper.insertFeature(id, buildFeatureN(5, "POINT(0 1 1001)"));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId()))
                 .andDo(print())
@@ -94,10 +94,10 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
-        testDataMapper.insertFeature(id, buildFeatureN(1, "SRID=4326;POINT(0 2)"));
-        testDataMapper.insertFeature(id, buildFeatureN(2, "SRID=4326;POINT(0 1)"));
-        testDataMapper.insertFeature(id, buildFeatureN(3, "SRID=4326;POINT(-1 2)"));
-        testDataMapper.insertFeature(id, buildFeatureN(4, "SRID=4326;POINT(0 3)"));
+        testDataMapper.insertFeature(id, buildFeatureN(1, "POINT(0 2)"));
+        testDataMapper.insertFeature(id, buildFeatureN(2, "POINT(0 1)"));
+        testDataMapper.insertFeature(id, buildFeatureN(3, "POINT(-1 2)"));
+        testDataMapper.insertFeature(id, buildFeatureN(4, "POINT(0 3)"));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId()))
                 .andDo(print())
