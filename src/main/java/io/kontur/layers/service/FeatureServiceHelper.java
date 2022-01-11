@@ -3,10 +3,8 @@ package io.kontur.layers.service;
 import io.kontur.layers.ApiConstants;
 import io.kontur.layers.dto.FeatureGeoJSON;
 import io.kontur.layers.dto.FeaturePropertiesFilter;
-import io.kontur.layers.dto.GeometryGeoJSON;
 import io.kontur.layers.dto.Link;
 import io.kontur.layers.repository.model.Feature;
-import io.kontur.layers.util.JsonUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 

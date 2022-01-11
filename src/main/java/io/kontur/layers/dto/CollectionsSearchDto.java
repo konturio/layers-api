@@ -1,20 +1,22 @@
 package io.kontur.layers.dto;
 
+import org.wololo.geojson.Geometry;
+
 import javax.validation.constraints.Min;
 
 public class CollectionsSearchDto {
 
-    private GeometryGeoJSON geometry;
+    private Geometry geometry;
     @Min(1)
     private Integer limit = 10;
     @Min(0)
     private Integer offset = 0;
 
-    public GeometryGeoJSON getGeometry() {
+    public Geometry getGeometry() {
         return geometry;
     }
 
-    public void setGeometry(GeometryGeoJSON geometry) {
+    public void setGeometry(Geometry geometry) {
         this.geometry = geometry;
     }
 

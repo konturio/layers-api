@@ -3,13 +3,13 @@ package io.kontur.layers.test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.layers.dto.CollectionCreateDto;
-import io.kontur.layers.dto.GeometryGeoJSON;
 import io.kontur.layers.dto.Link;
 import io.kontur.layers.repository.model.Feature;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.util.JsonUtil;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
+import org.wololo.geojson.Geometry;
 import org.wololo.jts2geojson.GeoJSONWriter;
 
 import java.time.Instant;
@@ -103,7 +103,7 @@ public class TestDataHelper {
         dto.setProperties(props);
         dto.setItemType(Layer.Type.tiles);
         dto.setLegend(legend);
-        dto.setGeometry(JsonUtil.readJson(String.format("{\"type\":\"Point\",\"coordinates\":[0,%1$d]}", n), GeometryGeoJSON.class));
+        dto.setGeometry(JsonUtil.readJson(String.format("{\"type\":\"Point\",\"coordinates\":[0,%1$d]}", n), Geometry.class));
         dto.setCopyrights("copyrights_" + n);
         return dto;
     }
