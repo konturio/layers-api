@@ -85,4 +85,20 @@ public class CollectionsItemsGetIT extends AbstractIntegrationTest {
         //THEN
         assertThat(json, hasJsonPath("$.msg", containsString("missingFeatureId")));
     }
+
+    @Test
+    @DisplayName("should not obtain features for non visible layer")
+    public void getFeatureForNonVisibleLayer() throws Exception {
+        //GIVEN
+        final Layer layer = buildLayerN(1);
+        layer.setVisible(false);
+        final long id = testDataMapper.insertLayer(layer);
+        final Feature feature = buildPolygonN(1);
+        testDataMapper.insertFeature(id, feature);
+        //WHEN
+        //THEN
+        mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items/" + feature.getFeatureId()))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 }

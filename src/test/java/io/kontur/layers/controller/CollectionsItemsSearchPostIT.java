@@ -218,4 +218,22 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
         //THEN
     }
 
+    @Test
+    @DisplayName("should not obtain features for non visible layer")
+    public void getFeatureForNonVisibleLayer() throws Exception {
+        //GIVEN
+        final Layer layer = buildLayerN(1);
+        layer.setVisible(false);
+        final long id = testDataMapper.insertLayer(layer);
+        testDataMapper.insertFeature(id, buildPolygonN(1));
+        //WHEN
+        //THEN
+        mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{}"))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+
 }

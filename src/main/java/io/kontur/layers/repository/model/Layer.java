@@ -34,6 +34,7 @@ public class Layer {
     private DateTimeRange temporalExtent;
     private Integer numberMatched;
     private boolean isPublic;
+    private boolean isVisible;
     private String owner;
 
     public enum Type {

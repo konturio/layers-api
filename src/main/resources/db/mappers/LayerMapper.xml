@@ -3,6 +3,7 @@
 
     <select id="getLayerName" resultType="string">
         select name from layers where public_id = #{publicId}
+                                  and is_visible
         <choose>
             <when test="userName != null">
                 and (is_public or owner = #{userName})
@@ -25,7 +26,7 @@
                last_updated as lastupdated,
                source_updated as sourcelastupdated
         from layers
-        where owner = #{userName} and public_id = #{publicId}
+        where owner = #{userName} and public_id = #{publicId} and is_visible
         for update
     </select>
 
@@ -41,9 +42,11 @@
                           l.category_id,
                           l.last_updated as lastupdated,
                           l.source_updated as sourcelastupdated,
+                          l.is_public      as isPublic,
+                          l.is_visible     as isVisible,
                           count(*) OVER() AS numberMatched
                    from layers l
-                   where 1 = 1
+                   where is_visible
                    <if test="publicIds != null">
                        <foreach collection="publicIds" item="id" open="and l.public_id in (" separator="," close=")">
                        #{id}
@@ -100,9 +103,9 @@
 
     <select id="insertLayer" resultType="io.kontur.layers.repository.model.Layer">
         with ins as (insert into layers (public_id, name, description, url, type, geom, last_updated, source_updated,
-                                         copyrights, properties, is_public, owner, display_rule)
+                                         copyrights, properties, is_public, owner, display_rule, is_visible)
             values (#{publicId}, #{name}, #{description}, #{url}, #{type}, #{geometry}::geometry, #{lastUpdated},
-                    #{sourceLastUpdated}, #{copyrights}, #{properties}::jsonb, #{isPublic}, #{owner}, #{legend}::jsonb)
+                    #{sourceLastUpdated}, #{copyrights}, #{properties}::jsonb, #{isPublic}, #{owner}, #{legend}::jsonb, true)
             returning *)
         select public_id      as publicId,
                name,
@@ -115,6 +118,7 @@
                copyrights,
                properties,
                is_public      as isPublic,
+               is_visible     as isVisible,
                owner,
                display_rule   as legend
         from ins
@@ -138,6 +142,7 @@
                copyrights,
                properties,
                is_public      as isPublic,
+               is_visible     as isVisible,
                owner,
                display_rule   as legend
         from upd
@@ -159,6 +164,7 @@
                copyrights,
                properties,
                is_public      as isPublic,
+               is_visible     as isVisible,
                owner,
                display_rule   as legend
         from del

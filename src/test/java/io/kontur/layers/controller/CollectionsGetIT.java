@@ -153,4 +153,19 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
         assertThat(json,
                 hasJsonPath("$.extent.temporal.trs", url("http://www.opengis.net/def/uom/ISO-8601/0/Gregorian")));
     }
+
+    @Test
+    @DisplayName("should not obtain non visible layer")
+    public void testGetNonVisibleCollection() throws Exception {
+        //GIVEN
+        final Layer layer = buildLayerN(1);
+        layer.setVisible(false);
+        testDataMapper.insertLayer(layer);
+        //WHEN
+        //THEN
+        mockMvc.perform(get("/collections/" + layer.getPublicId()))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON));
+    }
 }
