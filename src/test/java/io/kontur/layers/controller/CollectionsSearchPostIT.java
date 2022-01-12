@@ -230,4 +230,27 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
         assertThat(json.read("$.collections"), hasSize(2));
         assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_1", "pubId_3"));
     }
+
+    @Test
+    @DisplayName("should not obtain non visible layer")
+    public void testSearchNonVisibleCollection() throws Exception {
+        //GIVEN
+        Layer layer = buildLayerN(1);
+        layer.setVisible(false);
+        testDataMapper.insertLayer(layer);
+
+        //WHEN
+        String response = mockMvc.perform(post("/collections/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json.read("$.links"), is(empty()));
+        assertThat(json.read("$.collections"), is(empty()));
+    }
 }

@@ -39,6 +39,7 @@ CREATE TABLE layers
     category_id           integer                  REFERENCES layers_category_properties (id) ON DELETE SET NULL,
     group_id              integer                  REFERENCES layers_group_properties (id) ON DELETE SET NULL,
     properties            jsonb,
+    is_visible            boolean,
     is_dirty              boolean,
     zoom_visibility_rules jsonb,
     geom                  geometry,
