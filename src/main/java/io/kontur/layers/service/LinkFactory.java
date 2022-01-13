@@ -65,8 +65,14 @@ public class LinkFactory {
         if (relativeUrl == null) {
             throw new IllegalArgumentException("relativeUrl must not be null");
         }
-        String server = servletRequest.getScheme() + "://" + servletRequest.getServerName() + ":" + servletRequest.getServerPort() + servletRequest.getContextPath();
-        final String url = server + (relativeUrl.startsWith("/") ? relativeUrl : "/" + relativeUrl);
+        StringBuilder builder = new StringBuilder();
+        builder.append(servletRequest.getScheme()).append("://").append(servletRequest.getServerName());
+        if (servletRequest.getServerPort() != 80) {
+            builder.append(":").append(servletRequest.getServerPort());
+        }
+        builder.append(servletRequest.getContextPath());
+        builder.append((relativeUrl.startsWith("/") ? relativeUrl : "/" + relativeUrl));
+        final String url = builder.toString();
         return new Link().href(url).hreflang(hreflang).length(length).rel(rel.getStr()).title(title)
                 .type(type.getStr());
     }

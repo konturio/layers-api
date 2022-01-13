@@ -34,7 +34,7 @@ public abstract class AbstractIntegrationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
                 .apply(springSecurity())
                 .build();
-        BASE_URL = "http://localhost:80";
+        BASE_URL = "http://localhost";
     }
 
     @AfterEach

@@ -168,4 +168,22 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_JSON));
     }
+
+    @Test
+    @DisplayName("url to tiles is present for tiles layers")
+    public void returnLinkToTiles_8626() throws Exception {
+        //GIVEN
+        final Layer layer = buildLayerN(1);
+        layer.setType(Layer.Type.tiles);
+        layer.setUrl("https://example.com");
+        testDataMapper.insertLayer(layer);
+        //WHEN
+        String json = mockMvc.perform(get("/collections/" + layer.getPublicId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
+        assertThat(json, hasJsonPath("$.links[?(@.rel=='tiles')].href", contains("https://example.com")));
+    }
 }

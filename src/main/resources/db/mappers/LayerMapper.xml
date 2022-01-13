@@ -40,6 +40,8 @@
                           l.properties,
                           l.group_id,
                           l.category_id,
+                          l.type,
+                          l.url,
                           l.last_updated as lastupdated,
                           l.source_updated as sourcelastupdated,
                           l.is_public      as isPublic,

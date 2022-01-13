@@ -13,8 +13,8 @@ public interface TestDataMapper {
             "delete from layers"})
     void databaseCleanup();
 
-    @Select({"with ins as (insert into layers (public_id, name, description, geom, last_updated, source_updated, copyrights, properties, is_public, is_visible, owner) values ",
-            "(#{publicId},#{name},#{description},#{geometry}::geometry,#{lastUpdated},#{sourceLastUpdated},#{copyrights},#{properties}::jsonb,#{isPublic},#{isVisible},#{owner}) returning id) ",
+    @Select({"with ins as (insert into layers (public_id, name, description, geom, last_updated, source_updated, copyrights, properties, is_public, is_visible, owner, type, url) values ",
+            "(#{publicId},#{name},#{description},#{geometry}::geometry,#{lastUpdated},#{sourceLastUpdated},#{copyrights},#{properties}::jsonb,#{isPublic},#{isVisible},#{owner},#{type},#{url}) returning id) ",
             "select * from ins"})
     long insertLayer(Layer layer);
 
