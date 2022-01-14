@@ -174,7 +174,7 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
     public void returnLinkToTiles_8626() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        layer.setType(Layer.Type.tiles);
+        layer.setType("tiles");
         layer.setUrl("https://example.com");
         testDataMapper.insertLayer(layer);
         //WHEN

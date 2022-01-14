@@ -111,7 +111,7 @@ public class CollectionService {
                 .name(c.getTitle())
                 .description(c.getDescription())
                 .url(url)
-                .type(c.getItemType())
+                .type(c.getItemType().name())
                 .geometry(c.getGeometry() != null ? JsonUtil.writeJson(c.getGeometry()) : null)
                 .copyrights(c.getCopyrights())
                 .properties(c.getProperties())
@@ -125,9 +125,9 @@ public class CollectionService {
 
     private Collection toCollection(Layer layer) {
         Link link;
-        if (Layer.Type.tiles.equals(layer.getType())) {
+        if ("tiles".equals(layer.getType())) {
             link = new Link()
-                    .rel(String.valueOf(Layer.Type.tiles))
+                    .rel(layer.getType())
                     .href(layer.getUrl());
         } else {
             link = linkFactory.createLocal(
@@ -144,6 +144,7 @@ public class CollectionService {
                 .legend(layer.getLegend())
                 .group(layer.getGroup())
                 .category(layer.getCategory())
+                .itemType(layer.getType())
                 .crs(List.of("http://www.opengis.net/def/crs/OGC/1.3/CRS84"))
                 .links(List.of(link))
                 .extent(getExtent(layer));

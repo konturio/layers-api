@@ -21,13 +21,13 @@ public class Layer {
     private String name;
     private String description;
     private String url;
-    private Type type;
+    private String type;
     private String geometry;
     private String copyrights;
     private ObjectNode properties;
     private ObjectNode legend;
-    private ObjectNode group;
-    private ObjectNode category;
+    private LayersGroupProperties group;
+    private LayersCategoryProperties category;
     private OffsetDateTime lastUpdated;
     private OffsetDateTime sourceLastUpdated;
     private String spatialExtent;
@@ -36,9 +36,4 @@ public class Layer {
     private boolean isPublic;
     private boolean isVisible;
     private String owner;
-
-    public enum Type {
-        tiles,
-        feature
-    }
 }

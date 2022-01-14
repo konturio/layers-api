@@ -16,7 +16,7 @@ public class CollectionUpdateDto {
     @JsonProperty("link")
     private Link link;
     @JsonProperty("itemType")
-    private Layer.Type itemType = Layer.Type.feature;
+    private Type itemType = Type.feature;
     @JsonProperty("copyrights")
     private String copyrights;
     @JsonProperty("geometry")
@@ -25,4 +25,9 @@ public class CollectionUpdateDto {
     private ObjectNode properties;
     @JsonProperty("legend")
     private ObjectNode legend;
+
+    public enum Type {
+        tiles,
+        feature
+    }
 }

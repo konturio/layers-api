@@ -42,10 +42,11 @@
                           l.category_id,
                           l.type,
                           l.url,
-                          l.last_updated as lastupdated,
+                          l.last_updated   as lastupdated,
                           l.source_updated as sourcelastupdated,
                           l.is_public      as isPublic,
                           l.is_visible     as isVisible,
+                          l.display_rule   as legend,
                           count(*) OVER() AS numberMatched
                    from layers l
                    where is_visible
@@ -88,13 +89,13 @@
                ls.style_rule as legend,
                json_strip_nulls(json_build_object(
                    'name', gp."name",
-                   'is_opened', gp.is_opened,
-                   'mutually_exclusive', gp.mutually_exclusive,
+                   'isOpened', gp.is_opened,
+                   'mutuallyExclusive', gp.mutually_exclusive,
                    'order', gp."order")) as group,
                json_strip_nulls(json_build_object(
                    'name', cp."name",
-                   'is_opened', cp.is_opened,
-                   'mutually_exclusive', cp.mutually_exclusive,
+                   'isOpened', cp.is_opened,
+                   'mutuallyExclusive', cp.mutually_exclusive,
                    'order', cp."order")) as category
         from lrs
             left join ext on lrs.id = ext.layer_id

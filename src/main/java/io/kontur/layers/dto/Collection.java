@@ -2,6 +2,8 @@ package io.kontur.layers.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.kontur.layers.repository.model.LayersCategoryProperties;
+import io.kontur.layers.repository.model.LayersGroupProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
@@ -30,10 +32,10 @@ public class Collection {
     private ObjectNode legend;
 
     @JsonProperty("group")
-    private ObjectNode group;
+    private LayersGroupProperties group;
 
     @JsonProperty("category")
-    private ObjectNode category;
+    private LayersCategoryProperties category;
 
     @JsonProperty("links")
     private List<Link> links = new ArrayList<>();
@@ -132,29 +134,29 @@ public class Collection {
         this.legend = legend;
     }
 
-    public Collection group(ObjectNode group) {
+    public Collection group(LayersGroupProperties group) {
         this.group = group;
         return this;
     }
 
-    public ObjectNode getGroup() {
+    public LayersGroupProperties getGroup() {
         return group;
     }
 
-    public void setGroup(ObjectNode group) {
+    public void setGroup(LayersGroupProperties group) {
         this.group = group;
     }
 
-    public Collection category(ObjectNode category) {
+    public Collection category(LayersCategoryProperties category) {
         this.category = category;
         return this;
     }
 
-    public ObjectNode getCategory() {
+    public LayersCategoryProperties getCategory() {
         return category;
     }
 
-    public void setCategory(ObjectNode category) {
+    public void setCategory(LayersCategoryProperties category) {
         this.category = category;
     }
 

@@ -3,6 +3,7 @@ package io.kontur.layers.test;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.layers.dto.CollectionCreateDto;
+import io.kontur.layers.dto.CollectionUpdateDto;
 import io.kontur.layers.dto.Link;
 import io.kontur.layers.repository.model.Feature;
 import io.kontur.layers.repository.model.Layer;
@@ -101,7 +102,7 @@ public class TestDataHelper {
         dto.setDescription("description_" + n);
         dto.setLink(new Link().rel("tiles").href("https://www.example.com"));
         dto.setProperties(props);
-        dto.setItemType(Layer.Type.tiles);
+        dto.setItemType(CollectionUpdateDto.Type.tiles);
         dto.setLegend(legend);
         dto.setGeometry(JsonUtil.readJson(String.format("{\"type\":\"Point\",\"coordinates\":[0,%1$d]}", n), Geometry.class));
         dto.setCopyrights("copyrights_" + n);
