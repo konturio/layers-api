@@ -115,6 +115,25 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser("pigeon")
+    public void itemTypeShouldNotBeNull_8701() throws Exception {
+        //GIVEN
+        String collection = "{\"name\":\"Name1\",\"description\":\"Layer for test\",\"link\":{\"href\":\"http://data.example.com/buildings/123\",\"rel\":\"alternate\",\"type\":\"application/geo+json\",\"hreflang\":\"en\",\"title\":\"My home\",\"length\":0},\"itemType\":null,\"copyrights\":\"string\",\"geometry\":{\"type\":\"Point\",\"coordinates\":[27.439459562301636,53.8974479872508]},\"properties\":{},\"legend\":{},\"id\":\"myId_1\"}";
+        //WHEN
+        String response = mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(collection))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.fieldErrors.itemType.msg", not(emptyOrNullString())));
+    }
+
+    @Test
     @DisplayName("should not be able to save layers with the same public id")
     @WithMockUser("pigeon")
     public void shouldBeUnableToDuplicatePublicId() throws Exception {

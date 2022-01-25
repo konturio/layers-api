@@ -15,6 +15,6 @@ public class CollectionCreateDto extends CollectionUpdateDto {
     @JsonProperty("id")
     @NotNull
     @NotEmpty
-    @Pattern(regexp = "[^\\w]")
+    @Pattern(regexp = "[\\w]*")
     private String id;
 }
