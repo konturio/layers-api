@@ -73,6 +73,28 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.fieldErrors.id.msg", not(emptyOrNullString())));
     }
 
+
+    @Test
+    @DisplayName("empty string is not valid id #8697")
+    @WithMockUser("pigeon")
+    public void collectionIdCantBeEmpty_8697() throws Exception {
+        //GIVEN
+        CollectionCreateDto collection = buildCollectionCreateDtoN(1);
+        collection.setId("");
+        //WHEN
+        String response = mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.writeJson(collection)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.fieldErrors.id.msg", not(emptyOrNullString())));
+    }
+
     @Test
     @DisplayName("should not be able to save layers with the same public id")
     @WithMockUser("pigeon")
