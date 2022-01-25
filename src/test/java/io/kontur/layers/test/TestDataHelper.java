@@ -35,7 +35,7 @@ public class TestDataHelper {
                 "copyrights_" + n, props, null, null, null,
                 OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusSeconds(n),
                 OffsetDateTime.of(2020, 4, 15, 15, 0, 0, 0, offset()).plusSeconds(n),
-                null, null, null, true, true, "owner_" + n);
+                null, null, true, true, "owner_" + n);
     }
 
     public static Feature buildPointN(int n) {

@@ -32,7 +32,6 @@ public class Layer {
     private OffsetDateTime sourceLastUpdated;
     private String spatialExtent;
     private DateTimeRange temporalExtent;
-    private Integer numberMatched;
     private boolean isPublic;
     private boolean isVisible;
     private String owner;

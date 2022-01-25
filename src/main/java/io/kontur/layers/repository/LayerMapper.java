@@ -19,6 +19,10 @@ public interface LayerMapper {
         return getLayers(null, userName,1, 0, publicId).stream().findFirst();
     }
 
+    Integer getLayersTotal(@Param("geometry") String geometry,
+                          @Param("userName") String userName,
+                          @Param("publicIds") String... publicIds);
+
     List<Layer> getLayers(@Param("geometry") String geometry,
                           @Param("userName") String userName,
                           @Param("limit") Integer limit,
