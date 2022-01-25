@@ -74,6 +74,86 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("empty string is not valid id #8697")
+    @WithMockUser("pigeon")
+    public void collectionIdCantBeEmpty_8697() throws Exception {
+        //GIVEN
+        CollectionCreateDto collection = buildCollectionCreateDtoN(1);
+        collection.setId("");
+        //WHEN
+        String response = mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.writeJson(collection)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.fieldErrors.id.msg", not(emptyOrNullString())));
+    }
+
+    @Test
+    @WithMockUser("pigeon")
+    public void collectionIdCantContainSpecialSymbols_8700() throws Exception {
+        //GIVEN
+        CollectionCreateDto collection = buildCollectionCreateDtoN(1);
+        collection.setId("not_these_{}[]");
+        //WHEN
+        String response = mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.writeJson(collection)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.fieldErrors.id.msg", not(emptyOrNullString())));
+    }
+
+    @Test
+    @WithMockUser("pigeon")
+    public void itemTypeShouldNotBeNull_8701() throws Exception {
+        //GIVEN
+        String collection = "{\"name\":\"Name1\",\"itemType\":null,\"properties\":{},\"id\":\"myId_1\"}";
+        //WHEN
+        String response = mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(collection))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.fieldErrors.itemType.msg", not(emptyOrNullString())));
+    }
+
+    @Test
+    @WithMockUser("pigeon")
+    public void validationMessageShouldContainFieldName_8702() throws Exception {
+        //GIVEN
+        String collection = "{\"name\":\"Name1\",\"itemType\":\"\",\"properties\":{},\"id\":\"myId_1\"}";
+
+        //WHEN
+        String response = mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(collection))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.fieldErrors.itemType.msg", not(emptyOrNullString())));
+    }
+
+    @Test
     @DisplayName("should not be able to save layers with the same public id")
     @WithMockUser("pigeon")
     public void shouldBeUnableToDuplicatePublicId() throws Exception {

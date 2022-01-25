@@ -372,4 +372,23 @@ public class CollectionsListGetIT extends AbstractIntegrationTest {
         assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_1", "pubId_3"));
     }
 
+    @Test
+    public void numberMatchedShouldNotBe0WhenOffsetExceeded_8815() throws Exception {
+        //GIVEN
+        IntStream.rangeClosed(1, 7).forEach(i -> testDataMapper.insertLayer(buildLayerN(i)));
+
+        //WHEN
+        final String json = mockMvc.perform(get("/collections")
+                        .queryParam("limit", "10")
+                        .queryParam("offset", "10"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        assertThat(json, hasJsonPath("$.numberMatched", is(7)));
+        assertThat(json, hasJsonPath("$.numberReturned", is(0)));
+    }
+
 }

@@ -43,7 +43,7 @@ public class CollectionService {
                                       Integer offset, boolean includeLinks) {
         String geometryString = geometry != null ? JsonUtil.writeJson(geometry) : null;
         final List<Layer> layers = layerMapper.getLayers(geometryString, AuthorizationUtils.getAuthenticatedUserName(), limit, offset);
-        int numberMatched = layers.isEmpty() ? 0 : layers.get(0).getNumberMatched();
+        int numberMatched = layerMapper.getLayersTotal(geometryString, AuthorizationUtils.getAuthenticatedUserName());
 
         final List<Collection> collections = layers.stream().map(this::toCollection).collect(Collectors.toList());
 

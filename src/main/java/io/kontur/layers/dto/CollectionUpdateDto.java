@@ -2,9 +2,10 @@ package io.kontur.layers.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.kontur.layers.repository.model.Layer;
 import lombok.Data;
 import org.wololo.geojson.Geometry;
+
+import javax.validation.constraints.NotNull;
 
 @Data
 public class CollectionUpdateDto {
@@ -16,6 +17,7 @@ public class CollectionUpdateDto {
     @JsonProperty("link")
     private Link link;
     @JsonProperty("itemType")
+    @NotNull
     private Type itemType = Type.feature;
     @JsonProperty("copyrights")
     private String copyrights;

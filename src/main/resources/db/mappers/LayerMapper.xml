@@ -31,6 +31,32 @@
     </select>
 
 
+    <select id="getLayersTotal" resultType="java.lang.Integer">
+        select count(*) AS numberMatched
+        from layers l
+        where is_visible
+        <if test="publicIds != null">
+            <foreach collection="publicIds" item="id" open="and l.public_id in (" separator="," close=")">
+                #{id}
+            </foreach>
+        </if>
+        <if test="geometry != null">
+            and ((l.geom isnull
+            and l.id in (select layer_id
+            from layers_features ls
+            where ST_Intersects(ls.geom, ST_SetSRID(ST_GeomFromGeoJSON(#{geometry}), 4326))))
+            or ST_Intersects(l.geom, ST_SetSRID(ST_GeomFromGeoJSON(#{geometry}), 4326)))
+        </if>
+        <choose>
+            <when test="userName != null">
+                and (is_public or owner = #{userName})
+            </when>
+            <otherwise>
+                and is_public
+            </otherwise>
+        </choose>;
+    </select>
+
     <select id="getLayers" resultType="io.kontur.layers.repository.model.Layer">
         with lrs as (select l.id,
                           l.public_id as publicid,
@@ -46,8 +72,7 @@
                           l.source_updated as sourcelastupdated,
                           l.is_public      as isPublic,
                           l.is_visible     as isVisible,
-                          l.display_rule   as legend,
-                          count(*) OVER() AS numberMatched
+                          l.display_rule   as legend
                    from layers l
                    where is_visible
                    <if test="publicIds != null">
