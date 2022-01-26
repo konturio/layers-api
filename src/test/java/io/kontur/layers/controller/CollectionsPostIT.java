@@ -154,6 +154,26 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser("pigeon")
+    public void validationMessageShouldContainFieldName_8702_2() throws Exception {
+        //GIVEN
+        String collection = "{\"title\":[],\"properties\":{},\"id\":\"myId_1\"}";
+
+        //WHEN
+        String response = mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(collection))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.fieldErrors.title.msg", not(emptyOrNullString())));
+    }
+
+    @Test
     @DisplayName("should not be able to save layers with the same public id")
     @WithMockUser("pigeon")
     public void shouldBeUnableToDuplicatePublicId() throws Exception {

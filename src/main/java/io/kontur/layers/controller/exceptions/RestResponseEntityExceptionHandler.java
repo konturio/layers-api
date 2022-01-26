@@ -1,7 +1,7 @@
 package io.kontur.layers.controller.exceptions;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,13 +64,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
                                                                   WebRequest request) {
         String msg = "invalid field value";
         String fieldName = "";
-        if (ex.getCause() instanceof InvalidFormatException) {
-            fieldName = getInvalidFormatExceptionFieldName((InvalidFormatException) ex.getCause());
+        if (ex.getCause() instanceof MismatchedInputException) {
+            fieldName = getInvalidFormatExceptionFieldName((MismatchedInputException) ex.getCause());
         }
         return new ResponseEntity<>(Error.objectError(null, Error.fieldError(fieldName, Error.error(msg))), BAD_REQUEST);
     }
 
-    private String getInvalidFormatExceptionFieldName(InvalidFormatException ex) {
+    private String getInvalidFormatExceptionFieldName(MismatchedInputException ex) {
         for (JsonMappingException.Reference r : ex.getPath()) {
             return r.getFieldName();
         }
