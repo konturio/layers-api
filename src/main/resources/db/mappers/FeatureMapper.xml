@@ -17,7 +17,7 @@
         from layers_features where layer_id = (select id from layers where public_id = #{collectionId})
         <if test="geometry != null">
             and (geom ISNULL
-                or ST_Intersects(geom, ST_SetSRID(ST_GeomFromGeoJSON(#{geometry}), 4326)))
+                or ST_Intersects(geom, ST_GeomFromGeoJSON(#{geometry})))
         </if>
         <choose>
             <when test="bbox!=null &amp;&amp; bbox.size == 4">
@@ -52,7 +52,7 @@
         from layers_features where layer_id = (select id from layers where public_id = #{collectionId})
         <if test="geometry != null">
             and (geom ISNULL
-                or ST_Intersects(geom, ST_SetSRID(ST_GeomFromGeoJSON(#{geometry}), 4326)))
+                or ST_Intersects(geom, ST_GeomFromGeoJSON(#{geometry})))
         </if>
         <choose>
             <when test="bbox!=null &amp;&amp; bbox.size == 4">

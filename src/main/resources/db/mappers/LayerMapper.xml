@@ -44,8 +44,8 @@
             and ((l.geom isnull
             and l.id in (select layer_id
             from layers_features ls
-            where ST_Intersects(ls.geom, ST_SetSRID(ST_GeomFromGeoJSON(#{geometry}), 4326))))
-            or ST_Intersects(l.geom, ST_SetSRID(ST_GeomFromGeoJSON(#{geometry}), 4326)))
+            where ST_Intersects(ls.geom, ST_GeomFromGeoJSON(#{geometry}))))
+            or ST_Intersects(l.geom, ST_GeomFromGeoJSON(#{geometry})))
         </if>
         <choose>
             <when test="userName != null">
@@ -84,8 +84,8 @@
                        and ((l.geom isnull
                                 and l.id in (select layer_id
                                             from layers_features ls
-                                            where ST_Intersects(ls.geom, ST_SetSRID(ST_GeomFromGeoJSON(#{geometry}), 4326))))
-                           or ST_Intersects(l.geom, ST_SetSRID(ST_GeomFromGeoJSON(#{geometry}), 4326)))
+                                            where ST_Intersects(ls.geom, ST_GeomFromGeoJSON(#{geometry}))))
+                           or ST_Intersects(l.geom, ST_GeomFromGeoJSON(#{geometry})))
                    </if>
                    <choose>
                        <when test="userName != null">
@@ -132,7 +132,7 @@
     <select id="insertLayer" resultType="io.kontur.layers.repository.model.Layer">
         with ins as (insert into layers (public_id, name, description, url, type, geom, last_updated, source_updated,
                                          copyrights, properties, is_public, owner, display_rule, is_visible)
-            values (#{publicId}, #{name}, #{description}, #{url}, #{type}, #{geometry}::geometry, #{lastUpdated},
+            values (#{publicId}, #{name}, #{description}, #{url}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated},
                     #{sourceLastUpdated}, #{copyrights}, #{properties}::jsonb, #{isPublic}, #{owner}, #{legend}::jsonb, true)
             returning *)
         select public_id      as publicId,
@@ -155,7 +155,7 @@
     <select id="updateLayer" resultType="io.kontur.layers.repository.model.Layer">
         with upd as (update layers set (name, description, url, type, geom, last_updated, source_updated,
                                         copyrights, properties, is_public, display_rule) =
-                (#{name}, #{description}, #{url}, #{type}, #{geometry}::geometry, #{lastUpdated}, #{sourceLastUpdated},
+                (#{name}, #{description}, #{url}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated}, #{sourceLastUpdated},
                  #{copyrights}, #{properties}::jsonb, #{isPublic}, #{legend}::jsonb)
             where public_id = #{publicId} and owner = #{owner}
             returning *)
