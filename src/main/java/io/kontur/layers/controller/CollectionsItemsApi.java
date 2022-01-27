@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static io.kontur.layers.ApiConstants.APPLICATION_GEO_JSON;
@@ -46,6 +48,7 @@ public class CollectionsItemsApi {
     protected static final int COLLECTION_ITEMS_DEFAULT_LIMIT = 10;
     private static final Set<String> PREDEFINED_FIELDS = Set.of("limit", "offset", "bbox", "datetime", "geom",
             "excludeGeometry");
+    private static final Pattern FEATURE_ID_PATTERN = Pattern.compile("[\\w]*");
 
     private final FeatureService featureService;
     private final HttpServletRequest servletRequest;
@@ -139,6 +142,7 @@ public class CollectionsItemsApi {
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
             @PathVariable("collectionId") String collectionId,
             @RequestBody @Valid FeatureCollection body) {
+        validateFeatures(body);
         FeatureCollectionGeoJSON fc = featureService.upsertFeatures(collectionId, body);
         return ResponseEntity.ok(fc);
     }
@@ -173,5 +177,15 @@ public class CollectionsItemsApi {
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    private void validateFeatures(FeatureCollection body) {
+        for (Feature feature : body.getFeatures()) {
+            if (!FEATURE_ID_PATTERN.matcher(feature.getId().toString()).matches()) {
+                throw new WebApplicationException(BAD_REQUEST, Error.objectError(null,
+                        Error.fieldError("id",
+                                Error.error(String.format("invalid field value '%s'", feature.getId().toString())))));
+            }
+        }
     }
 }

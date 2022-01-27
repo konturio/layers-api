@@ -180,4 +180,29 @@ public class CollectionsItemsPutIT extends AbstractIntegrationTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
     }
+
+    @Test
+    @WithMockUser("owner_1")
+    public void featureIdValidation_8700() throws Exception {
+        //GIVEN
+        Layer layer = buildLayerN(1);
+        testDataMapper.insertLayer(layer);
+
+        String updatedGeoJson = "{\"type\":\"FeatureCollection\",\"features\":[{\"id\":\"id_{}\",\"type\":\"Feature\",\"properties\":{\"prop1\":\"propValue1_updated\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.96484375,39.774769485295465]}}]}";
+
+        //WHEN
+        String response = mockMvc.perform(put("/collections/" + layer.getPublicId() + "/items")
+                        .contentType(APPLICATION_JSON)
+                        .content(updatedGeoJson))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.fieldErrors.id.msg", not(emptyOrNullString())));
+
+    }
+
 }
