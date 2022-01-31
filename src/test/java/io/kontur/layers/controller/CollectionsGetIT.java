@@ -4,6 +4,7 @@ import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
 import io.kontur.layers.repository.model.Feature;
 import io.kontur.layers.repository.model.Layer;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +69,7 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("3d spatial extent must be correct")
+    @Disabled("As extent is optional it was removed for performance reason #8857")
     public void spatialExtent3dMustBeCorrect() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
@@ -90,6 +92,7 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("2d spatial extent must be correct")
+    @Disabled("As extent is optional it was removed for performance reason #8857")
     public void spatialExtent2dMustBeCorrect() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
@@ -111,6 +114,7 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("temporal extent must be correct")
+    @Disabled("As extent is optional it was removed for performance reason #8857")
     public void temporalExtentMustBeCorrect() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
@@ -135,6 +139,7 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("single item temporal extent must be correct")
+    @Disabled("As extent is optional it was removed for performance reason #8857")
     public void singleItemTemporalExtentMustBeCorrect() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);

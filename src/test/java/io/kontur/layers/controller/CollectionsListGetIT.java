@@ -7,6 +7,7 @@ import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
 import io.kontur.layers.repository.model.Feature;
 import net.minidev.json.JSONArray;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +63,7 @@ public class CollectionsListGetIT extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("multiple collections must have correct extents")
+    @Disabled("As extent is optional it was removed for performance reason #8857")
     public void testCollectionExtents() throws Exception {
         //GIVEN
         final Feature f1 = buildPolygonN(1);

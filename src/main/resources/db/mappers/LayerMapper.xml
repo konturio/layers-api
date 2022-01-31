@@ -30,7 +30,6 @@
         for update
     </select>
 
-
     <select id="getLayersTotal" resultType="java.lang.Integer">
         select count(*) AS numberMatched
         from layers l
@@ -94,22 +93,8 @@
                            and is_public
                        </otherwise>
                    </choose>
-                   group by l.id limit #{limit} offset #{offset}),
-        ext as (select f.layer_id,
-                   st_3dextent(f.geom) as spat,
-                   min(f.last_updated) as lowerdt,
-                   max(f.last_updated) as upperdt
-                   from layers_features f join lrs on lrs.id = f.layer_id
-                   group by f.layer_id)
+                   group by l.id limit #{limit} offset #{offset})
         select lrs.*,
-               case when ext.spat is not null then
-                    format('[%s,%s,%s,%s,%s,%s]',
-                           st_xmin(ext.spat), st_ymin(ext.spat), st_zmin(ext.spat),
-                           st_xmax(ext.spat), st_ymax(ext.spat), st_zmax(ext.spat))
-               end as spatialextent,
-               case when (lowerdt is not null and upperdt is not null ) then
-                    tstzrange(lowerdt, upperdt, format('%s%s', '[', ']' ))
-               end as temporalextent,
                ls.style_rule as legend,
                json_strip_nulls(json_build_object(
                    'name', gp."name",
@@ -122,7 +107,6 @@
                    'mutuallyExclusive', cp.mutually_exclusive,
                    'order', cp."order")) as category
         from lrs
-            left join ext on lrs.id = ext.layer_id
             left join layers_style ls on ls.layer_id = lrs.id
             left join layers_group_properties gp on gp.id = lrs.group_id
             left join layers_category_properties cp on cp.id = lrs.category_id
