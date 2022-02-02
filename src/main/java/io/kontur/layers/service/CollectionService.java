@@ -77,7 +77,9 @@ public class CollectionService {
     @Transactional
     public Collection createCollection(CollectionCreateDto collection) {
         try {
-            return toCollection(layerMapper.insertLayer(toLayer(collection, collection.getId())));
+            Layer layer = toLayer(collection, collection.getId());
+            layer.setVisible(true);
+            return toCollection(layerMapper.insertLayer(layer));
         } catch (DuplicateKeyException e) {
             throw new WebApplicationException(HttpStatus.BAD_REQUEST, "Layer with such id already exists");
         }
