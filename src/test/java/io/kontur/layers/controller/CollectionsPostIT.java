@@ -174,6 +174,27 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
     }
 
     @Test
+    @WithMockUser("pigeon")
+    public void validationMessageForInvalidJsonShouldNotHaveFieldStructure_8702_3() throws Exception {
+        //GIVEN
+        String collection = "{\"title\":\"fooBar\"\"description\":\"string\"}";
+
+        //WHEN
+        String response = mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(collection))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasNoJsonPath("$.fieldErrors.title.msg"));
+        assertThat(json, hasJsonPath("$.msg", not(emptyOrNullString())));
+    }
+
+    @Test
     @DisplayName("should not be able to save layers with the same public id")
     @WithMockUser("pigeon")
     public void shouldBeUnableToDuplicatePublicId() throws Exception {

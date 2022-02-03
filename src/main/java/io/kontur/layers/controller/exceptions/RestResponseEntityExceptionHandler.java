@@ -1,5 +1,6 @@
 package io.kontur.layers.controller.exceptions;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.apache.commons.lang3.StringUtils;
@@ -66,6 +67,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         String fieldName = "";
         if (ex.getCause() instanceof MismatchedInputException) {
             fieldName = getInvalidFormatExceptionFieldName((MismatchedInputException) ex.getCause());
+        } else if (ex.getCause() instanceof JsonParseException) {
+            return new ResponseEntity<>(Error.error(ex.getCause().getMessage()), BAD_REQUEST);
         }
         return new ResponseEntity<>(Error.objectError(null, Error.fieldError(fieldName, Error.error(msg))), BAD_REQUEST);
     }
