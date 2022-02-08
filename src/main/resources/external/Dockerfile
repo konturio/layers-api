@@ -7,8 +7,9 @@ USER spring:spring
 
 EXPOSE 8630
 
-COPY build/dependency/BOOT-INF/lib /app/lib
-COPY build/dependency/META-INF /app/META-INF
-COPY build/dependency/BOOT-INF/classes /app
+ARG DEPENDENCY=build/dependency
+COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
+COPY ${DEPENDENCY}/META-INF /app/META-INF
+COPY ${DEPENDENCY}/BOOT-INF/classes /app
 
 ENTRYPOINT ["java","-cp","app:app/lib/*","io.kontur.layers.LayersApiApplication"]

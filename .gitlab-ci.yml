@@ -41,6 +41,21 @@ build:
     reports:
       junit: build/test-results/test/**/TEST-*.xml
 
+deploy-docker-image:
+  tags:
+    - kontur
+    - docker
+    - java
+  stage: deploy
+  script:
+    - tar -xvf $(find $CI_PROJECT_DIR -maxdepth 1 -name layers-api\*.tar.xz -print -quit)
+    - mkdir -p dependency && (cd dependency; jar -xf ../*.jar)
+    - docker build --build-arg DEPENDENCY=dependency -t nexus.kontur.io:8085/konturdev/layers-api:0.0.1-SNAPSHOT .
+    - docker push nexus.kontur.io:8085/konturdev/layers-api:0.0.1-SNAPSHOT
+  when: manual
+  dependencies:
+  - build
+
 deploy-dev:
   tags:
     - kontur
