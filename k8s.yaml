@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: layers-api
+  name: layers-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: layers-api
+  template:
+    metadata:
+      labels:
+        app: layers-api
+    spec:
+      containers:
+      - image: nexus.kontur.io:8084/konturdev/layers-api:0.0.1-SNAPSHOT
+        name: layers-api
+        envFrom:
+        - configMapRef:
+            name: layers-api-config
+        - secretRef:
+            name: layers-api-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: layers-api
+  name: layers-api
+spec:
+  ports:
+  - port: 8630
+    protocol: TCP
+    targetPort: 8630
+  selector:
+    app: layers-api
+  type: NodePort
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: layers-api-config
+  labels:
+    app.kubernetes.io/name: layers-api
+data:
+  spring.profiles.active: 'dev'
+
