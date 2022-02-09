@@ -10,9 +10,6 @@ import java.util.Optional;
 @Mapper
 public interface LayerMapper {
 
-    Optional<String> getLayerName(@Param("publicId") String publicId,
-                                  @Param("userName") String userName);
-
     Optional<Layer> getOwnedLayer(String publicId, String userName);
 
     default Optional<Layer> getLayer(String publicId, String userName) {

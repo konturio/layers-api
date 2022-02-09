@@ -13,10 +13,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasNoJsonPath;
+import static io.kontur.layers.ApiConstants.APPLICATION_GEO_JSON;
 import static io.kontur.layers.test.CustomMatchers.url;
 import static io.kontur.layers.test.TestDataHelper.buildCollectionCreateDtoN;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -257,4 +259,26 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.title", is("name_1")));
     }
 
+    @Test
+    @WithMockUser("pigeon")
+    public void featuresForLayersWithoutTitleCanBeFound_8986() throws Exception {
+        //GIVEN
+        String collectionWithoutTitle = "{\"description\":\"\",\"link\":{\"href\":\"http://data.example.com/buildings/123\",\"rel\":\"alternate\",\"type\":\"application/geo+json\",\"hreflang\":\"en\",\"title\":\"My home\",\"length\":0},\"itemType\":\"tiles\",\"copyrights\":\"\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[98.3111572265625,68.32423359706064],[98.887939453125,68.32423359706064],[98.887939453125,68.52421309659984],[98.3111572265625,68.52421309659984],[98.3111572265625,68.32423359706064]]]},\"properties\":{},\"legend\":{},\"id\":\"test_layer15\"}";
+
+        mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(collectionWithoutTitle))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //WHEN
+        //THEN
+        mockMvc.perform(get("/collections/test_layer15/items"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_GEO_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+    }
 }

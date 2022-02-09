@@ -182,7 +182,7 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void error500() throws Exception {
         //GIVEN
         LayerMapper layerMapperMock = Mockito.mock(LayerMapper.class);
-        when(layerMapperMock.getLayerName(any(), any())).thenThrow(new RuntimeException("test"));
+        when(layerMapperMock.getLayer(any(), any())).thenThrow(new RuntimeException("test"));
 
         LayerMapper originalLayerMapper = (LayerMapper) ReflectionTestUtils.getField(featureService, "layerMapper");
         ReflectionTestUtils.setField(featureService, "layerMapper", layerMapperMock);

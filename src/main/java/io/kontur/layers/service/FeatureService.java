@@ -9,6 +9,7 @@ import io.kontur.layers.repository.model.Feature;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.util.AuthorizationUtils;
 import io.kontur.layers.util.JsonUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,8 +51,7 @@ public class FeatureService {
             List<FeaturePropertiesFilter> propFilterList,
             boolean includeLinks) {
 
-        final String title = layerMapper.getLayerName(collectionId, AuthorizationUtils.getAuthenticatedUserName())
-                .orElseThrow(() -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found", collectionId)));
+        String title = getLayerTitle(collectionId);
 
         List<FeaturePropertiesFilter> list = convertAdditionalPropertiesIntoFilterList(propFilterList);
         String geometryString = geometry != null ? JsonUtil.writeJson(geometry) : null;
@@ -93,9 +93,8 @@ public class FeatureService {
 
     @Transactional(readOnly = true)
     public Optional<FeatureGeoJSON> getFeature(String collectionId, String featureId) {
-        final String title = layerMapper.getLayerName(collectionId, AuthorizationUtils.getAuthenticatedUserName())
-                .orElseThrow(
-                        () -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found", collectionId)));
+        String title = getLayerTitle(collectionId);
+
         Optional<Feature> feature = featureMapper.getFeature(collectionId, featureId);
 
         return feature.map(f -> featureServiceHelper.toFeatureGeoJson(f, collectionId, title));
@@ -125,5 +124,16 @@ public class FeatureService {
         featureMapper.deleteFeature(AuthorizationUtils.getAuthenticatedUserName(), collectionId,
                         featureId)
                 .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Feature can not be found"));
+    }
+
+    private String getLayerTitle(String collectionId) {
+        final Layer layer = layerMapper.getLayer(collectionId, AuthorizationUtils.getAuthenticatedUserName())
+                .orElseThrow(() -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found",
+                        collectionId)));
+        String title = layer.getName();
+        if (StringUtils.isEmpty(title)) {
+            title = layer.getPublicId();
+        }
+        return title;
     }
 }
