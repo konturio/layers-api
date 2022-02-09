@@ -47,6 +47,9 @@ deploy-docker-image:
     - docker
     - java
   stage: deploy
+  before_script:
+    - mkdir -p $HOME/.docker
+    - echo $DOCKER_AUTH_CONFIG > $HOME/.docker/config.json
   script:
     - tar -xvf $(find $CI_PROJECT_DIR -maxdepth 1 -name layers-api\*.tar.xz -print -quit)
     - mkdir -p dependency && (cd dependency; jar -xf ../*.jar)
