@@ -4,6 +4,7 @@ import io.kontur.layers.controller.exceptions.Error;
 import io.kontur.layers.controller.exceptions.WebApplicationException;
 import io.kontur.layers.controller.validation.ValidBbox;
 import io.kontur.layers.dto.*;
+import io.kontur.layers.dto.validation.ValidGeoJSON;
 import io.kontur.layers.service.FeatureService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -141,7 +142,7 @@ public class CollectionsItemsApi {
     public ResponseEntity upsertFeatures(
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
             @PathVariable("collectionId") String collectionId,
-            @RequestBody @Valid FeatureCollection body) {
+            @RequestBody @Valid @ValidGeoJSON FeatureCollection body) {
         validateFeatures(body);
         FeatureCollectionGeoJSON fc = featureService.upsertFeatures(collectionId, body);
         return ResponseEntity.ok(fc);
