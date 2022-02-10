@@ -1,11 +1,13 @@
 package io.kontur.layers.dto;
 
+import io.kontur.layers.dto.validation.ValidGeoJSON;
 import org.wololo.geojson.Geometry;
 
 import javax.validation.constraints.Min;
 
 public class CollectionsItemsSearchDto {
 
+    @ValidGeoJSON
     private Geometry geometry;
     @Min(1)
     private Integer limit = 10;

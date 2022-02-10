@@ -235,5 +235,20 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    public void notValidGeometryInFilter_8985() throws Exception {
+        //GIVEN
+        final Layer layer = buildLayerN(1);
+        //WHEN
+        String json = mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[24.609375,12.897489183755892],[75.234375,12.897489183755892],[75.234375,45.336701909968134],[24.609375,45.336701909968134],[24.609375,12.897489183755892],[24.60222475,12.897412383755892]]]}}"))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
+        assertThat(json, hasJsonPath("$.fieldErrors.geometry.msg", not(emptyOrNullString())));
+    }
 
 }

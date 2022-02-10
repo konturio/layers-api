@@ -281,4 +281,25 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
     }
+
+    @Test
+    @WithMockUser("pigeon")
+    public void collectionWithInvalidGeometryIsNotSaved_8985() throws Exception {
+        //GIVEN
+        String collection = "{\"description\":\"\",\"title\":\"test title\",\"itemType\":\"tiles\",\"copyrights\":\"\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[98.3111572265625,68.32423359706064],[98.887939453125,68.32423359706064],[98.887939453125,68.52421309659984],[98.3111572265625,68.52421309659984]]]},\"id\":\"test_layer15\"}";
+
+        //WHEN
+        String json = mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(collection))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        assertThat(json, hasJsonPath("$.fieldErrors.geometry.msg", not(emptyOrNullString())));
+
+    }
+
 }

@@ -205,4 +205,27 @@ public class CollectionsItemsPutIT extends AbstractIntegrationTest {
 
     }
 
+    @Test
+    @WithMockUser("owner_1")
+    public void addFeaturesWithInvalidGeometry_8985() throws Exception {
+        //GIVEN
+        Layer layer = buildLayerN(1);
+        final long id = testDataMapper.insertLayer(layer);
+
+        String geoJson = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"id\":\"feature_id4\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[29.135742187499996,53.30462107510271],[29.794921874999996,53.30462107510271],[29.794921874999996,54.03358633521085],[29.135742187499996,54.03358633521085],[29.135742187499996,54.30462107510271]]]}}]}";
+
+        //WHEN
+        String response = mockMvc.perform(put("/collections/" + layer.getPublicId() + "/items")
+                        .contentType(APPLICATION_JSON)
+                        .content(geoJson))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.fieldErrors.body.msg", not(emptyOrNullString())));
+    }
+
 }

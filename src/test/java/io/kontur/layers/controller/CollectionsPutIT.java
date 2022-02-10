@@ -147,4 +147,34 @@ public class CollectionsPutIT extends AbstractIntegrationTest {
                 .andExpect(status().is4xxClientError())
                 .andReturn().getResponse().getContentAsString();
     }
+
+    @Test
+    @WithMockUser("pigeon")
+    public void collectionWithInvalidGeometryIsNotSaved_8985() throws Exception {
+        //GIVEN
+        CollectionCreateDto collection = buildCollectionCreateDtoN(0);
+        String id = collection.getId();
+        mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.writeJson(collection)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //WHEN
+        String collectionString = "{\"description\":\"\",\"title\":\"test title\",\"itemType\":\"tiles\",\"copyrights\":\"\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[98.3111572265625,68.32423359706064],[98.887939453125,68.32423359706064],[98.887939453125,68.52421309659984],[98.3111572265625,68.52421309659984]]]}}";
+
+        String json = mockMvc.perform(put("/collections/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(collectionString))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        assertThat(json, hasJsonPath("$.fieldErrors.geometry.msg", not(emptyOrNullString())));
+    }
+
 }
