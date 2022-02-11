@@ -102,49 +102,74 @@
 
     <select id="insertLayer" resultType="io.kontur.layers.repository.model.Layer">
         with ins as (insert into layers (public_id, name, description, url, type, geom, last_updated, source_updated,
-                                         copyrights, properties, is_public, owner, display_rule, is_visible)
+                                         copyrights, properties, is_public, owner, is_visible, group_id)
             values (#{publicId}, #{name}, #{description}, #{url}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated},
-                    #{sourceLastUpdated}, #{copyrights}, #{properties}::jsonb, #{isPublic}, #{owner}, #{legend}::jsonb, true)
+                    #{sourceLastUpdated}, #{copyrights}, #{properties}::jsonb, #{isPublic}, #{owner}, true,
+                    (select id
+                        from layers_group_properties
+                        where name = 'user_layers'))
             returning *)
-        select public_id      as publicId,
-               name,
-               description,
-               url,
-               type,
-               geom           as geometry,
-               last_updated   as lastUpdated,
-               source_updated as sourceLastUpdated,
-               copyrights,
-               properties,
-               is_public      as isPublic,
-               is_visible     as isVisible,
-               owner,
-               display_rule   as legend
+        select ins.public_id      as publicId,
+               ins.name,
+               ins.description,
+               ins.url,
+               ins.type,
+               ins.geom           as geometry,
+               ins.last_updated   as lastUpdated,
+               ins.source_updated as sourceLastUpdated,
+               ins.copyrights,
+               ins.properties,
+               ins.is_public      as isPublic,
+               ins.is_visible     as isVisible,
+               ins.owner,
+               json_strip_nulls(json_build_object(
+                       'name', gp."name",
+                       'isOpened', gp.is_opened,
+                       'mutuallyExclusive', gp.mutually_exclusive,
+                       'order', gp."order")) as group,
+               json_strip_nulls(json_build_object(
+                       'name', cp."name",
+                       'isOpened', cp.is_opened,
+                       'mutuallyExclusive', cp.mutually_exclusive,
+                       'order', cp."order")) as category
         from ins
+            left join layers_group_properties gp on gp.id = ins.group_id
+            left join layers_category_properties cp on cp.id = ins.category_id
     </select>
 
     <select id="updateLayer" resultType="io.kontur.layers.repository.model.Layer">
         with upd as (update layers set (name, description, url, type, geom, last_updated, source_updated,
-                                        copyrights, properties, is_public, display_rule) =
+                                        copyrights, properties, is_public) =
                 (#{name}, #{description}, #{url}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated}, #{sourceLastUpdated},
-                 #{copyrights}, #{properties}::jsonb, #{isPublic}, #{legend}::jsonb)
+                 #{copyrights}, #{properties}::jsonb, #{isPublic})
             where public_id = #{publicId} and owner = #{owner}
             returning *)
-        select public_id      as publicId,
-               name,
-               description,
-               url,
-               type,
-               geom           as geometry,
-               last_updated   as lastUpdated,
-               source_updated as sourceLastUpdated,
-               copyrights,
-               properties,
-               is_public      as isPublic,
-               is_visible     as isVisible,
-               owner,
-               display_rule   as legend
+        select upd.public_id      as publicId,
+               upd.name,
+               upd.description,
+               upd.url,
+               upd.type,
+               upd.geom           as geometry,
+               upd.last_updated   as lastUpdated,
+               upd.source_updated as sourceLastUpdated,
+               upd.copyrights,
+               upd.properties,
+               upd.is_public      as isPublic,
+               upd.is_visible     as isVisible,
+               upd.owner,
+               json_strip_nulls(json_build_object(
+                       'name', gp."name",
+                       'isOpened', gp.is_opened,
+                       'mutuallyExclusive', gp.mutually_exclusive,
+                       'order', gp."order")) as group,
+               json_strip_nulls(json_build_object(
+                       'name', cp."name",
+                       'isOpened', cp.is_opened,
+                       'mutuallyExclusive', cp.mutually_exclusive,
+                       'order', cp."order")) as category
         from upd
+            left join layers_group_properties gp on gp.id = upd.group_id
+            left join layers_category_properties cp on cp.id = upd.category_id
     </select>
 
 

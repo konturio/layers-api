@@ -22,9 +22,9 @@ public abstract class AbstractIntegrationTest {
     @Autowired
     protected WebApplicationContext webApplicationContext;
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    protected JdbcTemplate jdbcTemplate;
     @Autowired
-    private PlatformTransactionManager transactionManager;
+    protected PlatformTransactionManager transactionManager;
 
     protected MockMvc mockMvc;
     protected String BASE_URL;
