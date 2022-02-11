@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasNoJsonPath;
@@ -299,7 +300,32 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
 
         //THEN
         assertThat(json, hasJsonPath("$.fieldErrors.geometry.msg", not(emptyOrNullString())));
-
     }
 
+    @Test
+    @WithMockUser("pigeon")
+    public void addNewLayersIntoUserLayersGroup() throws Exception {
+        //GIVEN
+        new TransactionTemplate(transactionManager)
+                .execute(status ->
+                        jdbcTemplate.update(
+                                "INSERT INTO layers_group_properties (name) " +
+                                        "VALUES ('user_layers') " +
+                                        "ON CONFLICT (name) DO NOTHING;"));
+
+        CollectionUpdateDto collection = buildCollectionCreateDtoN(1);
+        //WHEN
+        String response = mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.writeJson(collection)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.group.name", is("user_layers")));
+
+    }
 }
