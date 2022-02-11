@@ -51,6 +51,9 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json.read("$.links"), is(empty()));
         assertThat(json.read("$.collections"), hasSize(3));
+
+        assertThat(json, hasJsonPath("$.collections[0].featureProperties.featureProp1", is("featureProperty_1")));
+
     }
 
     @Test

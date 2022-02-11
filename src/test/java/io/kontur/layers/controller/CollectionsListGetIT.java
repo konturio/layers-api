@@ -59,6 +59,8 @@ public class CollectionsListGetIT extends AbstractIntegrationTest {
 
         assertThat(json.read("$.links[?(@.rel && @.type)]"), hasSize(json.read("$.links", List.class).size()));
         assertThat(json.read("$.collections"), hasSize(3));
+
+        assertThat(json, hasJsonPath("$.collections[0].featureProperties.featureProp1", is("featureProperty_1")));
     }
 
     @Test

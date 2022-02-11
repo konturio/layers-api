@@ -43,6 +43,7 @@ CREATE TABLE layers
     is_dirty              boolean,
     zoom_visibility_rules jsonb,
     geom                  geometry,
+    feature_properties    jsonb,
     PRIMARY KEY (id)
 );
 

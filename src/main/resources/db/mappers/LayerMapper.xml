@@ -57,7 +57,8 @@
                           l.last_updated   as lastupdated,
                           l.source_updated as sourcelastupdated,
                           l.is_public      as isPublic,
-                          l.is_visible     as isVisible
+                          l.is_visible     as isVisible,
+                          l.feature_properties as featureProperties
                    from layers l
                    where is_visible
                    <if test="publicIds != null">
@@ -102,25 +103,24 @@
 
     <select id="insertLayer" resultType="io.kontur.layers.repository.model.Layer">
         with ins as (insert into layers (public_id, name, description, url, type, geom, last_updated, source_updated,
-                                         copyrights, properties, is_public, owner, is_visible, group_id)
+                                         copyrights, properties, is_public, owner, is_visible, group_id, feature_properties)
             values (#{publicId}, #{name}, #{description}, #{url}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated},
                     #{sourceLastUpdated}, #{copyrights}, #{properties}::jsonb, #{isPublic}, #{owner}, true,
-                    (select id
-                        from layers_group_properties
-                        where name = 'user_layers'))
+                    (select id from layers_group_properties where name = 'user_layers'), #{featureProperties}::jsonb)
             returning *)
-        select ins.public_id      as publicId,
+        select ins.public_id          as publicId,
                ins.name,
                ins.description,
                ins.url,
                ins.type,
-               ins.geom           as geometry,
-               ins.last_updated   as lastUpdated,
-               ins.source_updated as sourceLastUpdated,
+               ins.geom               as geometry,
+               ins.last_updated       as lastUpdated,
+               ins.source_updated     as sourceLastUpdated,
                ins.copyrights,
                ins.properties,
-               ins.is_public      as isPublic,
-               ins.is_visible     as isVisible,
+               ins.is_public          as isPublic,
+               ins.is_visible         as isVisible,
+               ins.feature_properties as featureProperties,
                ins.owner,
                json_strip_nulls(json_build_object(
                        'name', gp."name",
@@ -139,23 +139,24 @@
 
     <select id="updateLayer" resultType="io.kontur.layers.repository.model.Layer">
         with upd as (update layers set (name, description, url, type, geom, last_updated, source_updated,
-                                        copyrights, properties, is_public) =
+                                        copyrights, properties, is_public, feature_properties) =
                 (#{name}, #{description}, #{url}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated}, #{sourceLastUpdated},
-                 #{copyrights}, #{properties}::jsonb, #{isPublic})
+                 #{copyrights}, #{properties}::jsonb, #{isPublic}, #{featureProperties}::jsonb)
             where public_id = #{publicId} and owner = #{owner}
             returning *)
-        select upd.public_id      as publicId,
+        select upd.public_id          as publicId,
                upd.name,
                upd.description,
                upd.url,
                upd.type,
-               upd.geom           as geometry,
-               upd.last_updated   as lastUpdated,
-               upd.source_updated as sourceLastUpdated,
+               upd.geom               as geometry,
+               upd.last_updated       as lastUpdated,
+               upd.source_updated     as sourceLastUpdated,
                upd.copyrights,
                upd.properties,
-               upd.is_public      as isPublic,
-               upd.is_visible     as isVisible,
+               upd.is_public          as isPublic,
+               upd.is_visible         as isVisible,
+               upd.feature_properties as featureProperties,
                upd.owner,
                json_strip_nulls(json_build_object(
                        'name', gp."name",
@@ -177,20 +178,21 @@
         with del as (delete from layers
             where public_id = #{id} and owner = #{owner}
             returning *)
-        select public_id      as publicId,
+        select public_id          as publicId,
                name,
                description,
                url,
                type,
-               geom           as geometry,
-               last_updated   as lastUpdated,
-               source_updated as sourceLastUpdated,
+               geom               as geometry,
+               last_updated       as lastUpdated,
+               source_updated     as sourceLastUpdated,
                copyrights,
                properties,
-               is_public      as isPublic,
-               is_visible     as isVisible,
+               is_public          as isPublic,
+               is_visible         as isVisible,
+               feature_properties as featureProperties,
                owner,
-               display_rule   as legend
+               display_rule       as legend
         from del
     </select>
 </mapper>

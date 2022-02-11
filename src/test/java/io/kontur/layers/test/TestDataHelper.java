@@ -30,9 +30,12 @@ public class TestDataHelper {
         props.put("prop1", "propValue1_" + n);
         props.put("prop2", "propValue2_" + n);
 
+        final ObjectNode featureProps = objectMapper.createObjectNode();
+        featureProps.put("featureProp1", "featureProperty_" + n);
+
         return new Layer(null, "pubId_" + n, "name_" + n, "description_" + n, null, null,
                 String.format("SRID=4326;POLYGON((0 0, %1$d 0, %1$d %1$d, 0 %1$d, 0 0))", n),
-                "copyrights_" + n, props, null, null, null,
+                "copyrights_" + n, props, null, featureProps, null, null,
                 OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusSeconds(n),
                 OffsetDateTime.of(2020, 4, 15, 15, 0, 0, 0, offset()).plusSeconds(n),
                 null, null, true, true, "owner_" + n);
@@ -89,8 +92,11 @@ public class TestDataHelper {
 
     public static CollectionCreateDto buildCollectionCreateDtoN(int n) {
         final ObjectNode props = objectMapper.createObjectNode();
-        props.put("prop1", "propValue1_" + n);
         props.put("prop2", "propValue2_" + n);
+        props.put("prop1", "propValue1_" + n);
+
+        final ObjectNode featureProps = objectMapper.createObjectNode();
+        featureProps.put("featureProp1", "featureProperty_" + n);
 
         final ObjectNode legend = objectMapper.createObjectNode();
         legend.put("legend1", "legendValue1_" + n);
@@ -104,6 +110,7 @@ public class TestDataHelper {
         dto.setProperties(props);
         dto.setItemType(CollectionUpdateDto.Type.tiles);
         dto.setLegend(legend);
+        dto.setFeatureProperties(featureProps);
         dto.setGeometry(JsonUtil.readJson(String.format("{\"type\":\"Point\",\"coordinates\":[0,%1$d]}", n), Geometry.class));
         dto.setCopyrights("copyrights_" + n);
         return dto;

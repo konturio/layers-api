@@ -27,6 +27,8 @@ public class CollectionUpdateDto {
     private Geometry geometry;
     @JsonProperty("properties")
     private ObjectNode properties;
+    @JsonProperty("featureProperties")
+    private ObjectNode featureProperties;
     @JsonProperty("legend")
     private ObjectNode legend;
 

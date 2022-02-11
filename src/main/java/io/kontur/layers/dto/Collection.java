@@ -26,7 +26,10 @@ public class Collection {
     private String copyrights;
 
     @JsonProperty("properties")
-    private Object properties;
+    private ObjectNode properties;
+
+    @JsonProperty("featureProperties")
+    private ObjectNode featureProperties;
 
     @JsonProperty("legend")
     private ObjectNode legend;
@@ -108,17 +111,30 @@ public class Collection {
         this.copyrights = copyrights;
     }
 
-    public Collection properties(Object properties) {
+    public Collection properties(ObjectNode properties) {
         this.properties = properties;
         return this;
     }
 
-    public Object getProperties() {
+    public ObjectNode getProperties() {
         return properties;
     }
 
-    public void setProperties(Object properties) {
+    public void setProperties(ObjectNode properties) {
         this.properties = properties;
+    }
+
+    public Collection featureProperties(ObjectNode featureProperties) {
+        this.featureProperties = featureProperties;
+        return this;
+    }
+
+    public ObjectNode getFeatureProperties() {
+        return featureProperties;
+    }
+
+    public void setFeatureProperties(ObjectNode featureProperties) {
+        this.featureProperties = featureProperties;
     }
 
     public Collection legend(ObjectNode legend) {
