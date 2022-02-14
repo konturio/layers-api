@@ -51,6 +51,7 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.links[?(@.rel=='items' && @.type=='application/geo+json')].href",
                 contains(url(BASE_URL + "/collections/pubId_1/items"))));
         assertThat(json, hasNoJsonPath("$.extent"));//absent because no features
+        assertThat(json, hasJsonPath("$.ownedByUser", is(false)));
     }
 
     @Test

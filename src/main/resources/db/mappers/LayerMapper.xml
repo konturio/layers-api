@@ -58,7 +58,8 @@
                           l.source_updated as sourcelastupdated,
                           l.is_public      as isPublic,
                           l.is_visible     as isVisible,
-                          l.feature_properties as featureProperties
+                          l.feature_properties as featureProperties,
+                          l.owner as owner
                    from layers l
                    where is_visible
                    <if test="publicIds != null">

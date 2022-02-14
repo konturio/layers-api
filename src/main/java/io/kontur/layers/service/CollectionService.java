@@ -8,6 +8,7 @@ import io.kontur.layers.repository.LayerMapper;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.util.AuthorizationUtils;
 import io.kontur.layers.util.JsonUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -138,7 +139,7 @@ public class CollectionService {
                             .build(layer.getPublicId()).toString(),
                     ITEMS, APPLICATION_GEO_JSON, layer.getName());
         }
-        return new Collection()
+        return Collection.builder()
                 .id(layer.getPublicId())
                 .title(layer.getName())
                 .description(layer.getDescription())
@@ -151,7 +152,9 @@ public class CollectionService {
                 .itemType(layer.getType())
                 .crs(List.of("http://www.opengis.net/def/crs/OGC/1.3/CRS84"))
                 .links(List.of(link))
-                .extent(getExtent(layer));
+                .extent(getExtent(layer))
+                .ownedByUser(isUserOwnsLayer(layer))
+                .build();
     }
 
     private Extent getExtent(Layer layer) {
@@ -164,7 +167,7 @@ public class CollectionService {
                 if (box.get(2) == 0 && box.get(5) == 0) {
                     box = List.of(box.get(0), box.get(1), box.get(3), box.get(4));
                 }
-                final List<BigDecimal> decimals = box.stream().map(BigDecimal::new).collect(Collectors.toList());
+                final List<BigDecimal> decimals = box.stream().map(BigDecimal::new).toList();
                 final ExtentSpatial spatial = new ExtentSpatial();
                 spatial.setBbox(List.of(decimals));
                 extent.setSpatial(spatial);
@@ -181,5 +184,10 @@ public class CollectionService {
 
         }
         return extent;
+    }
+
+    private boolean isUserOwnsLayer(Layer layer) {
+        return StringUtils.isNotEmpty(layer.getOwner()) &&
+                layer.getOwner().equals(AuthorizationUtils.getAuthenticatedUserName());
     }
 }

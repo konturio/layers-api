@@ -374,6 +374,8 @@ public class CollectionsListGetIT extends AbstractIntegrationTest {
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json.read("$.collections"), hasSize(2));
         assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_1", "pubId_3"));
+        assertThat(json.read("$.collections[0].ownedByUser"), is(false));
+        assertThat(json.read("$.collections[1].ownedByUser"), is(true));
     }
 
     @Test
