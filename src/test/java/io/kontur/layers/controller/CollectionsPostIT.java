@@ -57,9 +57,8 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("id is required")
     @WithMockUser("pigeon")
-    public void collectionIdCantBeNull() throws Exception {
+    public void collectionIdCanBeNull_9028() throws Exception {
         //GIVEN
         CollectionCreateDto collection = buildCollectionCreateDtoN(1);
         collection.setId(null);
@@ -68,19 +67,18 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.writeJson(collection)))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse().getContentAsString();
 
         //THEN
         final DocumentContext json = JsonPath.parse(response);
-        assertThat(json, hasJsonPath("$.fieldErrors.id.msg", not(emptyOrNullString())));
+        assertThat(json, hasJsonPath("$.id", not(emptyOrNullString())));
     }
 
     @Test
-    @DisplayName("empty string is not valid id #8697")
     @WithMockUser("pigeon")
-    public void collectionIdCantBeEmpty_8697() throws Exception {
+    public void collectionIdCanBeEmpty_9028() throws Exception {
         //GIVEN
         CollectionCreateDto collection = buildCollectionCreateDtoN(1);
         collection.setId("");
@@ -89,13 +87,13 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.writeJson(collection)))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse().getContentAsString();
 
         //THEN
         final DocumentContext json = JsonPath.parse(response);
-        assertThat(json, hasJsonPath("$.fieldErrors.id.msg", not(emptyOrNullString())));
+        assertThat(json, hasJsonPath("$.id", not(emptyOrNullString())));
     }
 
     @Test
