@@ -5,7 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
-import io.kontur.layers.repository.model.Feature;
+import io.kontur.layers.repository.model.LayerFeature;
 import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -68,10 +68,10 @@ public class CollectionsListGetIT extends AbstractIntegrationTest {
     @Disabled("As extent is optional it was removed for performance reason #8857")
     public void testCollectionExtents() throws Exception {
         //GIVEN
-        final Feature f1 = buildPolygonN(1);
-        final Feature f2 = buildPolygonN(2);
-        final Feature f3 = buildPolygonN(3);
-        final Feature f4 = buildPolygonN(4);
+        final LayerFeature f1 = buildPolygonN(1);
+        final LayerFeature f2 = buildPolygonN(2);
+        final LayerFeature f3 = buildPolygonN(3);
+        final LayerFeature f4 = buildPolygonN(4);
 
         final long id1 = testDataMapper.insertLayer(buildLayerN(1));
         testDataMapper.insertFeature(id1, f1);

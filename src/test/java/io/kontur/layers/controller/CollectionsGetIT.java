@@ -2,7 +2,7 @@ package io.kontur.layers.controller;
 
 import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
-import io.kontur.layers.repository.model.Feature;
+import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.repository.model.Layer;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -120,10 +120,10 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
-        final Feature feature1 = buildPolygonN(1);
-        final Feature feature2 = buildPolygonN(2);
-        final Feature feature3 = buildPolygonN(3);
-        final Feature feature4 = buildPolygonN(4);
+        final LayerFeature feature1 = buildPolygonN(1);
+        final LayerFeature feature2 = buildPolygonN(2);
+        final LayerFeature feature3 = buildPolygonN(3);
+        final LayerFeature feature4 = buildPolygonN(4);
         testDataMapper.insertFeatures(id, List.of(feature1, feature2, feature3, feature4));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId()))
@@ -145,7 +145,7 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
-        final Feature feature1 = buildPolygonN(1);
+        final LayerFeature feature1 = buildPolygonN(1);
         testDataMapper.insertFeature(id, feature1);
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId()))

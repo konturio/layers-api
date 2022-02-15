@@ -1,6 +1,6 @@
 package io.kontur.layers.repository;
 
-import io.kontur.layers.repository.model.Feature;
+import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.repository.model.Layer;
 import org.apache.ibatis.annotations.*;
 
@@ -21,7 +21,7 @@ public interface TestDataMapper {
     @Select({"with ins as (insert into layers_features (layer_id, feature_id, geom, properties, last_updated) values ",
             "(#{collectionId},#{feature.featureId},ST_GeomFromGeoJSON(#{feature.geometry}),#{feature.properties}::jsonb,#{feature.lastUpdated}) returning feature_id) ",
             "select * from ins"})
-    String insertFeature(@Param("collectionId") long collectionId, @Param("feature") Feature feature);
+    String insertFeature(@Param("collectionId") long collectionId, @Param("feature") LayerFeature feature);
 
     @Insert({"<script>",
             "insert into layers_features (layer_id, feature_id, geom, properties, last_updated) values ",
@@ -29,5 +29,5 @@ public interface TestDataMapper {
             "(#{collectionId},#{feature.featureId},ST_GeomFromGeoJSON(#{feature.geometry}),#{feature.properties}::jsonb,#{feature.lastUpdated}) ",
             "</foreach> ",
             "</script>"})
-    void insertFeatures(@Param("collectionId") long collectionId, @Param("features") List<Feature> features);
+    void insertFeatures(@Param("collectionId") long collectionId, @Param("features") List<LayerFeature> features);
 }

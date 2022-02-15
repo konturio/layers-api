@@ -5,14 +5,16 @@ import io.kontur.layers.controller.exceptions.WebApplicationException;
 import io.kontur.layers.dto.*;
 import io.kontur.layers.repository.FeatureMapper;
 import io.kontur.layers.repository.LayerMapper;
-import io.kontur.layers.repository.model.Feature;
+import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.util.AuthorizationUtils;
 import io.kontur.layers.util.JsonUtil;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
 
@@ -59,7 +61,7 @@ public class FeatureService {
         Integer numberMatched = featureMapper.getFeaturesTotal(collectionId, geometryString, bbox, dateTimeRange, list)
                 .orElse(null);
 
-        List<Feature> features = featureMapper.getFeatures(collectionId, limit, offset, geometryString, bbox,
+        List<LayerFeature> features = featureMapper.getFeatures(collectionId, limit, offset, geometryString, bbox,
                 dateTimeRange, list);
         FeatureCollectionGeoJSON fc = convertFeatures(collectionId, title, features)
                 .numberMatched(numberMatched);
@@ -75,7 +77,7 @@ public class FeatureService {
     }
 
     private FeatureCollectionGeoJSON convertFeatures(String collectionId, String title,
-                                                                 List<Feature> features) {
+                                                                 List<LayerFeature> features) {
         return new FeatureCollectionGeoJSON()
                 .timeStamp(OffsetDateTime.now(ZoneOffset.UTC))
                 .features(featureServiceHelper.toFeatureGeoJson(features, collectionId, title))
@@ -95,28 +97,42 @@ public class FeatureService {
     public Optional<FeatureGeoJSON> getFeature(String collectionId, String featureId) {
         String title = getLayerTitle(collectionId);
 
-        Optional<Feature> feature = featureMapper.getFeature(collectionId, featureId);
+        Optional<LayerFeature> feature = featureMapper.getFeature(collectionId, featureId);
 
         return feature.map(f -> featureServiceHelper.toFeatureGeoJson(f, collectionId, title));
     }
 
     @Transactional
     public FeatureCollectionGeoJSON upsertFeatures(String collectionId, FeatureCollection fc) {
-        final Layer layer = layerMapper.getOwnedLayer(collectionId, AuthorizationUtils.getAuthenticatedUserName())
+        String userName = AuthorizationUtils.getAuthenticatedUserName();
+        final Layer layer = layerMapper.getOwnedLayer(collectionId, userName)
                 .orElseThrow(
                         () -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found", collectionId)));
 
-        List<Feature> features = Arrays.stream(fc.getFeatures())
-                .map(f -> new Feature(layer.getId(),
-                        String.valueOf(f.getId()),
+        List<LayerFeature> features = Arrays.stream(fc.getFeatures())
+                .map(f -> new LayerFeature(layer.getId(),
+                        getOrGenerateFeatureId(f),
                         f.getGeometry(),
                         f.getProperties() != null ? JsonUtil.writeObjectNode(f.getProperties()) : null,
                         OffsetDateTime.now()))
                 .collect(Collectors.toList());
 
-        List<Feature> featureList = featureMapper.upsertFeatures(features);
+        List<LayerFeature> result = featureMapper.upsertFeatures(features);
 
-        return convertFeatures(collectionId, layer.getName(), featureList);
+        List<String> resultedIds = result.stream()
+                .map(LayerFeature::getFeatureId)
+                .toList();
+
+        featureMapper.deleteFeaturesNotInList(userName, collectionId, resultedIds);
+
+        return convertFeatures(collectionId, layer.getName(), result);
+    }
+
+    private String getOrGenerateFeatureId(Feature feature) {
+        if (feature.getId() == null || StringUtils.isBlank(String.valueOf(feature.getId()))) {
+            return RandomStringUtils.randomAlphanumeric(8);
+        }
+        return String.valueOf(feature.getId());
     }
 
     @Transactional
