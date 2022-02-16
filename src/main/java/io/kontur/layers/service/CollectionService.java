@@ -49,8 +49,10 @@ public class CollectionService {
     public Collections getCollections(Geometry geometry, Integer limit,
                                       Integer offset, boolean includeLinks, CollectionOwner collectionOwner) {
         String geometryString = geometry != null ? JsonUtil.writeJson(geometry) : null;
-        final List<Layer> layers = layerMapper.getLayers(geometryString, AuthorizationUtils.getAuthenticatedUserName(), limit, offset, collectionOwner);
-        int numberMatched = layerMapper.getLayersTotal(geometryString, AuthorizationUtils.getAuthenticatedUserName(), collectionOwner);
+        String userName = AuthorizationUtils.getAuthenticatedUserName();
+        CollectionOwner ownershipFilter = StringUtils.isBlank(userName) ? CollectionOwner.ANY : collectionOwner;
+        final List<Layer> layers = layerMapper.getLayers(geometryString, userName, limit, offset, ownershipFilter);
+        int numberMatched = layerMapper.getLayersTotal(geometryString, userName, ownershipFilter);
 
         final List<Collection> collections = layers.stream().map(this::toCollection).collect(Collectors.toList());
 
