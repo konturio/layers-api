@@ -34,6 +34,9 @@
             or ST_Intersects(l.geom, ST_GeomFromGeoJSON(#{geometry})))
         </if>
         <choose>
+            <when test="ownedByUser == true">
+                and owner = #{userName}
+            </when>
             <when test="userName != null">
                 and (is_public or owner = #{userName})
             </when>
@@ -75,6 +78,9 @@
                            or ST_Intersects(l.geom, ST_GeomFromGeoJSON(#{geometry})))
                    </if>
                    <choose>
+                       <when test="ownedByUser == true">
+                           and owner = #{userName}
+                       </when>
                        <when test="userName != null">
                            and (is_public or owner = #{userName})
                        </when>

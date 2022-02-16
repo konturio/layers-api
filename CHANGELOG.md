@@ -9,6 +9,8 @@
 - Enriched layers with featureProperties field
 - Add ownedByUser layer flag
 - Layer ID is optional for create operations. Will be generated if missing
+- Layers styles are saved in DB now
+- One can search only through collections owned by themselves
 
 #### Changed
 - Bug fixes

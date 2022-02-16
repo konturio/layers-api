@@ -47,10 +47,10 @@ public class CollectionService {
 
     @Transactional(readOnly = true)
     public Collections getCollections(Geometry geometry, Integer limit,
-                                      Integer offset, boolean includeLinks) {
+                                      Integer offset, boolean includeLinks, Boolean ownedByUser) {
         String geometryString = geometry != null ? JsonUtil.writeJson(geometry) : null;
-        final List<Layer> layers = layerMapper.getLayers(geometryString, AuthorizationUtils.getAuthenticatedUserName(), limit, offset);
-        int numberMatched = layerMapper.getLayersTotal(geometryString, AuthorizationUtils.getAuthenticatedUserName());
+        final List<Layer> layers = layerMapper.getLayers(geometryString, AuthorizationUtils.getAuthenticatedUserName(), limit, offset, ownedByUser);
+        int numberMatched = layerMapper.getLayersTotal(geometryString, AuthorizationUtils.getAuthenticatedUserName(), ownedByUser);
 
         final List<Collection> collections = layers.stream().map(this::toCollection).collect(Collectors.toList());
 
