@@ -67,7 +67,7 @@ public class CollectionsApi {
             @Min(0)
             @RequestParam(value = "offset", defaultValue = "0") Integer offset) {
         int lmt = Math.min(limit == null ? COLLECTIONS_DEFAULT_LIMIT : limit, COLLECTIONS_LIMIT);
-        Collections collections = collectionService.getCollections(null, lmt, offset, true, false);
+        Collections collections = collectionService.getCollections(null, lmt, offset, true, CollectionOwner.ANY);
         return ResponseEntity.ok(collections);
     }
 
@@ -75,14 +75,14 @@ public class CollectionsApi {
     @Operation(summary = "search feature collections in the dataset", description = """
             ## Body parameters
             **geometry** filters collections that intersect with provided geometry \s
-            **ownedByUser** if true, returns only collections owned by a logged user""", tags = {"Capabilities"})
+            **collectionOwner** limit to collections created by authenticated user or created by others""", tags = {"Capabilities"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "The feature collections shared by this API.  The dataset is organized as one or more feature collections. This resource provides information about and access to the collections.  The response contains the list of collections. For each collection, a link to the items in the collection (path `/collections/{collectionId}/items`, link relation `items`) as well as key information about the collection. This information includes:  * A local identifier for the collection that is unique for the dataset; * A list of coordinate reference systems (CRS) in which geometries may be returned by the server. The first CRS is the default coordinate reference system (the default is always WGS 84 with axis order longitude/latitude); * An optional title and description for the collection; * An optional extent that can be used to provide an indication of the spatial and temporal extent of the collection - typically derived from the data; * An optional indicator about the type of the items in the collection (the default value, if the indicator is not provided, is 'feature').", content = @Content(schema = @Schema(implementation = Collections.class))),
             @ApiResponse(responseCode = "500", description = "A server error occurred.", content = @Content(schema = @Schema(implementation = Exception.class)))})
     public ResponseEntity searchCollections(
             @RequestBody @Valid CollectionsSearchDto body) {
         int lmt = Math.min(body.getLimit() == null ? COLLECTIONS_DEFAULT_LIMIT : body.getLimit(), COLLECTIONS_LIMIT);
-        Collections collections = collectionService.getCollections(body.getGeometry(), lmt, body.getOffset(), false, body.getOwnedByUser());
+        Collections collections = collectionService.getCollections(body.getGeometry(), lmt, body.getOffset(), false, body.getCollectionOwner());
         return ResponseEntity.ok(collections);
     }
 

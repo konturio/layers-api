@@ -13,7 +13,7 @@ public interface LayerStyleMapper {
     Optional<LayerStyle> getLayerStyle(@Param("layerId") Long layerId);
 
     ObjectNode insertLayerStyle(@Param("layerId") Long layerId,
-                           @Param("style") ObjectNode style);
+                                @Param("style") ObjectNode style);
 
     ObjectNode updateLayerStyle(@Param("layerStyleId") Long layerStyleId,
                                 @Param("style") ObjectNode style);

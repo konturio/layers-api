@@ -10,7 +10,7 @@
 - Add ownedByUser layer flag
 - Layer ID is optional for create operations. Will be generated if missing
 - Layers styles are saved in DB now
-- One can search only through collections owned by themselves
+- One can search only through collections created by themselves or others users
 
 #### Changed
 - Bug fixes

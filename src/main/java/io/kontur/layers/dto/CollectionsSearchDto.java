@@ -14,8 +14,8 @@ public class CollectionsSearchDto {
 
     @ValidGeoJSON
     private Geometry geometry;
-    @Schema(defaultValue = "false")
-    private Boolean ownedByUser;
+    @Schema(defaultValue = "ANY")
+    private CollectionOwner collectionOwner = CollectionOwner.ANY;
     @Min(1)
     @Schema(defaultValue = "10")
     private Integer limit = 10;

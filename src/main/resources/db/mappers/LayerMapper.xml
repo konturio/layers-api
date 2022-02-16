@@ -34,8 +34,11 @@
             or ST_Intersects(l.geom, ST_GeomFromGeoJSON(#{geometry})))
         </if>
         <choose>
-            <when test="ownedByUser == true">
+            <when test='collectionOwner.name().equals("ME")'>
                 and owner = #{userName}
+            </when>
+            <when test='collectionOwner.name().equals("NOT_ME")'>
+                and is_public and owner != #{userName}
             </when>
             <when test="userName != null">
                 and (is_public or owner = #{userName})
@@ -78,8 +81,11 @@
                            or ST_Intersects(l.geom, ST_GeomFromGeoJSON(#{geometry})))
                    </if>
                    <choose>
-                       <when test="ownedByUser == true">
+                       <when test='collectionOwner.name().equals("ME")'>
                            and owner = #{userName}
+                       </when>
+                       <when test='collectionOwner.name().equals("NOT_ME")'>
+                           and is_public and owner != #{userName}
                        </when>
                        <when test="userName != null">
                            and (is_public or owner = #{userName})
