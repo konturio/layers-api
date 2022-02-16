@@ -82,7 +82,15 @@
                            and is_public
                        </otherwise>
                    </choose>
-                   group by l.id limit #{limit} offset #{offset})
+                   group by l.id limit #{limit} offset #{offset}
+            ),
+        styles as (select distinct on (layer_id)
+                                                 ls1.id,
+                                                 ls1.layer_id,
+                                                 ls1.style_rule
+                from layers_style ls1
+                where ls1.layer_id in (select id from lrs)
+            )
         select lrs.*,
                ls.style_rule as legend,
                json_strip_nulls(json_build_object(
@@ -96,7 +104,7 @@
                    'mutuallyExclusive', cp.mutually_exclusive,
                    'order', cp."order")) as category
         from lrs
-            left join layers_style ls on ls.layer_id = lrs.id
+            left join styles ls on ls.layer_id = lrs.id
             left join layers_group_properties gp on gp.id = lrs.group_id
             left join layers_category_properties cp on cp.id = lrs.category_id
         order by lrs.id
