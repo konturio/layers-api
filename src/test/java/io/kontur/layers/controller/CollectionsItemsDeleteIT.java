@@ -1,7 +1,7 @@
 package io.kontur.layers.controller;
 
 import io.kontur.layers.repository.TestDataMapper;
-import io.kontur.layers.repository.model.Feature;
+import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.test.AbstractIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +30,7 @@ public class CollectionsItemsDeleteIT extends AbstractIntegrationTest {
         Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
 
-        Feature feature1 = buildPointN(1);
+        LayerFeature feature1 = buildPointN(1);
         String featureId = testDataMapper.insertFeature(id, feature1);
         testDataMapper.insertFeature(id, buildPointN(2));
 
@@ -53,7 +53,7 @@ public class CollectionsItemsDeleteIT extends AbstractIntegrationTest {
         Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
 
-        Feature feature1 = buildPointN(1);
+        LayerFeature feature1 = buildPointN(1);
         String featureId = testDataMapper.insertFeature(id, feature1);
         testDataMapper.insertFeature(id, buildPointN(2));
 

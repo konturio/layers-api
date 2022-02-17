@@ -2,7 +2,7 @@ package io.kontur.layers.controller;
 
 import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
-import io.kontur.layers.repository.model.Feature;
+import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.repository.model.Layer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ public class CollectionsItemsGetIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
-        final Feature feature = buildPolygonN(1);
+        final LayerFeature feature = buildPolygonN(1);
         testDataMapper.insertFeature(id, feature);
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items/" + feature.getFeatureId()))
@@ -93,7 +93,7 @@ public class CollectionsItemsGetIT extends AbstractIntegrationTest {
         final Layer layer = buildLayerN(1);
         layer.setVisible(false);
         final long id = testDataMapper.insertLayer(layer);
-        final Feature feature = buildPolygonN(1);
+        final LayerFeature feature = buildPolygonN(1);
         testDataMapper.insertFeature(id, feature);
         //WHEN
         //THEN

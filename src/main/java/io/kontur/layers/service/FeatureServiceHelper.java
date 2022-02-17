@@ -4,7 +4,7 @@ import io.kontur.layers.ApiConstants;
 import io.kontur.layers.dto.FeatureGeoJSON;
 import io.kontur.layers.dto.FeaturePropertiesFilter;
 import io.kontur.layers.dto.Link;
-import io.kontur.layers.repository.model.Feature;
+import io.kontur.layers.repository.model.LayerFeature;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -48,13 +48,13 @@ public class FeatureServiceHelper {
         return linkList;
     }
 
-    public List<FeatureGeoJSON> toFeatureGeoJson(List<Feature> features, String collectionId, String title) {
+    public List<FeatureGeoJSON> toFeatureGeoJson(List<LayerFeature> features, String collectionId, String title) {
         return features.stream()
                 .map(f -> toFeatureGeoJson(f, collectionId, title))
                 .collect(Collectors.toList());
     }
 
-    public FeatureGeoJSON toFeatureGeoJson(Feature feature, String collectionId, String title) {
+    public FeatureGeoJSON toFeatureGeoJson(LayerFeature feature, String collectionId, String title) {
         Link selfLink = linkFactory.createLocal(UriComponentsBuilder.fromPath(ApiConstants.COLLECTION_ITEM_ID_ENDPOINT)
                         .build(collectionId, feature.getFeatureId()).toString(),
                 SELF, APPLICATION_GEO_JSON);

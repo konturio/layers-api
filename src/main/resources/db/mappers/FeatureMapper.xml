@@ -1,7 +1,7 @@
 <!DOCTYPE mapper     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.kontur.layers.repository.FeatureMapper">
 
-    <select id="getFeature" resultType="io.kontur.layers.repository.model.Feature">
+    <select id="getFeature" resultType="io.kontur.layers.repository.model.LayerFeature">
         select feature_id             as featureid,
                layer_id               as layerid,
                properties,
@@ -43,7 +43,7 @@
         </foreach>
     </select>
 
-    <select id="getFeatures" resultType="io.kontur.layers.repository.model.Feature" useCache="false">
+    <select id="getFeatures" resultType="io.kontur.layers.repository.model.LayerFeature" useCache="false">
         select feature_id as featureId,
         layer_id as layerId,
         properties,
@@ -79,7 +79,7 @@
         order by feature_id limit #{limit} offset #{offset}
     </select>
 
-    <select id="upsertFeatures" parameterType="java.util.List"  resultType="io.kontur.layers.repository.model.Feature">
+    <select id="upsertFeatures" parameterType="java.util.List"  resultType="io.kontur.layers.repository.model.LayerFeature">
         with ins as (INSERT INTO layers_features (feature_id, layer_id, properties, geom)
         VALUES
                <foreach collection="features" item="item" open="(" separator="),(" close=")">
@@ -97,7 +97,7 @@
         from ins;
     </select>
 
-    <select id="deleteFeature" resultType="io.kontur.layers.repository.model.Feature">
+    <select id="deleteFeature" resultType="io.kontur.layers.repository.model.LayerFeature">
         with del as (delete from layers_features
             where feature_id = #{featureId}
                       and layer_id = (select id from layers
@@ -112,4 +112,16 @@
             last_updated           as lastupdated
         from del
     </select>
+
+    <delete id="deleteFeaturesNotInList">
+        delete from layers_features
+        where layer_id = (select id from layers
+            where public_id = #{collectionId}
+            and owner = #{owner})
+        <foreach item="item" index="index" collection="featureIds"
+                 open="AND feature_id not in (" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
 </mapper>

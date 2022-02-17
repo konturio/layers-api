@@ -1,0 +1,27 @@
+<!DOCTYPE mapper     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.kontur.layers.repository.LayerStyleMapper">
+
+<!--    TODO DN2 can't work with multiple styles for a layer. Remove limit 1 when it can.  -->
+    <select id="getLayerStyle" resultType="io.kontur.layers.repository.model.LayerStyle">
+        select style_rule
+        from layers_style
+        where layer_id = #{layerId}
+        limit 1;
+    </select>
+
+    <select id="insertLayerStyle" resultType="com.fasterxml.jackson.databind.node.ObjectNode">
+        with ins as (INSERT INTO layers_style (layer_id, style_rule)
+            VALUES (#{layerId}, #{style}::jsonb)
+            RETURNING *)
+        select style_rule
+        from ins;
+    </select>
+
+    <select id="updateLayerStyle" resultType="com.fasterxml.jackson.databind.node.ObjectNode">
+        with upd as (UPDATE layers_style SET style_rule = #{style}::jsonb
+            where id = #{layerStyleId}
+            RETURNING *)
+        select style_rule
+        from upd;
+    </select>
+</mapper>

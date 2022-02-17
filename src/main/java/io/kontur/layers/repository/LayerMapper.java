@@ -1,5 +1,6 @@
 package io.kontur.layers.repository;
 
+import io.kontur.layers.dto.CollectionOwner;
 import io.kontur.layers.repository.model.Layer;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -13,17 +14,19 @@ public interface LayerMapper {
     Optional<Layer> getOwnedLayer(String publicId, String userName);
 
     default Optional<Layer> getLayer(String publicId, String userName) {
-        return getLayers(null, userName,1, 0, publicId).stream().findFirst();
+        return getLayers(null, userName,1, 0, CollectionOwner.ANY, publicId).stream().findFirst();
     }
 
     Integer getLayersTotal(@Param("geometry") String geometry,
-                          @Param("userName") String userName,
-                          @Param("publicIds") String... publicIds);
+                           @Param("userName") String userName,
+                           @Param("collectionOwner") CollectionOwner collectionOwner,
+                           @Param("publicIds") String... publicIds);
 
     List<Layer> getLayers(@Param("geometry") String geometry,
                           @Param("userName") String userName,
                           @Param("limit") Integer limit,
                           @Param("offset") Integer offset,
+                          @Param("collectionOwner") CollectionOwner collectionOwner,
                           @Param("publicIds") String... publicIds);
 
     Layer insertLayer(Layer layer);

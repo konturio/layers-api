@@ -1,6 +1,6 @@
 package io.kontur.layers.repository;
 
-import io.kontur.layers.repository.model.Feature;
+import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.repository.model.Layer;
 import org.apache.ibatis.annotations.*;
 
@@ -13,15 +13,15 @@ public interface TestDataMapper {
             "delete from layers"})
     void databaseCleanup();
 
-    @Select({"with ins as (insert into layers (public_id, name, description, geom, last_updated, source_updated, copyrights, properties, is_public, is_visible, owner, type, url) values ",
-            "(#{publicId},#{name},#{description},#{geometry}::geometry,#{lastUpdated},#{sourceLastUpdated},#{copyrights},#{properties}::jsonb,#{isPublic},#{isVisible},#{owner},#{type},#{url}) returning id) ",
+    @Select({"with ins as (insert into layers (public_id, name, description, geom, last_updated, source_updated, copyrights, properties, is_public, is_visible, owner, type, url, feature_properties) values ",
+            "(#{publicId},#{name},#{description},#{geometry}::geometry,#{lastUpdated},#{sourceLastUpdated},#{copyrights},#{properties}::jsonb,#{isPublic},#{isVisible},#{owner},#{type},#{url},#{featureProperties}::jsonb) returning id) ",
             "select * from ins"})
     long insertLayer(Layer layer);
 
     @Select({"with ins as (insert into layers_features (layer_id, feature_id, geom, properties, last_updated) values ",
             "(#{collectionId},#{feature.featureId},ST_GeomFromGeoJSON(#{feature.geometry}),#{feature.properties}::jsonb,#{feature.lastUpdated}) returning feature_id) ",
             "select * from ins"})
-    String insertFeature(@Param("collectionId") long collectionId, @Param("feature") Feature feature);
+    String insertFeature(@Param("collectionId") long collectionId, @Param("feature") LayerFeature feature);
 
     @Insert({"<script>",
             "insert into layers_features (layer_id, feature_id, geom, properties, last_updated) values ",
@@ -29,5 +29,5 @@ public interface TestDataMapper {
             "(#{collectionId},#{feature.featureId},ST_GeomFromGeoJSON(#{feature.geometry}),#{feature.properties}::jsonb,#{feature.lastUpdated}) ",
             "</foreach> ",
             "</script>"})
-    void insertFeatures(@Param("collectionId") long collectionId, @Param("features") List<Feature> features);
+    void insertFeatures(@Param("collectionId") long collectionId, @Param("features") List<LayerFeature> features);
 }

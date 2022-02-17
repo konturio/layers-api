@@ -3,7 +3,6 @@ package io.kontur.layers.controller;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import io.kontur.layers.repository.TestDataMapper;
-import io.kontur.layers.repository.model.Feature;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.test.AbstractIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -35,15 +34,16 @@ public class CollectionsItemsPutIT extends AbstractIntegrationTest {
     private TestDataMapper testDataMapper;
 
     @Test
-    @DisplayName("should upsert items")
+    @DisplayName("should upsert items and remove old ones")
     @WithMockUser("owner_1")
     public void testPutItems() throws Exception {
         //GIVEN
         Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
 
-        Feature feature1 = buildPointN(1);
-        testDataMapper.insertFeature(id, feature1);
+        testDataMapper.insertFeature(id, buildPointN(1));
+        testDataMapper.insertFeature(id, buildPointN(10));
+        testDataMapper.insertFeature(id, buildPointN(100));
 
         String updatedGeoJson = "{\"type\":\"FeatureCollection\",\"features\":[{\"id\":\"featureId_1\",\"type\":\"Feature\",\"properties\":{\"prop1\":\"propValue1_updated\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.96484375,39.774769485295465]}},{\"id\":\"featureId_2\",\"type\":\"Feature\",\"properties\":{\"prop1\":\"propValue2_inserted\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[9.2724609375,39.50404070558415]}}]}";
 
@@ -98,8 +98,14 @@ public class CollectionsItemsPutIT extends AbstractIntegrationTest {
         Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
 
-        Feature feature1 = buildPointN(1);
-        testDataMapper.insertFeature(id, feature1);
+        testDataMapper.insertFeature(id, buildPointN(1));
+        testDataMapper.insertFeature(id, buildPointN(10));
+        testDataMapper.insertFeature(id, buildPointN(100));
+
+        Layer layer2 = buildLayerN(2);
+        final long layerId2 = testDataMapper.insertLayer(layer2);
+        testDataMapper.insertFeature(layerId2, buildPointN(10));
+
 
         String updatedGeoJson = "{\"type\":\"FeatureCollection\",\"features\":[{\"id\":\"featureId_1\",\"type\":\"Feature\",\"properties\":{\"prop1\":\"propValue1_updated\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.96484375,39.774769485295465]}},{\"id\":\"featureId_2\",\"type\":\"Feature\",\"properties\":{\"prop1\":\"propValue2_inserted\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[9.2724609375,39.50404070558415]}}]}";
 
@@ -144,6 +150,17 @@ public class CollectionsItemsPutIT extends AbstractIntegrationTest {
         assertThat(json,
                 hasJsonPath("$.features[0].links[?(@.rel=='collection' && @.type=='application/geo+json')].href",
                         contains(url(BASE_URL + "/collections/pubId_1"))));
+
+        //WHEN
+        String response2 = mockMvc.perform(get("/collections/" + layer2.getPublicId() + "/items"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_GEO_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json2 = JsonPath.parse(response2);
+        assertThat(json2, hasJsonPath("$.features", hasSize(1)));
     }
 
     @Test
@@ -203,6 +220,30 @@ public class CollectionsItemsPutIT extends AbstractIntegrationTest {
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json, hasJsonPath("$.fieldErrors.id.msg", not(emptyOrNullString())));
 
+    }
+
+    @Test
+    @WithMockUser("owner_1")
+    public void emptyIdIsGenerated_9028() throws Exception {
+        //GIVEN
+        Layer layer = buildLayerN(1);
+        testDataMapper.insertLayer(layer);
+
+        String updatedGeoJson = "{\"type\":\"FeatureCollection\",\"features\":[{\"id\":\"\",\"type\":\"Feature\",\"properties\":{\"prop1\":\"propValue1_updated\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.96484375,39.774769485295465]}}]}";
+
+        //WHEN
+        String response = mockMvc.perform(put("/collections/" + layer.getPublicId() + "/items")
+                        .contentType(APPLICATION_JSON)
+                        .content(updatedGeoJson))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_GEO_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.features", hasSize(1)));
+        assertThat(json, hasJsonPath("$.features[0].id", not(emptyOrNullString())));
     }
 
     @Test

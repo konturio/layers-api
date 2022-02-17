@@ -51,14 +51,16 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.copyrights", is("copyrights_1")));
         assertThat(json, hasJsonPath("$.properties.prop1", is("propValue1_1")));
         assertThat(json, hasJsonPath("$.properties.prop2", is("propValue2_1")));
+        assertThat(json, hasJsonPath("$.legend.legend1", is("legendValue1_1")));
+        assertThat(json, hasJsonPath("$.legend.legend2", is("legendValue2_1")));
+        assertThat(json, hasJsonPath("$.featureProperties.featureProp1", is("featureProperty_1")));
         assertThat(json, hasJsonPath("$.links[?(@.rel=='tiles')].href", contains(url("https://www.example.com"))));
         assertThat(json, hasNoJsonPath("$.extent"));//absent because no features
     }
 
     @Test
-    @DisplayName("id is required")
     @WithMockUser("pigeon")
-    public void collectionIdCantBeNull() throws Exception {
+    public void collectionIdCanBeNull_9028() throws Exception {
         //GIVEN
         CollectionCreateDto collection = buildCollectionCreateDtoN(1);
         collection.setId(null);
@@ -67,19 +69,18 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.writeJson(collection)))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse().getContentAsString();
 
         //THEN
         final DocumentContext json = JsonPath.parse(response);
-        assertThat(json, hasJsonPath("$.fieldErrors.id.msg", not(emptyOrNullString())));
+        assertThat(json, hasJsonPath("$.id", not(emptyOrNullString())));
     }
 
     @Test
-    @DisplayName("empty string is not valid id #8697")
     @WithMockUser("pigeon")
-    public void collectionIdCantBeEmpty_8697() throws Exception {
+    public void collectionIdCanBeEmpty_9028() throws Exception {
         //GIVEN
         CollectionCreateDto collection = buildCollectionCreateDtoN(1);
         collection.setId("");
@@ -88,13 +89,13 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.writeJson(collection)))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse().getContentAsString();
 
         //THEN
         final DocumentContext json = JsonPath.parse(response);
-        assertThat(json, hasJsonPath("$.fieldErrors.id.msg", not(emptyOrNullString())));
+        assertThat(json, hasJsonPath("$.id", not(emptyOrNullString())));
     }
 
     @Test

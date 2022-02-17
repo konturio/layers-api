@@ -51,6 +51,9 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json.read("$.links"), is(empty()));
         assertThat(json.read("$.collections"), hasSize(3));
+
+        assertThat(json, hasJsonPath("$.collections[0].featureProperties.featureProp1", is("featureProperty_1")));
+
     }
 
     @Test
@@ -209,9 +212,8 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("should return collections owned by a user")
     @WithMockUser("owner_3")
-    public void testGetOwnedCollection() throws Exception {
+    public void testGetOwnedAndPublicCollections() throws Exception {
         //GIVEN
         testDataMapper.insertLayer(buildLayerN(1));
         Layer layer2 = buildLayerN(2);
@@ -232,7 +234,93 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
         //THEN
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json.read("$.collections"), hasSize(2));
+        assertThat(json.read("$.numberMatched"), is(2));
+        assertThat(json.read("$.numberReturned"), is(2));
         assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_1", "pubId_3"));
+    }
+
+    @Test
+    @WithMockUser("owner_3")
+    public void testGetOwnedAndPublicCollections_2() throws Exception {
+        //GIVEN
+        testDataMapper.insertLayer(buildLayerN(1));
+        Layer layer2 = buildLayerN(2);
+        ReflectionTestUtils.setField(layer2, "isPublic", false);
+        testDataMapper.insertLayer(layer2);
+        Layer layer3 = buildLayerN(3);
+        ReflectionTestUtils.setField(layer3, "isPublic", false);
+        testDataMapper.insertLayer(layer3);
+        //WHEN
+        String response = mockMvc.perform(post("/collections/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"collectionOwner\": \"ANY\"}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json.read("$.collections"), hasSize(2));
+        assertThat(json.read("$.numberMatched"), is(2));
+        assertThat(json.read("$.numberReturned"), is(2));
+        assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_1", "pubId_3"));
+    }
+
+    @Test
+    @WithMockUser("owner_3")
+    public void testGetOnlyOwnedCollection() throws Exception {
+        //GIVEN
+        testDataMapper.insertLayer(buildLayerN(1));
+        Layer layer2 = buildLayerN(2);
+        ReflectionTestUtils.setField(layer2, "isPublic", false);
+        testDataMapper.insertLayer(layer2);
+        Layer layer3 = buildLayerN(3);
+        ReflectionTestUtils.setField(layer3, "isPublic", false);
+        testDataMapper.insertLayer(layer3);
+        //WHEN
+        String response = mockMvc.perform(post("/collections/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"collectionOwner\": \"ME\"}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json.read("$.collections"), hasSize(1));
+        assertThat(json.read("$.numberMatched"), is(1));
+        assertThat(json.read("$.numberReturned"), is(1));
+        assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_3"));
+    }
+
+    @Test
+    @WithMockUser("owner_3")
+    public void testGetOthersCollections() throws Exception {
+        //GIVEN
+        testDataMapper.insertLayer(buildLayerN(1));
+        Layer layer2 = buildLayerN(2);
+        ReflectionTestUtils.setField(layer2, "isPublic", false);
+        testDataMapper.insertLayer(layer2);
+        Layer layer3 = buildLayerN(3);
+        ReflectionTestUtils.setField(layer3, "isPublic", false);
+        testDataMapper.insertLayer(layer3);
+        //WHEN
+        String response = mockMvc.perform(post("/collections/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"collectionOwner\": \"NOT_ME\"}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json.read("$.collections"), hasSize(1));
+        assertThat(json.read("$.numberMatched"), is(1));
+        assertThat(json.read("$.numberReturned"), is(1));
+        assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_1"));
     }
 
     @Test

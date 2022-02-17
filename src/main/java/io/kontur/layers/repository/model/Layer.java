@@ -26,6 +26,7 @@ public class Layer {
     private String copyrights;
     private ObjectNode properties;
     private ObjectNode legend;
+    private ObjectNode featureProperties;
     private LayersGroupProperties group;
     private LayersCategoryProperties category;
     private OffsetDateTime lastUpdated;

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.layers.dto.CollectionCreateDto;
 import io.kontur.layers.dto.CollectionUpdateDto;
 import io.kontur.layers.dto.Link;
-import io.kontur.layers.repository.model.Feature;
+import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.util.JsonUtil;
 import org.locationtech.jts.io.ParseException;
@@ -30,52 +30,55 @@ public class TestDataHelper {
         props.put("prop1", "propValue1_" + n);
         props.put("prop2", "propValue2_" + n);
 
+        final ObjectNode featureProps = objectMapper.createObjectNode();
+        featureProps.put("featureProp1", "featureProperty_" + n);
+
         return new Layer(null, "pubId_" + n, "name_" + n, "description_" + n, null, null,
                 String.format("SRID=4326;POLYGON((0 0, %1$d 0, %1$d %1$d, 0 %1$d, 0 0))", n),
-                "copyrights_" + n, props, null, null, null,
+                "copyrights_" + n, props, null, featureProps, null, null,
                 OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusSeconds(n),
                 OffsetDateTime.of(2020, 4, 15, 15, 0, 0, 0, offset()).plusSeconds(n),
                 null, null, true, true, "owner_" + n);
     }
 
-    public static Feature buildPointN(int n) {
+    public static LayerFeature buildPointN(int n) {
         return buildFeatureN(n, String.format("POINT(0 %1$d)", n));
     }
 
-    public static Feature buildMultipointN(int n) {
+    public static LayerFeature buildMultipointN(int n) {
         return buildFeatureN(n, String.format("MULTIPOINT((%1$d 0),(0 %1$d))", n));
     }
 
-    public static Feature buildLineStringN(int n) {
+    public static LayerFeature buildLineStringN(int n) {
         return buildFeatureN(n, String.format("LINESTRING(0 0, %1$d 0, %1$d %1$d)", n));
     }
 
-    public static Feature buildMultiLineStringN(int n) {
+    public static LayerFeature buildMultiLineStringN(int n) {
         return buildFeatureN(n, String.format("MULTILINESTRING((0 0, %1$d 0, %1$d %1$d),(%1$d 0, 0 0))", n));
     }
 
-    public static Feature buildMultiPolygonN(int n) {
+    public static LayerFeature buildMultiPolygonN(int n) {
         return buildFeatureN(n, String.format(
                 "MULTIPOLYGON(((0 0, %1$d 0, %1$d %1$d, 0 %1$d, 0 0)),((0 0, %2$d 0, %2$d %2$d, 0 %2$d, 0 0)))",
                 n, n + 10));
     }
 
-    public static Feature buildGeometryCollectionN(int n) {
+    public static LayerFeature buildGeometryCollectionN(int n) {
         return buildFeatureN(n,
                 String.format("GEOMETRYCOLLECTION(POINT(0 %1$d),LINESTRING(0 0, %1$d 0, %1$d %1$d))", n));
     }
 
-    public static Feature buildPolygonN(int n) {
+    public static LayerFeature buildPolygonN(int n) {
         return buildFeatureN(n, String.format("POLYGON((0 0, %1$d 0, %1$d %1$d, 0 %1$d, 0 0))", n));
     }
 
-    public static Feature buildFeatureN(int n, String wkt) {
+    public static LayerFeature buildFeatureN(int n, String wkt) {
         final ObjectNode props = objectMapper.createObjectNode();
         props.put("prop1", "propValue1_" + n);
         props.put("prop2", "propValue2_" + n);
         final OffsetDateTime lastUpdated = OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusMinutes(n);
         try {
-            return new Feature(null, "featureId_" + n, wkt == null ? null : geoJSONWriter.write(wktReader.read(wkt)), props, lastUpdated);
+            return new LayerFeature(null, "featureId_" + n, wkt == null ? null : geoJSONWriter.write(wktReader.read(wkt)), props, lastUpdated);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
@@ -89,8 +92,11 @@ public class TestDataHelper {
 
     public static CollectionCreateDto buildCollectionCreateDtoN(int n) {
         final ObjectNode props = objectMapper.createObjectNode();
-        props.put("prop1", "propValue1_" + n);
         props.put("prop2", "propValue2_" + n);
+        props.put("prop1", "propValue1_" + n);
+
+        final ObjectNode featureProps = objectMapper.createObjectNode();
+        featureProps.put("featureProp1", "featureProperty_" + n);
 
         final ObjectNode legend = objectMapper.createObjectNode();
         legend.put("legend1", "legendValue1_" + n);
@@ -104,6 +110,7 @@ public class TestDataHelper {
         dto.setProperties(props);
         dto.setItemType(CollectionUpdateDto.Type.tiles);
         dto.setLegend(legend);
+        dto.setFeatureProperties(featureProps);
         dto.setGeometry(JsonUtil.readJson(String.format("{\"type\":\"Point\",\"coordinates\":[0,%1$d]}", n), Geometry.class));
         dto.setCopyrights("copyrights_" + n);
         return dto;

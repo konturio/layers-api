@@ -5,7 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.LayerMapper;
 import io.kontur.layers.repository.TestDataMapper;
-import io.kontur.layers.repository.model.Feature;
+import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.service.FeatureService;
 import org.junit.jupiter.api.DisplayName;
@@ -430,7 +430,7 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         final Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
         IntStream.rangeClosed(0, 101).forEach(value -> {
-            final List<Feature> features = IntStream.rangeClosed(1, 1001)
+            final List<LayerFeature> features = IntStream.rangeClosed(1, 1001)
                     .mapToObj(i -> buildFeatureN(value * 10000 + i, null))
                     .collect(Collectors.toList());
             testDataMapper.insertFeatures(id, features);
@@ -573,7 +573,7 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         final long id = testDataMapper.insertLayer(layer);
         final String wkt = "MULTIPOLYGON(((0 0,4 0,4 4,0 4,0 0),(1 1,2 1,2 2,1 2,1 1)), ((-1 -1,-1 -2,-2 -2,-2 -1,-1 -1)))";
         final OffsetDateTime lastUpdated = OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusMinutes(10);
-        testDataMapper.insertFeature(id, new Feature(null, "featureId_" + 10, new GeoJSONWriter().write(new WKTReader().read(wkt)), null, lastUpdated));
+        testDataMapper.insertFeature(id, new LayerFeature(null, "featureId_" + 10, new GeoJSONWriter().write(new WKTReader().read(wkt)), null, lastUpdated));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
                 .andDo(print())
@@ -658,9 +658,9 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         final Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
 
-        final Feature feature1 = buildPolygonN(1);
+        final LayerFeature feature1 = buildPolygonN(1);
         ((ObjectNode) feature1.getProperties()).put("prop1", "xx%aa");
-        final Feature feature2 = buildPolygonN(2);
+        final LayerFeature feature2 = buildPolygonN(2);
         ((ObjectNode) feature2.getProperties()).put("prop1", "%x%");
 
         testDataMapper.insertFeatures(id, List.of(feature1, feature2));
@@ -775,9 +775,9 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
-        final Feature feature1 = buildPolygonN(1);
+        final LayerFeature feature1 = buildPolygonN(1);
         testDataMapper.insertFeature(id, feature1);
-        final Feature feature2 = buildPolygonN(2);
+        final LayerFeature feature2 = buildPolygonN(2);
         testDataMapper.insertFeature(id, feature2);
         testDataMapper.insertFeature(id, buildPolygonN(3));
         //WHEN
@@ -799,9 +799,9 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
-        final Feature feature1 = buildPolygonN(1);
+        final LayerFeature feature1 = buildPolygonN(1);
         testDataMapper.insertFeature(id, feature1);
-        final Feature feature2 = buildPolygonN(2);
+        final LayerFeature feature2 = buildPolygonN(2);
         testDataMapper.insertFeature(id, feature2);
         testDataMapper.insertFeature(id, buildPolygonN(3));
         //WHEN
@@ -823,9 +823,9 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
-        final Feature feature1 = buildPolygonN(1);
+        final LayerFeature feature1 = buildPolygonN(1);
         testDataMapper.insertFeature(id, feature1);
-        final Feature feature2 = buildPolygonN(2);
+        final LayerFeature feature2 = buildPolygonN(2);
         testDataMapper.insertFeature(id, feature2);
         testDataMapper.insertFeature(id, buildPolygonN(3));
         //WHEN
@@ -881,7 +881,7 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         final long id = testDataMapper.insertLayer(layer);
-        final Feature feature1 = buildPolygonN(1);
+        final LayerFeature feature1 = buildPolygonN(1);
         final OffsetDateTime someDate = OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset());
         feature1.setLastUpdated(someDate);
         testDataMapper.insertFeature(id, feature1);
