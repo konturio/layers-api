@@ -6,14 +6,18 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class LayerStyle {
+public class ApplicationLayer {
 
-    private Long id;
-    private Long layerId;
+    private UUID appId;
+    private String layerId;
+    private Boolean isDefault;
     private ObjectNode styleRule;
+    private ObjectNode displayRule;
 
 }

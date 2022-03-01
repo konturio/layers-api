@@ -65,4 +65,10 @@ public class Collection {
 
     @JsonProperty("ownedByUser")
     private boolean ownedByUser;
+
+    @JsonProperty("styleRule")
+    private ObjectNode styleRule;
+
+    @JsonProperty("displayRule")
+    private ObjectNode displayRule;
 }

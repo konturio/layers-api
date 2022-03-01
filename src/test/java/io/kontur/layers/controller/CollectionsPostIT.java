@@ -51,8 +51,6 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.copyrights", is("copyrights_1")));
         assertThat(json, hasJsonPath("$.properties.prop1", is("propValue1_1")));
         assertThat(json, hasJsonPath("$.properties.prop2", is("propValue2_1")));
-        assertThat(json, hasJsonPath("$.legend.legend1", is("legendValue1_1")));
-        assertThat(json, hasJsonPath("$.legend.legend2", is("legendValue2_1")));
         assertThat(json, hasJsonPath("$.featureProperties.featureProp1", is("featureProperty_1")));
         assertThat(json, hasJsonPath("$.links[?(@.rel=='tiles')].href", contains(url("https://www.example.com"))));
         assertThat(json, hasNoJsonPath("$.extent"));//absent because no features

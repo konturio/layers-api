@@ -134,9 +134,9 @@ public class CollectionsItemsApi {
     }
 
     @PutMapping(produces = APPLICATION_GEO_JSON)
-    @Operation(summary = "Insert or update features", tags = {"Data"})
+    @Operation(summary = "Updates feature set", tags = {"Data"})
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "fetch the upserted features", content = @Content(schema = @Schema(implementation = FeatureGeoJSON.class))),
+            @ApiResponse(responseCode = "200", description = "fetch the set of features", content = @Content(schema = @Schema(implementation = FeatureGeoJSON.class))),
             @ApiResponse(responseCode = "404", description = "The requested URI was not found.")})
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity upsertFeatures(

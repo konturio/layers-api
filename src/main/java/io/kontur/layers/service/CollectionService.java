@@ -5,9 +5,7 @@ import io.kontur.layers.ApiConstants;
 import io.kontur.layers.controller.exceptions.WebApplicationException;
 import io.kontur.layers.dto.*;
 import io.kontur.layers.repository.LayerMapper;
-import io.kontur.layers.repository.LayerStyleMapper;
 import io.kontur.layers.repository.model.Layer;
-import io.kontur.layers.repository.model.LayerStyle;
 import io.kontur.layers.util.AuthorizationUtils;
 import io.kontur.layers.util.JsonUtil;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -35,13 +33,11 @@ import static io.kontur.layers.service.LinkFactory.Type.APPLICATION_JSON;
 public class CollectionService {
 
     private final LayerMapper layerMapper;
-    private final LayerStyleMapper layerStyleMapper;
     private final LinkFactory linkFactory;
 
-    public CollectionService(LayerMapper layerMapper, LayerStyleMapper layerStyleMapper,
+    public CollectionService(LayerMapper layerMapper,
                              LinkFactory linkFactory) {
         this.layerMapper = layerMapper;
-        this.layerStyleMapper = layerStyleMapper;
         this.linkFactory = linkFactory;
     }
 
@@ -88,9 +84,6 @@ public class CollectionService {
         Layer layer = toLayer(collection, collection.getId());
         layer.setVisible(true);
         Layer newLayer = insertLayer(layer, 1);
-        if (collection.getLegend() != null) {
-            newLayer.setLegend(layerStyleMapper.insertLayerStyle(newLayer.getId(), collection.getLegend()));
-        }
         return toCollection(newLayer);
     }
 
@@ -118,12 +111,6 @@ public class CollectionService {
             throw new WebApplicationException(HttpStatus.NOT_FOUND, "Layer with such id can not be found");
         }
 
-        Optional<LayerStyle> layerStyle = layerStyleMapper.getLayerStyle(layer.getId());
-        if (layerStyle.isPresent()) {
-            layer.setLegend(layerStyleMapper.updateLayerStyle(layerStyle.get().getId(), collection.getLegend()));
-        } else {
-            layer.setLegend(layerStyleMapper.insertLayerStyle(layer.getId(), collection.getLegend()));
-        }
         return toCollection(layer);
     }
 
@@ -135,7 +122,7 @@ public class CollectionService {
         }
     }
 
-    private Layer toLayer(CollectionUpdateDto c, String id) {
+    public Layer toLayer(CollectionUpdateDto c, String id) {
         String url = null;
         if (c.getLink() != null && "tiles".equals(c.getLink().getRel())) {
             url = c.getLink().getHref();
@@ -151,7 +138,6 @@ public class CollectionService {
                 .copyrights(c.getCopyrights())
                 .properties(c.getProperties())
                 .featureProperties(c.getFeatureProperties())
-                .legend(c.getLegend())
                 .lastUpdated(OffsetDateTime.now())
                 .sourceLastUpdated(OffsetDateTime.now())
                 .isPublic(false) //TODO how do we create public kontur layers?
@@ -159,7 +145,7 @@ public class CollectionService {
                 .build();
     }
 
-    private Collection toCollection(Layer layer) {
+    public Collection toCollection(Layer layer) {
         Link link;
         if ("tiles".equals(layer.getType())) {
             link = new Link()

@@ -1,0 +1,32 @@
+<!DOCTYPE mapper     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.kontur.layers.repository.ApplicationLayerMapper">
+
+    <select id="getApplicationLayersRules" resultType="io.kontur.layers.repository.model.ApplicationLayer">
+        select app_id       as appId,
+               layer_id     as layerId,
+               is_default   as isDefault,
+               display_rule as displayRule,
+               style_rule   as styleRule
+        from apps_layers
+        where app_id = #{appId};
+    </select>
+
+    <select id="upsertLayers" resultType="io.kontur.layers.repository.model.ApplicationLayer">
+        with ins as (INSERT INTO apps_layers (app_id, layer_id, is_default, display_rule, style_rule)
+            VALUES
+            <foreach collection="layers" item="item" open="(" separator="),(" close=")">
+                #{appId}, #{item.layerId}, #{item.isDefault}, #{item.displayRule}::jsonb, #{item.styleRule}::jsonb
+            </foreach>
+        ON CONFLICT (app_id, layer_id)
+            DO UPDATE SET (is_default, display_rule, style_rule) =
+            (EXCLUDED.is_default, EXCLUDED.display_rule, EXCLUDED.style_rule)
+        RETURNING *)
+        select
+            app_id as appId,
+            layer_id as layerId,
+            is_default as isDefault,
+            display_rule as styleRule,
+            style_rule as displayRule
+        from ins;
+    </select>
+</mapper>
