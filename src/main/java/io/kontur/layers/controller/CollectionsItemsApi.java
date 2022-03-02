@@ -182,7 +182,7 @@ public class CollectionsItemsApi {
 
     private void validateFeatures(FeatureCollection body) {
         for (Feature feature : body.getFeatures()) {
-            if (!FEATURE_ID_PATTERN.matcher(feature.getId().toString()).matches()) {
+            if (feature.getId() != null && !FEATURE_ID_PATTERN.matcher(feature.getId().toString()).matches()) {
                 throw new WebApplicationException(BAD_REQUEST, Error.objectError(null,
                         Error.fieldError("id",
                                 Error.error(String.format("invalid field value '%s'", feature.getId().toString())))));
