@@ -50,6 +50,7 @@ public class Collection {
     @JsonProperty("links")
     @Schema(example = "[{\"href\":\"http://data.example.com/buildings\",\"rel\":\"item\"},{\"href\":\"http://example.com/concepts/buildings.html\",\"rel\":\"describedBy\",\"type\":\"text/html\"}]", required = true, description = "")
     @NotNull
+    @Builder.Default()
     private List<Link> links = new ArrayList<>();
 
     @JsonProperty("extent")
@@ -57,6 +58,7 @@ public class Collection {
 
     @JsonProperty("itemType")
     @Schema(description = "indicator about the type of the items in the collection (the default value is 'feature').")
+    @Builder.Default
     private String itemType = "feature";
 
     @JsonProperty("crs")
