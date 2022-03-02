@@ -1,5 +1,6 @@
 package io.kontur.layers.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +16,9 @@ import java.util.UUID;
 public class ApplicationDto {
 
     private UUID id;
-    private Boolean showAllPublicLayers;
-    private Boolean isPublic;
+    private boolean showAllPublicLayers;
+    @JsonProperty("isPublic")
+    private boolean isPublic;
     private List<Collection> defaultCollections;
 
 }

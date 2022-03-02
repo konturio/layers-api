@@ -44,8 +44,8 @@ public class ApplicationsPostIT extends AbstractIntegrationTest {
 
         //THEN
         assertThat(json, hasJsonPath("$.id", is(applicationDto.getId().toString())));
-        assertThat(json, hasJsonPath("$.showAllPublicLayers", is(applicationDto.getShowAllPublicLayers())));
-        assertThat(json, hasJsonPath("$.isPublic", is(applicationDto.getIsPublic())));
+        assertThat(json, hasJsonPath("$.showAllPublicLayers", is(applicationDto.isShowAllPublicLayers())));
+        assertThat(json, hasJsonPath("$.isPublic", is(applicationDto.isPublic())));
 
         json = mockMvc.perform(get("/apps/" + applicationDto.getId())
                         .param("defaultCollections", "true")
@@ -82,8 +82,8 @@ public class ApplicationsPostIT extends AbstractIntegrationTest {
 
         //THEN
         assertThat(json, hasJsonPath("$.id", is(applicationDto.getId().toString())));
-        assertThat(json, hasJsonPath("$.showAllPublicLayers", is(applicationDto.getShowAllPublicLayers())));
-        assertThat(json, hasJsonPath("$.isPublic", is(applicationDto.getIsPublic())));
+        assertThat(json, hasJsonPath("$.showAllPublicLayers", is(applicationDto.isShowAllPublicLayers())));
+        assertThat(json, hasJsonPath("$.isPublic", is(applicationDto.isPublic())));
 
         json = mockMvc.perform(get("/apps/" + applicationDto.getId())
                         .param("includeDefaultCollections", "true")

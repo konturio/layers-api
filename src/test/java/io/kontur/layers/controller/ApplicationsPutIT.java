@@ -72,7 +72,7 @@ public class ApplicationsPutIT extends AbstractIntegrationTest {
         applicationDto.getLayers().add(buildApplicationLayerDto(layer2.getPublicId(), 2));
 
         //WHEN
-        applicationDto.setIsPublic(false);
+        applicationDto.setPublic(false);
         applicationDto.setShowAllPublicLayers(false);
         String json = mockMvc.perform(put("/apps/" + application.getId())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -83,8 +83,8 @@ public class ApplicationsPutIT extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
         //THEN
         assertThat(json, hasJsonPath("$.id", is(application.getId().toString())));
-        assertThat(json, hasJsonPath("$.showAllPublicLayers", is(applicationDto.getShowAllPublicLayers())));
-        assertThat(json, hasJsonPath("$.isPublic", is(applicationDto.getIsPublic())));
+        assertThat(json, hasJsonPath("$.showAllPublicLayers", is(applicationDto.isShowAllPublicLayers())));
+        assertThat(json, hasJsonPath("$.isPublic", is(applicationDto.isPublic())));
 
         json = mockMvc.perform(get("/apps/" + application.getId())
                         .param("includeDefaultCollections", "true")

@@ -135,8 +135,8 @@ public class ApplicationService {
     private Application toModel(ApplicationUpdateDto body, UUID id) {
         return Application.builder()
                 .id(id)
-                .isPublic(body.getIsPublic())
-                .showAllPublicLayers(body.getShowAllPublicLayers())
+                .isPublic(body.isPublic())
+                .showAllPublicLayers(body.isShowAllPublicLayers())
                 .owner(AuthorizationUtils.getAuthenticatedUserName())
                 .build();
     }

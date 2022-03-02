@@ -124,7 +124,7 @@ public class TestDataHelper {
     public static ApplicationCreateDto buildApplicationCreateDto() {
         ApplicationCreateDto dto = new ApplicationCreateDto();
         dto.setId(UUID.randomUUID());
-        dto.setIsPublic(true);
+        dto.setPublic(true);
         dto.setShowAllPublicLayers(true);
         dto.setLayers(new ArrayList<>());
         return dto;
