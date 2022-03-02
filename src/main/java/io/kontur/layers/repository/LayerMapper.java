@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Mapper
 public interface LayerMapper {
@@ -35,4 +36,7 @@ public interface LayerMapper {
 
     Layer deleteLayer(@Param("owner") String owner,
                       @Param("id") String id);
+
+    List<Layer> getApplicationLayers(@Param("appId") UUID appId,
+                                     @Param("getDefaultOnly") boolean getDefaultOnly);
 }

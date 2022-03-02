@@ -29,8 +29,6 @@ public class CollectionUpdateDto {
     private ObjectNode properties;
     @JsonProperty("featureProperties")
     private ObjectNode featureProperties;
-    @JsonProperty("legend")
-    private ObjectNode legend;
 
     public enum Type {
         tiles,

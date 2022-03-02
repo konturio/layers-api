@@ -216,4 +216,32 @@
                display_rule       as legend
         from del
     </select>
+
+    <select id="getApplicationLayers" resultType="io.kontur.layers.repository.model.Layer">
+        select id,
+               public_id          as publicId,
+               name,
+               description,
+               url,
+               type,
+               geom               as geometry,
+               last_updated       as lastUpdated,
+               source_updated     as sourceLastUpdated,
+               copyrights,
+               properties,
+               is_public          as isPublic,
+               is_visible         as isVisible,
+               feature_properties as featureProperties,
+               owner,
+               display_rule       as legend
+        from layers
+        where is_visible
+          and public_id in (select layer_id
+                    from apps_layers
+                    where app_id = #{appId}
+                    <if test="getDefaultOnly == true">
+                        and is_default
+                    </if>
+              );
+    </select>
 </mapper>

@@ -1,0 +1,48 @@
+<!DOCTYPE mapper     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.kontur.layers.repository.ApplicationMapper">
+
+
+    <select id="getApplication" resultType="io.kontur.layers.repository.model.Application">
+        select id,
+               show_all_public_layers as showAllPublicLayers,
+               is_public              as isPublic,
+               owner
+        from apps
+        where id = #{appId}
+          and (owner = #{owner} or is_public);
+    </select>
+
+    <select id="insertApplication" resultType="io.kontur.layers.repository.model.Application">
+        with ins as (INSERT INTO apps (id, show_all_public_layers, is_public, owner)
+            VALUES (#{id}, ${showAllPublicLayers}, #{isPublic}, #{owner})
+            RETURNING *)
+        select id,
+               show_all_public_layers as showAllPublicLayers,
+               is_public              as isPublic,
+               owner
+        from ins;
+    </select>
+
+    <select id="updateApplication" resultType="io.kontur.layers.repository.model.Application">
+        with upd as (UPDATE apps SET (show_all_public_layers, is_public) =
+                (${showAllPublicLayers}, #{isPublic}) WHERE id = #{id} and owner = #{owner}
+            RETURNING *)
+        select id,
+               show_all_public_layers as showAllPublicLayers,
+               is_public              as isPublic,
+               owner
+        from upd;
+    </select>
+
+    <select id="deleteApplication" resultType="io.kontur.layers.repository.model.Application">
+        with del as (delete from apps WHERE id = #{appId} and owner = #{owner}
+            RETURNING *)
+        select id,
+               show_all_public_layers as showAllPublicLayers,
+               is_public              as isPublic,
+               owner
+        from del;
+    </select>
+
+
+</mapper>

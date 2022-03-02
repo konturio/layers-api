@@ -2,9 +2,8 @@ package io.kontur.layers.test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.kontur.layers.dto.CollectionCreateDto;
-import io.kontur.layers.dto.CollectionUpdateDto;
-import io.kontur.layers.dto.Link;
+import io.kontur.layers.dto.*;
+import io.kontur.layers.repository.model.Application;
 import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.util.JsonUtil;
@@ -17,6 +16,8 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class TestDataHelper {
 
@@ -98,10 +99,6 @@ public class TestDataHelper {
         final ObjectNode featureProps = objectMapper.createObjectNode();
         featureProps.put("featureProp1", "featureProperty_" + n);
 
-        final ObjectNode legend = objectMapper.createObjectNode();
-        legend.put("legend1", "legendValue1_" + n);
-        legend.put("legend2", "legendValue2_" + n);
-
         CollectionCreateDto dto = new CollectionCreateDto();
         dto.setId("pubId_" + n);
         dto.setTitle("name_" + n);
@@ -109,10 +106,44 @@ public class TestDataHelper {
         dto.setLink(new Link().rel("tiles").href("https://www.example.com"));
         dto.setProperties(props);
         dto.setItemType(CollectionUpdateDto.Type.tiles);
-        dto.setLegend(legend);
         dto.setFeatureProperties(featureProps);
         dto.setGeometry(JsonUtil.readJson(String.format("{\"type\":\"Point\",\"coordinates\":[0,%1$d]}", n), Geometry.class));
         dto.setCopyrights("copyrights_" + n);
+        return dto;
+    }
+
+    public static Application buildApplication(int n) {
+        Application dto = new Application();
+        dto.setId(UUID.randomUUID());
+        dto.setIsPublic(true);
+        dto.setShowAllPublicLayers(true);
+        dto.setOwner("owner_" + n);
+        return dto;
+    }
+
+    public static ApplicationCreateDto buildApplicationCreateDto() {
+        ApplicationCreateDto dto = new ApplicationCreateDto();
+        dto.setId(UUID.randomUUID());
+        dto.setPublic(true);
+        dto.setShowAllPublicLayers(true);
+        dto.setLayers(new ArrayList<>());
+        return dto;
+    }
+
+    public static ApplicationLayerDto buildApplicationLayerDto(String layerId, int n) {
+        ApplicationLayerDto dto = new ApplicationLayerDto();
+        dto.setLayerId(layerId);
+        dto.setIsDefault(true);
+
+        final ObjectNode displayRules = objectMapper.createObjectNode();
+        displayRules.put("displayRule1", "propValue1_" + n);
+        displayRules.put("displayRule2", "propValue2_" + n);
+        dto.setDisplayRule(displayRules);
+
+        final ObjectNode legend = objectMapper.createObjectNode();
+        legend.put("legend1", "legendValue1_" + n);
+        legend.put("legend2", "legendValue2_" + n);
+        dto.setStyleRule(legend);
         return dto;
     }
 }

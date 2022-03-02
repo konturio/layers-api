@@ -11,6 +11,7 @@
 - Layer ID is optional for create operations. Will be generated if missing
 - Layers styles are saved in DB now
 - One can search only through collections created by themselves or others users
+- Add CRUD REST for Applications
 
 #### Changed
 - Bug fixes

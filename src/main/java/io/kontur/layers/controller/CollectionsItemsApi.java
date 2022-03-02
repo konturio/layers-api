@@ -134,9 +134,9 @@ public class CollectionsItemsApi {
     }
 
     @PutMapping(produces = APPLICATION_GEO_JSON)
-    @Operation(summary = "Insert or update features", tags = {"Data"})
+    @Operation(summary = "Updates feature set", tags = {"Data"})
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "fetch the upserted features", content = @Content(schema = @Schema(implementation = FeatureGeoJSON.class))),
+            @ApiResponse(responseCode = "200", description = "fetch the set of features", content = @Content(schema = @Schema(implementation = FeatureGeoJSON.class))),
             @ApiResponse(responseCode = "404", description = "The requested URI was not found.")})
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity upsertFeatures(
@@ -182,7 +182,7 @@ public class CollectionsItemsApi {
 
     private void validateFeatures(FeatureCollection body) {
         for (Feature feature : body.getFeatures()) {
-            if (!FEATURE_ID_PATTERN.matcher(feature.getId().toString()).matches()) {
+            if (feature.getId() != null && !FEATURE_ID_PATTERN.matcher(feature.getId().toString()).matches()) {
                 throw new WebApplicationException(BAD_REQUEST, Error.objectError(null,
                         Error.fieldError("id",
                                 Error.error(String.format("invalid field value '%s'", feature.getId().toString())))));
