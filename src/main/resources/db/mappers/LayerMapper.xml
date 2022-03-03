@@ -166,7 +166,7 @@
                  #{copyrights}, #{properties}::jsonb, #{isPublic}, #{featureProperties}::jsonb)
             where public_id = #{publicId} and owner = #{owner}
             returning *)
-        select ins.id,
+        select upd.id,
                upd.public_id          as publicId,
                upd.name,
                upd.description,
