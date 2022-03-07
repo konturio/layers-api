@@ -15,19 +15,39 @@ public interface LayerMapper {
     Optional<Layer> getOwnedLayer(String publicId, String userName);
 
     default Optional<Layer> getLayer(String publicId, String userName) {
-        return getLayers(null, userName,1, 0, CollectionOwner.ANY, publicId).stream().findFirst();
+        return getLayers(null, userName,1, 0, CollectionOwner.ANY, null, true, publicId).stream().findFirst();
+    }
+
+    default Integer getLayersTotal(@Param("geometry") String geometry,
+                           @Param("userName") String userName,
+                           @Param("collectionOwner") CollectionOwner collectionOwner,
+                           @Param("publicIds") String... publicIds) {
+        return getLayersTotal(geometry, userName, collectionOwner, null, true, publicIds);
     }
 
     Integer getLayersTotal(@Param("geometry") String geometry,
                            @Param("userName") String userName,
                            @Param("collectionOwner") CollectionOwner collectionOwner,
+                           @Param("appId") UUID appId,
+                           @Param("showAllPublic") boolean showAllPublic,
                            @Param("publicIds") String... publicIds);
+
+    default List<Layer> getLayers(@Param("geometry") String geometry,
+                          @Param("userName") String userName,
+                          @Param("limit") Integer limit,
+                          @Param("offset") Integer offset,
+                          @Param("collectionOwner") CollectionOwner collectionOwner,
+                          @Param("publicIds") String... publicIds) {
+        return getLayers(geometry, userName, limit, offset, collectionOwner, null, true, publicIds);
+    }
 
     List<Layer> getLayers(@Param("geometry") String geometry,
                           @Param("userName") String userName,
                           @Param("limit") Integer limit,
                           @Param("offset") Integer offset,
                           @Param("collectionOwner") CollectionOwner collectionOwner,
+                          @Param("appId") UUID appId,
+                          @Param("showAllPublic") boolean showAllPublic,
                           @Param("publicIds") String... publicIds);
 
     Layer insertLayer(Layer layer);

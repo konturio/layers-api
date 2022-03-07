@@ -25,7 +25,7 @@ public class Layer {
     private String geometry;
     private String copyrights;
     private ObjectNode properties;
-    private ObjectNode legend;
+    private ObjectNode styleRule;
     private ObjectNode featureProperties;
     private LayersGroupProperties group;
     private LayersCategoryProperties category;
