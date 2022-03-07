@@ -7,6 +7,7 @@ import lombok.Data;
 import org.wololo.geojson.Geometry;
 
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @Data
 public class CollectionUpdateDto {
@@ -29,6 +30,10 @@ public class CollectionUpdateDto {
     private ObjectNode properties;
     @JsonProperty("featureProperties")
     private ObjectNode featureProperties;
+    @JsonProperty("styleRule")
+    private ObjectNode styleRule;
+    @JsonProperty("appId")
+    private UUID appId;
 
     public enum Type {
         tiles,

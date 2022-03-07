@@ -1,11 +1,13 @@
 package io.kontur.layers.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.layers.ApiConstants;
 import io.kontur.layers.controller.exceptions.WebApplicationException;
 import io.kontur.layers.dto.*;
 import io.kontur.layers.dto.Collection;
 import io.kontur.layers.dto.Collections;
+import io.kontur.layers.repository.ApplicationLayerMapper;
 import io.kontur.layers.repository.ApplicationMapper;
 import io.kontur.layers.repository.LayerMapper;
 import io.kontur.layers.repository.model.Application;
@@ -36,12 +38,15 @@ public class CollectionService {
     private final LayerMapper layerMapper;
     private final LinkFactory linkFactory;
     private final ApplicationMapper applicationMapper;
+    private final ApplicationLayerMapper applicationLayerMapper;
 
     public CollectionService(LayerMapper layerMapper,
-                             LinkFactory linkFactory, ApplicationMapper applicationMapper) {
+                             LinkFactory linkFactory, ApplicationMapper applicationMapper,
+                             ApplicationLayerMapper applicationLayerMapper) {
         this.layerMapper = layerMapper;
         this.linkFactory = linkFactory;
         this.applicationMapper = applicationMapper;
+        this.applicationLayerMapper = applicationLayerMapper;
     }
 
     @Transactional(readOnly = true)
@@ -100,6 +105,7 @@ public class CollectionService {
         Layer layer = toLayer(collection, collection.getId());
         layer.setVisible(true);
         Layer newLayer = insertLayer(layer, 1);
+        updateStyleRules(collection, newLayer);
         return toCollection(newLayer);
     }
 
@@ -126,6 +132,7 @@ public class CollectionService {
         if (layer == null) {
             throw new WebApplicationException(HttpStatus.NOT_FOUND, "Layer with such id can not be found");
         }
+        updateStyleRules(collection, layer);
 
         return toCollection(layer);
     }
@@ -190,6 +197,21 @@ public class CollectionService {
                 .extent(getExtent(layer))
                 .ownedByUser(isUserOwnsLayer(layer))
                 .build();
+    }
+
+    private void updateStyleRules(CollectionUpdateDto collection, Layer layer) {
+        if (collection.getAppId() != null && collection.getStyleRule() != null) {
+            applicationMapper.getApplication(collection.getAppId(),
+                    AuthorizationUtils.getAuthenticatedUserName())
+                    .orElseThrow(() -> new WebApplicationException(HttpStatus.BAD_REQUEST,
+                            "Application with such id can not be found"));
+
+            ObjectNode styleRules = applicationLayerMapper.updateStyleRule(collection.getAppId(), layer.getPublicId(),
+                            collection.getStyleRule())
+                    .orElseThrow(() -> new WebApplicationException(HttpStatus.BAD_REQUEST,
+                            "Isn't able to update style rules"));
+            layer.setStyleRule(styleRules);
+        }
     }
 
     private Extent getExtent(Layer layer) {
