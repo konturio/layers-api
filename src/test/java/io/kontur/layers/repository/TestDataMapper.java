@@ -1,5 +1,6 @@
 package io.kontur.layers.repository;
 
+import io.kontur.layers.dto.ApplicationLayerDto;
 import io.kontur.layers.repository.model.Application;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.repository.model.LayerFeature;
@@ -36,4 +37,9 @@ public interface TestDataMapper {
             "(#{id},#{showAllPublicLayers},#{isPublic},#{owner}) returning id) ",
             "select * from ins"})
     UUID insertApplication(Application app);
+
+    @Insert({"insert into apps_layers (app_id, layer_id, is_default, display_rule, style_rule) values " +
+            "(#{appId}, #{appLayer.layerId}, #{appLayer.isDefault}, #{appLayer.styleRule}::jsonb, " +
+            "#{appLayer.displayRule}::jsonb)"})
+    void insertApplicationLayer(@Param("appLayer") ApplicationLayerDto appLayer, @Param("appId") UUID appId);
 }

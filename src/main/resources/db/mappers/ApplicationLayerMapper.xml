@@ -29,4 +29,13 @@
             style_rule as displayRule
         from ins;
     </select>
+
+    <select id="updateStyleRule" resultType="com.fasterxml.jackson.databind.node.ObjectNode">
+        with ins as (INSERT INTO apps_layers (app_id, layer_id, style_rule, is_default)
+        VALUES (#{appId}, #{layerId}, #{styleRule}::jsonb, false)
+        ON CONFLICT (app_id, layer_id)
+        DO UPDATE SET style_rule = EXCLUDED.style_rule
+        RETURNING *)
+        select style_rule from ins;
+    </select>
 </mapper>

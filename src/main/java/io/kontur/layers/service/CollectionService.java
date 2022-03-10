@@ -1,10 +1,16 @@
 package io.kontur.layers.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.layers.ApiConstants;
 import io.kontur.layers.controller.exceptions.WebApplicationException;
 import io.kontur.layers.dto.*;
+import io.kontur.layers.dto.Collection;
+import io.kontur.layers.dto.Collections;
+import io.kontur.layers.repository.ApplicationLayerMapper;
+import io.kontur.layers.repository.ApplicationMapper;
 import io.kontur.layers.repository.LayerMapper;
+import io.kontur.layers.repository.model.Application;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.util.AuthorizationUtils;
 import io.kontur.layers.util.JsonUtil;
@@ -19,10 +25,7 @@ import org.wololo.geojson.Geometry;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.kontur.layers.service.LinkFactory.Relation.*;
@@ -34,21 +37,39 @@ public class CollectionService {
 
     private final LayerMapper layerMapper;
     private final LinkFactory linkFactory;
+    private final ApplicationMapper applicationMapper;
+    private final ApplicationLayerMapper applicationLayerMapper;
 
     public CollectionService(LayerMapper layerMapper,
-                             LinkFactory linkFactory) {
+                             LinkFactory linkFactory, ApplicationMapper applicationMapper,
+                             ApplicationLayerMapper applicationLayerMapper) {
         this.layerMapper = layerMapper;
         this.linkFactory = linkFactory;
+        this.applicationMapper = applicationMapper;
+        this.applicationLayerMapper = applicationLayerMapper;
     }
 
     @Transactional(readOnly = true)
     public Collections getCollections(Geometry geometry, Integer limit,
-                                      Integer offset, boolean includeLinks, CollectionOwner collectionOwner) {
+                                      Integer offset, boolean includeLinks,
+                                      CollectionOwner collectionOwner, UUID appId) {
         String geometryString = geometry != null ? JsonUtil.writeJson(geometry) : null;
         String userName = AuthorizationUtils.getAuthenticatedUserName();
         CollectionOwner ownershipFilter = StringUtils.isBlank(userName) ? CollectionOwner.ANY : collectionOwner;
-        final List<Layer> layers = layerMapper.getLayers(geometryString, userName, limit, offset, ownershipFilter);
-        int numberMatched = layerMapper.getLayersTotal(geometryString, userName, ownershipFilter);
+        final List<Layer> layers;
+        int numberMatched;
+        if (appId != null) {
+            Application app = applicationMapper.getApplication(appId, userName)
+                    .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Application is not found"));
+
+            layers = layerMapper.getLayers(geometryString, userName, limit, offset, ownershipFilter,
+                    app.getId(), app.getShowAllPublicLayers());
+            numberMatched = layerMapper.getLayersTotal(geometryString, userName, ownershipFilter,
+                    app.getId(), app.getShowAllPublicLayers());
+        } else {
+            layers = layerMapper.getLayers(geometryString, userName, limit, offset, ownershipFilter);
+            numberMatched = layerMapper.getLayersTotal(geometryString, userName, ownershipFilter);
+        }
 
         final List<Collection> collections = layers.stream().map(this::toCollection).collect(Collectors.toList());
 
@@ -84,6 +105,7 @@ public class CollectionService {
         Layer layer = toLayer(collection, collection.getId());
         layer.setVisible(true);
         Layer newLayer = insertLayer(layer, 1);
+        updateStyleRules(collection, newLayer);
         return toCollection(newLayer);
     }
 
@@ -110,6 +132,7 @@ public class CollectionService {
         if (layer == null) {
             throw new WebApplicationException(HttpStatus.NOT_FOUND, "Layer with such id can not be found");
         }
+        updateStyleRules(collection, layer);
 
         return toCollection(layer);
     }
@@ -164,7 +187,8 @@ public class CollectionService {
                 .copyrights(layer.getCopyrights())
                 .properties(layer.getProperties())
                 .featureProperties(layer.getFeatureProperties())
-                .legend(layer.getLegend())
+                .legend(layer.getStyleRule()) //TODO remove
+                .styleRule(layer.getStyleRule())
                 .group(layer.getGroup())
                 .category(layer.getCategory())
                 .itemType(layer.getType())
@@ -173,6 +197,21 @@ public class CollectionService {
                 .extent(getExtent(layer))
                 .ownedByUser(isUserOwnsLayer(layer))
                 .build();
+    }
+
+    private void updateStyleRules(CollectionUpdateDto collection, Layer layer) {
+        if (collection.getAppId() != null && collection.getStyleRule() != null) {
+            applicationMapper.getApplication(collection.getAppId(),
+                    AuthorizationUtils.getAuthenticatedUserName())
+                    .orElseThrow(() -> new WebApplicationException(HttpStatus.BAD_REQUEST,
+                            "Application with such id can not be found"));
+
+            ObjectNode styleRules = applicationLayerMapper.updateStyleRule(collection.getAppId(), layer.getPublicId(),
+                            collection.getStyleRule())
+                    .orElseThrow(() -> new WebApplicationException(HttpStatus.BAD_REQUEST,
+                            "Isn't able to update style rules"));
+            layer.setStyleRule(styleRules);
+        }
     }
 
     private Extent getExtent(Layer layer) {
