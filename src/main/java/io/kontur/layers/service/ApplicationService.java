@@ -10,7 +10,6 @@ import io.kontur.layers.repository.model.ApplicationLayer;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.util.AuthorizationUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -41,7 +41,7 @@ public class ApplicationService {
 
     @Transactional(readOnly = true)
     public ApplicationDto getApplication(UUID appId, boolean includeCollectionsInfo) {
-        ApplicationDto app = applicationMapper.getApplication(appId,
+        ApplicationDto app = applicationMapper.getApplicationOwnedOrPublic(appId,
                         AuthorizationUtils.getAuthenticatedUserName())
                 .map(this::toDto)
                 .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND,
@@ -69,28 +69,28 @@ public class ApplicationService {
     }
 
     @Transactional
-    public ApplicationDto createApplication(ApplicationCreateDto body) {
-        try {
-            Application app = applicationMapper.insertApplication(toModel(body, body.getId()));
-            if (!CollectionUtils.isEmpty(body.getLayers())) {
-                upsertApplicationLayers(body.getLayers(), app);
-            }
-            return toDto(app);
-        } catch (DuplicateKeyException ex) {
+    public ApplicationDto updateApplication(UUID applicationId, ApplicationUpdateDto body) {
+        String userName = AuthorizationUtils.getAuthenticatedUserName();
+        if (userName == null) {
+            throw new WebApplicationException(HttpStatus.UNAUTHORIZED, "Unauthorized access is forbidden");
+        }
+        Optional<Application> app = applicationMapper.getApplication(applicationId);
+        Application resultedApp;
+        if (app.isPresent() && userName.equals(app.get().getOwner())) {
+            resultedApp = applicationMapper.updateApplication(toModel(body, applicationId));
+        } else if (app.isEmpty()) {
+            resultedApp = applicationMapper.insertApplication(toModel(body, applicationId));
+        } else {
             throw new WebApplicationException(HttpStatus.BAD_REQUEST, "Application with such id already exists");
         }
-    }
 
-    @Transactional
-    public ApplicationDto updateApplication(UUID applicationId, ApplicationUpdateDto body) {
-        Application app = applicationMapper.updateApplication(toModel(body, applicationId));
-        if (app == null) {
+        if (resultedApp == null) {
             throw new WebApplicationException(HttpStatus.NOT_FOUND, "Application with such id can not be found");
         }
         if (!CollectionUtils.isEmpty(body.getLayers())) {
-            upsertApplicationLayers(body.getLayers(), app);
+            upsertApplicationLayers(body.getLayers(), resultedApp);
         }
-        return toDto(app);
+        return toDto(resultedApp);
     }
 
     @Transactional

@@ -18,14 +18,14 @@ public interface LayerMapper {
         return getLayers(null, userName,1, 0, CollectionOwner.ANY, null, true, publicId).stream().findFirst();
     }
 
-    default Integer getLayersTotal(@Param("geometry") String geometry,
+    default int getLayersTotal(@Param("geometry") String geometry,
                            @Param("userName") String userName,
                            @Param("collectionOwner") CollectionOwner collectionOwner,
                            @Param("publicIds") String... publicIds) {
         return getLayersTotal(geometry, userName, collectionOwner, null, true, publicIds);
     }
 
-    Integer getLayersTotal(@Param("geometry") String geometry,
+    int getLayersTotal(@Param("geometry") String geometry,
                            @Param("userName") String userName,
                            @Param("collectionOwner") CollectionOwner collectionOwner,
                            @Param("appId") UUID appId,

@@ -1,6 +1,5 @@
 package io.kontur.layers.controller;
 
-import io.kontur.layers.dto.ApplicationCreateDto;
 import io.kontur.layers.dto.ApplicationDto;
 import io.kontur.layers.dto.ApplicationUpdateDto;
 import io.kontur.layers.service.ApplicationService;
@@ -44,19 +43,8 @@ public class ApplicationsApi {
         return ResponseEntity.ok(result);
     }
 
-    @PostMapping
-    @Operation(summary = "Create new application", tags = {"Applications"})
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Newly created application.", content = @Content(schema = @Schema(implementation = ApplicationCreateDto.class)))})
-    @PreAuthorize("isAuthenticated()")
-    public ResponseEntity create(
-            @RequestBody @Valid ApplicationCreateDto body) {
-        ApplicationDto result = applicationService.createApplication(body);
-        return ResponseEntity.ok(result);
-    }
-
     @PutMapping("/{applicationId}")
-    @Operation(summary = "Update application", tags = {"Applications"})
+    @Operation(summary = "Update or create application", tags = {"Applications"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Updated application.", content = @Content(schema = @Schema(implementation = ApplicationUpdateDto.class)))})
     @PreAuthorize("isAuthenticated()")

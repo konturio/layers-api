@@ -10,7 +10,9 @@ import java.util.UUID;
 @Mapper
 public interface ApplicationMapper {
 
-    Optional<Application> getApplication(@Param("appId") UUID appId, @Param("owner") String owner);
+    Optional<Application> getApplication(@Param("appId") UUID appId);
+
+    Optional<Application> getApplicationOwnedOrPublic(@Param("appId") UUID appId, @Param("owner") String owner);
 
     Application insertApplication(Application application);
 

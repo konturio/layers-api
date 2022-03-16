@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.layers.dto.*;
 import io.kontur.layers.repository.model.Application;
-import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.repository.model.Layer;
+import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.util.JsonUtil;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
@@ -121,9 +121,8 @@ public class TestDataHelper {
         return dto;
     }
 
-    public static ApplicationCreateDto buildApplicationCreateDto() {
-        ApplicationCreateDto dto = new ApplicationCreateDto();
-        dto.setId(UUID.randomUUID());
+    public static ApplicationUpdateDto buildApplicationCreateDto() {
+        ApplicationUpdateDto dto = new ApplicationUpdateDto();
         dto.setPublic(true);
         dto.setShowAllPublicLayers(true);
         dto.setLayers(new ArrayList<>());

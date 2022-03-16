@@ -59,7 +59,7 @@ public class CollectionService {
         final List<Layer> layers;
         int numberMatched;
         if (appId != null) {
-            Application app = applicationMapper.getApplication(appId, userName)
+            Application app = applicationMapper.getApplicationOwnedOrPublic(appId, userName)
                     .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Application is not found"));
 
             layers = layerMapper.getLayers(geometryString, userName, limit, offset, ownershipFilter,
@@ -201,7 +201,7 @@ public class CollectionService {
 
     private void updateStyleRules(CollectionUpdateDto collection, Layer layer) {
         if (collection.getAppId() != null && collection.getStyleRule() != null) {
-            applicationMapper.getApplication(collection.getAppId(),
+            applicationMapper.getApplicationOwnedOrPublic(collection.getAppId(),
                     AuthorizationUtils.getAuthenticatedUserName())
                     .orElseThrow(() -> new WebApplicationException(HttpStatus.BAD_REQUEST,
                             "Application with such id can not be found"));
