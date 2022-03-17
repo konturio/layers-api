@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.wololo.geojson.Geometry;
 
 import javax.validation.constraints.Min;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -18,6 +20,7 @@ public class CollectionsSearchDto {
     @Schema(defaultValue = "ANY")
     private CollectionOwner collectionOwner = CollectionOwner.ANY;
     private UUID appId;
+    private List<String> collectionIds = new ArrayList<>();
     @Min(1)
     @Schema(defaultValue = "10")
     private Integer limit = 10;

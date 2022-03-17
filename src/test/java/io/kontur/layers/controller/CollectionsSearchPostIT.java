@@ -524,4 +524,35 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
         //THEN
     }
 
+    @Test
+    public void filterByCollectionIds() throws Exception {
+        //GIVEN
+        testDataMapper.insertLayer(buildLayerN(1));
+        testDataMapper.insertLayer(buildLayerN(2));
+        testDataMapper.insertLayer(buildLayerN(3));
+
+        Application app = buildApplication(1);
+        testDataMapper.insertApplication(app);
+
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_1", 1), app.getId());
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_2", 2), app.getId());
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_3", 3), app.getId());
+
+
+        //WHEN
+        String response = mockMvc.perform(post("/collections/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"collectionIds\":[\"pubId_2\", \"pubId_3\", \"not_exists\"], " +
+                                "\"appId\": \"" + app.getId().toString() + "\"}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json.read("$.collections"), hasSize(2));
+        assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_2", "pubId_3"));
+        assertThat(json.read("$.collections[*].styleRule"), not(empty()));
+    }
 }

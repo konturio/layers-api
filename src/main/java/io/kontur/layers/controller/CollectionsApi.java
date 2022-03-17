@@ -68,7 +68,7 @@ public class CollectionsApi {
             @RequestParam(value = "offset", defaultValue = "0") Integer offset) {
         int lmt = Math.min(limit == null ? COLLECTIONS_DEFAULT_LIMIT : limit, COLLECTIONS_LIMIT);
         Collections collections = collectionService.getCollections(null, lmt, offset, true,
-                CollectionOwner.ANY, null);
+                CollectionOwner.ANY, null, java.util.Collections.emptyList());
         return ResponseEntity.ok(collections);
     }
 
@@ -85,7 +85,7 @@ public class CollectionsApi {
             @RequestBody @Valid CollectionsSearchDto body) {
         int lmt = Math.min(body.getLimit() == null ? COLLECTIONS_DEFAULT_LIMIT : body.getLimit(), COLLECTIONS_LIMIT);
         Collections collections = collectionService.getCollections(body.getGeometry(), lmt, body.getOffset(),
-                false, body.getCollectionOwner(), body.getAppId());
+                false, body.getCollectionOwner(), body.getAppId(), body.getCollectionIds());
         return ResponseEntity.ok(collections);
     }
 
