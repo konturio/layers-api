@@ -90,7 +90,7 @@ public class ApplicationService {
         if (!CollectionUtils.isEmpty(body.getLayers())) {
             upsertApplicationLayers(body.getLayers(), resultedApp);
         }
-        return toDto(resultedApp);
+        return getApplication(applicationId, true);
     }
 
     @Transactional
@@ -122,7 +122,12 @@ public class ApplicationService {
                     String.format("Unable to find requested layers: %s", String.join(",", diff)));
         }
 
-        applicationLayerMapper.upsertLayers(app.getId(), appLayers);
+        List<String> updatedLayersIds = applicationLayerMapper.upsertLayers(app.getId(), appLayers)
+                .stream()
+                .map(ApplicationLayer::getLayerId)
+                .toList();
+
+        applicationLayerMapper.deleteAppLayersNotInList(app.getId(), updatedLayersIds);
     }
 
     private ApplicationDto toDto(Application app) {

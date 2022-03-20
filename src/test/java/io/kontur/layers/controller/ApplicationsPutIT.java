@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
@@ -268,6 +269,56 @@ public class ApplicationsPutIT extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+
+    @Test
+    @WithMockUser("owner_1")
+    public void updateApplicationLayers_RemoveLayersFromApplication() throws Exception {
+        //GIVEN
+        Layer layer1 = buildLayerN(1);
+        testDataMapper.insertLayer(layer1);
+        Layer layer2 = buildLayerN(2);
+        testDataMapper.insertLayer(layer2);
+        Layer layer3 = buildLayerN(3);
+        testDataMapper.insertLayer(layer3);
+
+        Application application = buildApplication(1);
+        testDataMapper.insertApplication(application);
+
+        ApplicationUpdateDto applicationDto = buildApplicationCreateDto();
+        applicationDto.getLayers().add(buildApplicationLayerDto(layer1.getPublicId(), 1));
+        applicationDto.getLayers().add(buildApplicationLayerDto(layer2.getPublicId(), 2));
+
+        //WHEN
+        applicationDto.setShowAllPublicLayers(false);
+        mockMvc.perform(put("/apps/" + application.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.writeJson(applicationDto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+
+        applicationDto.setLayers(Arrays.asList(buildApplicationLayerDto(layer1.getPublicId(), 1),
+                buildApplicationLayerDto(layer3.getPublicId(), 3)));
+        mockMvc.perform(put("/apps/" + application.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.writeJson(applicationDto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        //THEN
+
+        String json = mockMvc.perform(get("/apps/" + application.getId())
+                        .param("includeDefaultCollections", "true")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        assertThat(json, hasJsonPath("$.defaultCollections", hasSize(2)));
+        assertThat(json, hasJsonPath("$.defaultCollections[*].id",
+                containsInAnyOrder(layer1.getPublicId(), layer3.getPublicId())));
     }
 
 }
