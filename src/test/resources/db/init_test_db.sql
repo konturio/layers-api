@@ -30,7 +30,6 @@ CREATE TABLE layers
     type                  text,
     description           text,
     copyrights            text,
-    display_rule          jsonb,
     last_updated          timestamp with time zone not null default CURRENT_TIMESTAMP,
     source_updated        timestamp with time zone,
     access_time           timestamp with time zone,
@@ -56,17 +55,6 @@ CREATE TABLE layers_features
     last_updated timestamp with time zone not null default CURRENT_TIMESTAMP,
     zoom         integer                           default 999,
     UNIQUE (feature_id, layer_id, zoom)
-);
-
-CREATE TABLE layers_style
-(
-    id         integer generated always as identity,
-    layer_id   integer,
-    style_rule jsonb,
-    CONSTRAINT fk_layers_style
-        FOREIGN KEY (layer_id)
-            REFERENCES layers (id)
-            ON DELETE CASCADE
 );
 
 CREATE TABLE layers_dependencies

@@ -3,6 +3,5 @@
 ## Layers API
 
 First Production deploy procedure:
-- Read https://kontur.fibery.io/Tasks/document/Layers-DB-and-API-deployment-1072 
-- Add legend to hotProjects layer. Copy configuration json from layers_style from DEV env. 
-- Add group and category for hotProjects layer
+- Read https://kontur.fibery.io/Tasks/document/Layers-DB-and-API-deployment-1072
+- Install migration scripts from migrations folder in layers-db repo
