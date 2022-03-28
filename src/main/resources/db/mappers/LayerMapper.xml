@@ -129,7 +129,8 @@
                     #{sourceLastUpdated}, #{copyrights}, #{properties}::jsonb, #{isPublic}, #{owner}, true,
                     (select id from layers_group_properties where name = 'user_layers'), #{featureProperties}::jsonb)
             returning *)
-        select ins.public_id          as publicId,
+        select ins.id,
+               ins.public_id          as publicId,
                ins.name,
                ins.description,
                ins.url,
@@ -165,7 +166,8 @@
                  #{copyrights}, #{properties}::jsonb, #{isPublic}, #{featureProperties}::jsonb)
             where public_id = #{publicId} and owner = #{owner}
             returning *)
-        select upd.public_id          as publicId,
+        select upd.id,
+               upd.public_id          as publicId,
                upd.name,
                upd.description,
                upd.url,

@@ -27,6 +27,7 @@ import static io.kontur.layers.test.TestDataHelper.buildApplication;
 import static io.kontur.layers.test.TestDataHelper.buildCollectionCreateDtoN;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -62,6 +63,40 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.copyrights", is("copyrights_1")));
         assertThat(json, hasJsonPath("$.properties.prop1", is("propValue1_1")));
         assertThat(json, hasJsonPath("$.properties.prop2", is("propValue2_1")));
+        assertThat(json, hasJsonPath("$.featureProperties.featureProp1", is("featureProperty_1")));
+        assertThat(json, hasJsonPath("$.links[?(@.rel=='tiles')].href", contains(url("https://www.example.com"))));
+        assertThat(json, hasNoJsonPath("$.extent"));//absent because no features
+    }
+
+    @Test
+    @DisplayName("should save new layer")
+    @WithMockUser("pigeon")
+    public void testPostAndGetCollection() throws Exception {
+        //GIVEN
+        CollectionUpdateDto collection = buildCollectionCreateDtoN(1);
+        //WHEN
+        mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.writeJson(collection)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        String json = mockMvc.perform(get("/collections/pubId_1"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
+
+        assertThat(json, hasJsonPath("$.id", is("pubId_1")));
+        assertThat(json, hasJsonPath("$.title", is("name_1")));
+        assertThat(json, hasJsonPath("$.description", is("description_1")));
+        assertThat(json, hasJsonPath("$.copyrights", is("copyrights_1")));
+        assertThat(json, hasJsonPath("$.properties.prop1", is("propValue1_1")));
+        assertThat(json, hasJsonPath("$.properties.prop2", is("propValue2_1")));
+        assertThat(json, hasJsonPath("$.legend.legend1", is("legendValue1_1")));
+        assertThat(json, hasJsonPath("$.legend.legend2", is("legendValue2_1")));
         assertThat(json, hasJsonPath("$.featureProperties.featureProp1", is("featureProperty_1")));
         assertThat(json, hasJsonPath("$.links[?(@.rel=='tiles')].href", contains(url("https://www.example.com"))));
         assertThat(json, hasNoJsonPath("$.extent"));//absent because no features
