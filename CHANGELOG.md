@@ -11,6 +11,8 @@
 - Layer ID is optional for create operations. Will be generated if missing
 - Layers styles are saved in DB now
 - One can search only through collections created by themselves or others users
+- New collectionIds parameter limits collections result in search endpoint
+- Add CRUD REST for Applications
 
 #### Changed
 - Bug fixes
@@ -20,3 +22,4 @@
 #### Installation sequence
 - Install migrations from Layers DB repo
   - layers.feature_properties field is added 
+  - apps and apps_layers tables are added

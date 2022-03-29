@@ -41,8 +41,8 @@ public abstract class AbstractIntegrationTest {
     public void cleanDB() {
         new TransactionTemplate(transactionManager)
                 .execute(status ->
-                        JdbcTestUtils.deleteFromTables(jdbcTemplate, "layers", "layers_features",
-                                "layers_group_properties", "layers_category_properties", "layers_style",
+                        JdbcTestUtils.deleteFromTables(jdbcTemplate, "apps_layers", "apps",
+                                "layers", "layers_features", "layers_group_properties", "layers_category_properties",
                                 "layers_dependencies"));
     }
 }

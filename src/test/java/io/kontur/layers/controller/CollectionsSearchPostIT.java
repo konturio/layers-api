@@ -3,6 +3,7 @@ package io.kontur.layers.controller;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import io.kontur.layers.dto.CollectionUpdateDto;
+import io.kontur.layers.repository.model.Application;
 import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
 import io.kontur.layers.repository.model.Layer;
@@ -394,4 +395,164 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.fieldErrors.geometry.msg", not(emptyOrNullString())));
     }
 
+    @Test
+    public void getApplication() throws Exception {
+        //GIVEN
+        testDataMapper.insertLayer(buildLayerN(1));
+        testDataMapper.insertLayer(buildLayerN(2));
+        testDataMapper.insertLayer(buildLayerN(3));
+
+        Application app = buildApplication(1);
+        testDataMapper.insertApplication(app);
+
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_1", 1), app.getId());
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_2", 2), app.getId());
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_3", 3), app.getId());
+
+
+        //WHEN
+        String response = mockMvc.perform(post("/collections/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"appId\": \"" + app.getId().toString() + "\"}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json.read("$.collections"), hasSize(3));
+        assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_1", "pubId_2", "pubId_3"));
+        assertThat(json.read("$.collections[*].styleRule"), not(empty()));
+    }
+
+    @Test
+    public void getApplicationWithNotPublicLayers() throws Exception {
+        //GIVEN
+        Layer layer = buildLayerN(1);
+        layer.setPublic(false);
+        testDataMapper.insertLayer(layer);
+        Layer layer2 = buildLayerN(2);
+        layer2.setVisible(false);
+        testDataMapper.insertLayer(layer2);
+        testDataMapper.insertLayer(buildLayerN(3));
+
+        Application app = buildApplication(1);
+        testDataMapper.insertApplication(app);
+
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_1", 1), app.getId());
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_2", 2), app.getId());
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_3", 3), app.getId());
+
+
+        //WHEN
+        String response = mockMvc.perform(post("/collections/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"appId\": \"" + app.getId().toString() + "\"}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json.read("$.collections"), hasSize(1));
+        assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_3"));
+        assertThat(json.read("$.collections[*].styleRule"), not(empty()));
+    }
+
+    @Test
+    public void getNotPublicLayerApplicationWithNotPublicLayers() throws Exception {
+        //GIVEN
+        Layer layer = buildLayerN(1);
+        layer.setPublic(false);
+        testDataMapper.insertLayer(layer);
+        Layer layer2 = buildLayerN(2);
+        layer2.setVisible(false);
+        testDataMapper.insertLayer(layer2);
+        testDataMapper.insertLayer(buildLayerN(3));
+
+        Application app = buildApplication(1);
+        app.setShowAllPublicLayers(false);
+        testDataMapper.insertApplication(app);
+
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_1", 1), app.getId());
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_2", 2), app.getId());
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_3", 3), app.getId());
+
+
+        //WHEN
+        String response = mockMvc.perform(post("/collections/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"appId\": \"" + app.getId().toString() + "\"}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json.read("$.collections"), hasSize(2));
+        assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_1", "pubId_3"));
+        assertThat(json.read("$.collections[*].styleRule"), not(empty()));
+    }
+
+    @Test
+    public void getNotPublicApplication() throws Exception {
+        //GIVEN
+        testDataMapper.insertLayer(buildLayerN(1));
+        testDataMapper.insertLayer(buildLayerN(2));
+        testDataMapper.insertLayer(buildLayerN(3));
+
+        Application app = buildApplication(1);
+        app.setIsPublic(false);
+        testDataMapper.insertApplication(app);
+
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_1", 1), app.getId());
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_2", 2), app.getId());
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_3", 3), app.getId());
+
+
+        //WHEN
+        mockMvc.perform(post("/collections/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"appId\": \"" + app.getId().toString() + "\"}"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON));
+
+        //THEN
+    }
+
+    @Test
+    public void filterByCollectionIds() throws Exception {
+        //GIVEN
+        testDataMapper.insertLayer(buildLayerN(1));
+        testDataMapper.insertLayer(buildLayerN(2));
+        testDataMapper.insertLayer(buildLayerN(3));
+
+        Application app = buildApplication(1);
+        testDataMapper.insertApplication(app);
+
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_1", 1), app.getId());
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_2", 2), app.getId());
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_3", 3), app.getId());
+
+
+        //WHEN
+        String response = mockMvc.perform(post("/collections/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"collectionIds\":[\"pubId_2\", \"pubId_3\", \"not_exists\"], " +
+                                "\"appId\": \"" + app.getId().toString() + "\"}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json.read("$.collections"), hasSize(2));
+        assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_2", "pubId_3"));
+        assertThat(json.read("$.collections[*].styleRule"), not(empty()));
+    }
 }

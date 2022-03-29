@@ -39,7 +39,7 @@ public class Collection {
     private ObjectNode featureProperties;
 
     @JsonProperty("legend")
-    private ObjectNode legend;
+    private ObjectNode legend; //TODO remove
 
     @JsonProperty("group")
     private LayersGroupProperties group;
@@ -67,4 +67,10 @@ public class Collection {
 
     @JsonProperty("ownedByUser")
     private boolean ownedByUser;
+
+    @JsonProperty("styleRule")
+    private ObjectNode styleRule;
+
+    @JsonProperty("displayRule")
+    private ObjectNode displayRule;
 }

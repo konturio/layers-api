@@ -1,21 +1,29 @@
 package io.kontur.layers.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import io.kontur.layers.dto.CollectionCreateDto;
 import io.kontur.layers.dto.CollectionUpdateDto;
+import io.kontur.layers.repository.TestDataMapper;
+import io.kontur.layers.repository.model.Application;
 import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.util.JsonUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.UUID;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasNoJsonPath;
 import static io.kontur.layers.ApiConstants.APPLICATION_GEO_JSON;
 import static io.kontur.layers.test.CustomMatchers.url;
+import static io.kontur.layers.test.TestDataHelper.buildApplication;
 import static io.kontur.layers.test.TestDataHelper.buildCollectionCreateDtoN;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -28,6 +36,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("POST /collections")
 public class CollectionsPostIT extends AbstractIntegrationTest {
+
+    @Autowired
+    private TestDataMapper testDataMapper;
 
     @Test
     @DisplayName("should save new layer")
@@ -52,15 +63,12 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.copyrights", is("copyrights_1")));
         assertThat(json, hasJsonPath("$.properties.prop1", is("propValue1_1")));
         assertThat(json, hasJsonPath("$.properties.prop2", is("propValue2_1")));
-        assertThat(json, hasJsonPath("$.legend.legend1", is("legendValue1_1")));
-        assertThat(json, hasJsonPath("$.legend.legend2", is("legendValue2_1")));
         assertThat(json, hasJsonPath("$.featureProperties.featureProp1", is("featureProperty_1")));
         assertThat(json, hasJsonPath("$.links[?(@.rel=='tiles')].href", contains(url("https://www.example.com"))));
         assertThat(json, hasNoJsonPath("$.extent"));//absent because no features
     }
 
     @Test
-    @DisplayName("should save new layer")
     @WithMockUser("pigeon")
     public void testPostAndGetCollection() throws Exception {
         //GIVEN
@@ -86,8 +94,6 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.copyrights", is("copyrights_1")));
         assertThat(json, hasJsonPath("$.properties.prop1", is("propValue1_1")));
         assertThat(json, hasJsonPath("$.properties.prop2", is("propValue2_1")));
-        assertThat(json, hasJsonPath("$.legend.legend1", is("legendValue1_1")));
-        assertThat(json, hasJsonPath("$.legend.legend2", is("legendValue2_1")));
         assertThat(json, hasJsonPath("$.featureProperties.featureProp1", is("featureProperty_1")));
         assertThat(json, hasJsonPath("$.links[?(@.rel=='tiles')].href", contains(url("https://www.example.com"))));
         assertThat(json, hasNoJsonPath("$.extent"));//absent because no features
@@ -362,6 +368,54 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
         //THEN
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json, hasJsonPath("$.group.name", is("user_layers")));
+    }
 
+    @Test
+    @WithMockUser("pigeon")
+    public void saveNewCollectionStyleRule() throws Exception {
+        //GIVEN
+        Application app = buildApplication(1);
+        testDataMapper.insertApplication(app);
+
+        CollectionUpdateDto collection = buildCollectionCreateDtoN(1);
+        collection.setAppId(app.getId());
+        final ObjectNode styleRule = new ObjectMapper().createObjectNode();
+        styleRule.put("rule1", "legendValue1");
+        collection.setStyleRule(styleRule);
+
+        //WHEN
+        String response = mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.writeJson(collection)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.id", is("pubId_1")));
+        assertThat(json, hasJsonPath("$.styleRule.rule1", is("legendValue1")));
+    }
+
+    @Test
+    @WithMockUser("pigeon")
+    public void skipStyleRuleSaving_UnknownAppId() throws Exception {
+        //GIVEN
+        CollectionUpdateDto collection = buildCollectionCreateDtoN(1);
+        collection.setAppId(UUID.randomUUID());
+        final ObjectNode styleRule = new ObjectMapper().createObjectNode();
+        styleRule.put("rule1", "legendValue1");
+        collection.setStyleRule(styleRule);
+
+        //WHEN
+        mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.writeJson(collection)))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        //THEN;
     }
 }

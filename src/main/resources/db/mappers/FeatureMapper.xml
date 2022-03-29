@@ -13,7 +13,7 @@
     </select>
 
     <select id="getFeaturesTotal" resultType="java.lang.Integer">
-        select count(*) AS numberMatched
+        select count(feature_id) AS numberMatched
         from layers_features where layer_id = (select id from layers where public_id = #{collectionId})
         <if test="geometry != null">
             and (geom ISNULL

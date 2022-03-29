@@ -34,6 +34,9 @@
             or ST_Intersects(l.geom, ST_GeomFromGeoJSON(#{geometry})))
         </if>
         <choose>
+            <when test="appId != null and !showAllPublic">
+                and l.public_id in (select layer_id from apps_layers where app_id = #{appId})
+            </when>
             <when test='collectionOwner.name().equals("ME")'>
                 and owner = #{userName}
             </when>
@@ -81,6 +84,9 @@
                            or ST_Intersects(l.geom, ST_GeomFromGeoJSON(#{geometry})))
                    </if>
                    <choose>
+                       <when test="appId != null and !showAllPublic">
+                           and l.public_id in (select layer_id from apps_layers where app_id = #{appId})
+                       </when>
                        <when test='collectionOwner.name().equals("ME")'>
                            and owner = #{userName}
                        </when>
@@ -95,16 +101,9 @@
                        </otherwise>
                    </choose>
                    group by l.id limit #{limit} offset #{offset}
-            ),
-        styles as (select distinct on (layer_id)
-                                                 ls1.id,
-                                                 ls1.layer_id,
-                                                 ls1.style_rule
-                from layers_style ls1
-                where ls1.layer_id in (select id from lrs)
             )
         select lrs.*,
-               ls.style_rule as legend,
+               al.style_rule as styleRule,
                json_strip_nulls(json_build_object(
                    'name', gp."name",
                    'isOpened', gp.is_opened,
@@ -116,7 +115,8 @@
                    'mutuallyExclusive', cp.mutually_exclusive,
                    'order', cp."order")) as category
         from lrs
-            left join styles ls on ls.layer_id = lrs.id
+            left join apps_layers al on
+                al.app_id = #{appId} and al.layer_id = lrs.publicid
             left join layers_group_properties gp on gp.id = lrs.group_id
             left join layers_category_properties cp on cp.id = lrs.category_id
         order by lrs.id
@@ -214,8 +214,34 @@
                is_public          as isPublic,
                is_visible         as isVisible,
                feature_properties as featureProperties,
-               owner,
-               display_rule       as legend
+               owner
         from del
+    </select>
+
+    <select id="getApplicationLayers" resultType="io.kontur.layers.repository.model.Layer">
+        select id,
+               public_id          as publicId,
+               name,
+               description,
+               url,
+               type,
+               geom               as geometry,
+               last_updated       as lastUpdated,
+               source_updated     as sourceLastUpdated,
+               copyrights,
+               properties,
+               is_public          as isPublic,
+               is_visible         as isVisible,
+               feature_properties as featureProperties,
+               owner
+        from layers
+        where is_visible
+          and public_id in (select layer_id
+                    from apps_layers
+                    where app_id = #{appId}
+                    <if test="getDefaultOnly == true">
+                        and is_default
+                    </if>
+              );
     </select>
 </mapper>

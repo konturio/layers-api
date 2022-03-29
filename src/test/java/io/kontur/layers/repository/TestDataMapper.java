@@ -1,17 +1,19 @@
 package io.kontur.layers.repository;
 
-import io.kontur.layers.repository.model.LayerFeature;
+import io.kontur.layers.dto.ApplicationLayerDto;
+import io.kontur.layers.repository.model.Application;
 import io.kontur.layers.repository.model.Layer;
-import org.apache.ibatis.annotations.*;
+import io.kontur.layers.repository.model.LayerFeature;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.UUID;
 
 @Mapper
 public interface TestDataMapper {
-
-    @Update({"delete from layers_features;",
-            "delete from layers"})
-    void databaseCleanup();
 
     @Select({"with ins as (insert into layers (public_id, name, description, geom, last_updated, source_updated, copyrights, properties, is_public, is_visible, owner, type, url, feature_properties) values ",
             "(#{publicId},#{name},#{description},#{geometry}::geometry,#{lastUpdated},#{sourceLastUpdated},#{copyrights},#{properties}::jsonb,#{isPublic},#{isVisible},#{owner},#{type},#{url},#{featureProperties}::jsonb) returning id) ",
@@ -30,4 +32,14 @@ public interface TestDataMapper {
             "</foreach> ",
             "</script>"})
     void insertFeatures(@Param("collectionId") long collectionId, @Param("features") List<LayerFeature> features);
+
+    @Select({"with ins as (insert into apps (id, show_all_public_layers, is_public, owner) values ",
+            "(#{id},#{showAllPublicLayers},#{isPublic},#{owner}) returning id) ",
+            "select * from ins"})
+    UUID insertApplication(Application app);
+
+    @Insert({"insert into apps_layers (app_id, layer_id, is_default, display_rule, style_rule) values " +
+            "(#{appId}, #{appLayer.layerId}, #{appLayer.isDefault}, #{appLayer.styleRule}::jsonb, " +
+            "#{appLayer.displayRule}::jsonb)"})
+    void insertApplicationLayer(@Param("appLayer") ApplicationLayerDto appLayer, @Param("appId") UUID appId);
 }

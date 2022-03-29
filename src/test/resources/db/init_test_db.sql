@@ -30,7 +30,6 @@ CREATE TABLE layers
     type                  text,
     description           text,
     copyrights            text,
-    display_rule          jsonb,
     last_updated          timestamp with time zone not null default CURRENT_TIMESTAMP,
     source_updated        timestamp with time zone,
     access_time           timestamp with time zone,
@@ -58,17 +57,6 @@ CREATE TABLE layers_features
     UNIQUE (feature_id, layer_id, zoom)
 );
 
-CREATE TABLE layers_style
-(
-    id         integer generated always as identity,
-    layer_id   integer,
-    style_rule jsonb,
-    CONSTRAINT fk_layers_style
-        FOREIGN KEY (layer_id)
-            REFERENCES layers (id)
-            ON DELETE CASCADE
-);
-
 CREATE TABLE layers_dependencies
 (
     layer_id            integer,
@@ -83,6 +71,33 @@ CREATE TABLE layers_dependencies
     CONSTRAINT fk_layers_dependencies_parent_id
         FOREIGN KEY (parent_id)
             REFERENCES layers (id)
+            ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS apps
+(
+    id                     uuid NOT NULL DEFAULT gen_random_uuid(),
+    show_all_public_layers boolean,
+    is_public              boolean,
+    owner                  text,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS apps_layers
+(
+    app_id       uuid    NOT NULL,
+    layer_id     text    NOT NULL,
+    is_default   boolean,
+    display_rule jsonb,
+    style_rule   jsonb,
+    PRIMARY KEY (app_id, layer_id),
+    CONSTRAINT fk_apps_layers_apps
+        FOREIGN KEY (app_id)
+            REFERENCES apps (id)
+            ON DELETE CASCADE,
+    CONSTRAINT fk_apps_layers_layers
+        FOREIGN KEY (layer_id)
+            REFERENCES layers (public_id)
             ON DELETE CASCADE
 );
 
