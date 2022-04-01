@@ -1,5 +1,17 @@
 # Release notes
 
+## UNRELEASED
+
+#### Added
+
+#### Changed
+
+#### Removed
+
+#### Installation sequence
+
+
+
 ## Release 1.1.0 - 2022.04.01
 
 #### Added
