@@ -1,6 +1,6 @@
 # Release notes
 
-## UNRELEASED
+## Release 1.1.0 - 2022.04.01
 
 #### Added
 - Newly added layers are inserted into user_layer group 
