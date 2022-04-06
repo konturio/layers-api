@@ -66,7 +66,7 @@ public class CollectionsItemsApi {
             @ApiResponse(responseCode = "200", description = "fetch the feature with id `featureId` in the feature collection with id `collectionId`", content = @Content(schema = @Schema(implementation = FeatureGeoJSON.class))),
             @ApiResponse(responseCode = "404", description = "The requested URI was not found."),
             @ApiResponse(responseCode = "500", description = "A server error occurred.", content = @Content(schema = @Schema(implementation = Exception.class)))})
-    public ResponseEntity getFeature(
+    public ResponseEntity<FeatureGeoJSON> getFeature(
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
             @PathVariable("collectionId") String collectionId,
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a feature", required = true)
@@ -83,7 +83,7 @@ public class CollectionsItemsApi {
             @ApiResponse(responseCode = "400", description = "A query parameter has an invalid value.", content = @Content(schema = @Schema(implementation = Exception.class))),
             @ApiResponse(responseCode = "404", description = "The requested URI was not found."),
             @ApiResponse(responseCode = "500", description = "A server error occurred.", content = @Content(schema = @Schema(implementation = Exception.class)))})
-    public ResponseEntity getFeatures(
+    public ResponseEntity<FeatureCollectionGeoJSON> getFeatures(
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
             @PathVariable("collectionId")
                     String collectionId,
@@ -106,7 +106,7 @@ public class CollectionsItemsApi {
         int lmt = Math.min(limit == null ? COLLECTION_ITEMS_DEFAULT_LIMIT : limit, COLLECTION_ITEMS_LIMIT);
         Optional<FeatureCollectionGeoJSON> fc = featureService.getFeatureCollection(collectionId, lmt, offset,
                 null, bbox != null ? bbox : java.util.Collections.emptyList(),
-                        datetime, getCriteriaList(), true);
+                        datetime, getCriteriaList(), true, null);
         return ResponseEntity.ok(fc.orElse(new FeatureCollectionGeoJSON()));
     }
 
@@ -117,7 +117,7 @@ public class CollectionsItemsApi {
             @ApiResponse(responseCode = "400", description = "A query parameter has an invalid value.", content = @Content(schema = @Schema(implementation = Exception.class))),
             @ApiResponse(responseCode = "404", description = "The requested URI was not found."),
             @ApiResponse(responseCode = "500", description = "A server error occurred.", content = @Content(schema = @Schema(implementation = Exception.class)))})
-    public ResponseEntity searchFeatures(
+    public ResponseEntity<FeatureCollectionGeoJSON> searchFeatures(
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
             @PathVariable("collectionId")
                     String collectionId,
@@ -129,7 +129,10 @@ public class CollectionsItemsApi {
                 itemsSearchDto.getOffset(),
                 itemsSearchDto.getGeometry(),
                 null,
-                itemsSearchDto.getDatetime(), getCriteriaList(), false);
+                itemsSearchDto.getDatetime(),
+                getCriteriaList(),
+                false,
+                itemsSearchDto.getAppId());
         return ResponseEntity.ok(fc.orElse(new FeatureCollectionGeoJSON()));
     }
 
@@ -139,7 +142,7 @@ public class CollectionsItemsApi {
             @ApiResponse(responseCode = "200", description = "fetch the set of features", content = @Content(schema = @Schema(implementation = FeatureGeoJSON.class))),
             @ApiResponse(responseCode = "404", description = "The requested URI was not found.")})
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity upsertFeatures(
+    public ResponseEntity<FeatureCollectionGeoJSON> upsertFeatures(
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
             @PathVariable("collectionId") String collectionId,
             @RequestBody @Valid @ValidGeoJSON FeatureCollection body) {
@@ -153,7 +156,7 @@ public class CollectionsItemsApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Success")})
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity deleteCollection(
+    public ResponseEntity<?> deleteCollection(
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
             @PathVariable("collectionId") String collectionId,
             @Parameter(in = ParameterIn.PATH, description = "local identifier of a feature", required = true)
@@ -183,7 +186,7 @@ public class CollectionsItemsApi {
     private void validateFeatures(FeatureCollection body) {
         for (Feature feature : body.getFeatures()) {
             if (feature.getId() != null && !FEATURE_ID_PATTERN.matcher(feature.getId().toString()).matches()) {
-                throw new WebApplicationException(BAD_REQUEST, Error.objectError(null,
+                throw new WebApplicationException(BAD_REQUEST, objectError(null,
                         Error.fieldError("id",
                                 Error.error(String.format("invalid field value '%s'", feature.getId().toString())))));
             }

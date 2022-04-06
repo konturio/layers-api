@@ -15,7 +15,11 @@ public interface LayerMapper {
     Optional<Layer> getOwnedLayer(String publicId, String userName);
 
     default Optional<Layer> getLayer(String publicId, String userName) {
-        return getLayers(null, userName,1, 0, CollectionOwner.ANY, null, true, publicId).stream().findFirst();
+        return getLayer(publicId, userName, null, true);
+    }
+
+    default Optional<Layer> getLayer(String publicId, String userName, UUID appId, boolean showAllPublic) {
+        return getLayers(null, userName,1, 0, CollectionOwner.ANY, appId, showAllPublic, publicId).stream().findFirst();
     }
 
     default int getLayersTotal(@Param("geometry") String geometry,

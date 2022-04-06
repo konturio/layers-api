@@ -1,5 +1,6 @@
 package io.kontur.layers.controller;
 
+import io.kontur.layers.repository.model.Application;
 import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
 import io.kontur.layers.repository.model.Layer;
@@ -14,8 +15,7 @@ import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static io.kontur.layers.ApiConstants.APPLICATION_GEO_JSON;
 import static io.kontur.layers.test.CustomMatchers.matchesRfc3339DatePattern;
 import static io.kontur.layers.test.CustomMatchers.url;
-import static io.kontur.layers.test.TestDataHelper.buildLayerN;
-import static io.kontur.layers.test.TestDataHelper.buildPolygonN;
+import static io.kontur.layers.test.TestDataHelper.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -251,4 +251,89 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.fieldErrors.geometry.msg", not(emptyOrNullString())));
     }
 
+    @Test
+    public void featuresFromApplication() throws Exception {
+        //GIVEN
+        Application app = buildApplication(1);
+        app.setShowAllPublicLayers(false);
+        testDataMapper.insertApplication(app);
+
+        final Layer layer = buildLayerN(1);
+        ReflectionTestUtils.setField(layer, "isPublic", false);
+        final long id = testDataMapper.insertLayer(layer);
+
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_1", 1), app.getId());
+
+        testDataMapper.insertFeature(id, buildPolygonN(1));
+        //WHEN
+        String json = mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
+                        .contentType(APPLICATION_JSON)
+                        .content(String.format("{\"appId\":\"%s\"}", app.getId())))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_GEO_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
+
+        assertThat(json, hasJsonPath("$.type", is("FeatureCollection")));
+        assertThat(json, hasJsonPath("$.features", hasSize(1)));
+        assertThat(json, hasJsonPath("$.features[0].id", is("featureId_1")));
+    }
+
+    @Test
+    public void featuresFromNonPublicApplicationAreNotVisible() throws Exception {
+        //GIVEN
+        Application app = buildApplication(1);
+        app.setShowAllPublicLayers(false);
+        app.setIsPublic(false);
+        testDataMapper.insertApplication(app);
+
+        final Layer layer = buildLayerN(1);
+        ReflectionTestUtils.setField(layer, "isPublic", false);
+        final long id = testDataMapper.insertLayer(layer);
+
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_1", 1), app.getId());
+
+        testDataMapper.insertFeature(id, buildPolygonN(1));
+        //WHEN
+        String json = mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
+                        .contentType(APPLICATION_JSON)
+                        .content(String.format("{\"appId\":\"%s\"}", app.getId())))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
+    }
+
+    @Test
+    public void featuresFromDN2ApplicationWithGeometryFilter() throws Exception {
+        //GIVEN
+        Application app = buildApplication(1);
+        app.setShowAllPublicLayers(true);
+        testDataMapper.insertApplication(app);
+
+        final Layer layer = buildLayerN(1);
+        ReflectionTestUtils.setField(layer, "isPublic", true);
+        final long id = testDataMapper.insertLayer(layer);
+
+        testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_1", 1), app.getId());
+
+        testDataMapper.insertFeature(id, buildPolygonN(1));
+        testDataMapper.insertFeature(id, buildPolygonN(2));
+        //WHEN
+        String json = mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
+                        .contentType(APPLICATION_JSON)
+                        .content(String.format("{\"geometry\":{\"type\":\"Point\",\"coordinates\":[0,2]}, " +
+                                "\"appId\":\"%s\"}", app.getId())))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_GEO_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
+
+        assertThat(json, hasJsonPath("$.type", is("FeatureCollection")));
+        assertThat(json, hasJsonPath("$.features", hasSize(1)));
+        assertThat(json, hasJsonPath("$.features[0].id", is("featureId_2")));
+    }
 }
