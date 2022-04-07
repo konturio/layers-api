@@ -3,6 +3,7 @@
 ## UNRELEASED
 
 #### Added
+- appId parameter into feature search endpoint
 
 #### Changed
 
