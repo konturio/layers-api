@@ -3,8 +3,10 @@ package io.kontur.layers.service;
 import io.kontur.layers.controller.exceptions.Error;
 import io.kontur.layers.controller.exceptions.WebApplicationException;
 import io.kontur.layers.dto.*;
+import io.kontur.layers.repository.ApplicationMapper;
 import io.kontur.layers.repository.FeatureMapper;
 import io.kontur.layers.repository.LayerMapper;
+import io.kontur.layers.repository.model.Application;
 import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.util.AuthorizationUtils;
@@ -24,6 +26,7 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -33,12 +36,15 @@ public class FeatureService {
 
     private final FeatureMapper featureMapper;
     private final LayerMapper layerMapper;
+    private final ApplicationMapper applicationMapper;
     private final FeatureServiceHelper featureServiceHelper;
 
     public FeatureService(FeatureMapper featureMapper, final LayerMapper layerMapper,
+                          ApplicationMapper applicationMapper,
                           FeatureServiceHelper featureServiceHelper) {
         this.featureMapper = featureMapper;
         this.layerMapper = layerMapper;
+        this.applicationMapper = applicationMapper;
         this.featureServiceHelper = featureServiceHelper;
     }
 
@@ -51,12 +57,21 @@ public class FeatureService {
             List<BigDecimal> bbox,
             DateTimeRange dateTimeRange,
             List<FeaturePropertiesFilter> propFilterList,
-            boolean includeLinks) {
-
-        String title = getLayerTitle(collectionId);
-
+            boolean includeLinks,
+            UUID appId) {
         List<FeaturePropertiesFilter> list = convertAdditionalPropertiesIntoFilterList(propFilterList);
         String geometryString = geometry != null ? JsonUtil.writeJson(geometry) : null;
+
+        String title;
+        if (appId != null) {
+            String userName = AuthorizationUtils.getAuthenticatedUserName();
+            Application app = applicationMapper.getApplicationOwnedOrPublic(appId, userName)
+                    .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Application is not found"));
+
+            title = getLayerTitle(getLayerIfAvailable(collectionId, app));
+        } else {
+            title = getLayerTitle(getLayerIfAvailable(collectionId, null));
+        }
 
         Integer numberMatched = featureMapper.getFeaturesTotal(collectionId, geometryString, bbox, dateTimeRange, list)
                 .orElse(null);
@@ -95,7 +110,7 @@ public class FeatureService {
 
     @Transactional(readOnly = true)
     public Optional<FeatureGeoJSON> getFeature(String collectionId, String featureId) {
-        String title = getLayerTitle(collectionId);
+        String title = getLayerTitle(getLayerIfAvailable(collectionId, null));
 
         Optional<LayerFeature> feature = featureMapper.getFeature(collectionId, featureId);
 
@@ -142,10 +157,20 @@ public class FeatureService {
                 .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Feature can not be found"));
     }
 
-    private String getLayerTitle(String collectionId) {
-        final Layer layer = layerMapper.getLayer(collectionId, AuthorizationUtils.getAuthenticatedUserName())
-                .orElseThrow(() -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found",
-                        collectionId)));
+    private Layer getLayerIfAvailable(String collectionId, Application app) {
+        String userName = AuthorizationUtils.getAuthenticatedUserName();
+        Optional<Layer> layer;
+        if (app == null) {
+            layer = layerMapper.getLayer(collectionId, userName);
+        } else {
+            layer = layerMapper.getLayer(collectionId, userName, app.getId(), app.getShowAllPublicLayers());
+        }
+        return layer
+                .orElseThrow(() -> new WebApplicationException(NOT_FOUND,
+                        Error.errorFmt("Collection '%s' not found", collectionId)));
+    }
+
+    private String getLayerTitle(Layer layer) {
         String title = layer.getName();
         if (StringUtils.isEmpty(title)) {
             title = layer.getPublicId();
