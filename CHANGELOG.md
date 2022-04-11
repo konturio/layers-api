@@ -3,7 +3,8 @@
 ## UNRELEASED
 
 #### Added
-- appId parameter into feature search endpoint
+- #9725 appId parameter into feature search endpoint
+- #9819 Pass collections displayRule to API
 
 #### Changed
 

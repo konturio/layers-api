@@ -190,6 +190,7 @@ public class CollectionService {
                 .featureProperties(layer.getFeatureProperties())
                 .legend(layer.getStyleRule()) //TODO remove
                 .styleRule(layer.getStyleRule())
+                .displayRule(layer.getDisplayRule())
                 .group(layer.getGroup())
                 .category(layer.getCategory())
                 .itemType(layer.getType())

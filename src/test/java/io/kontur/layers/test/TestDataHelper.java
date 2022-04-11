@@ -36,7 +36,7 @@ public class TestDataHelper {
 
         return new Layer(null, "pubId_" + n, "name_" + n, "description_" + n, null, null,
                 String.format("SRID=4326;POLYGON((0 0, %1$d 0, %1$d %1$d, 0 %1$d, 0 0))", n),
-                "copyrights_" + n, props, null, featureProps, null, null,
+                "copyrights_" + n, props, null, null, featureProps, null, null,
                 OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusSeconds(n),
                 OffsetDateTime.of(2020, 4, 15, 15, 0, 0, 0, offset()).plusSeconds(n),
                 null, null, true, true, "owner_" + n);

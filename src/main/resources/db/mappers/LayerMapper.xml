@@ -104,6 +104,7 @@
             )
         select lrs.*,
                al.style_rule as styleRule,
+               al.display_rule as displayRule,
                json_strip_nulls(json_build_object(
                    'name', gp."name",
                    'isOpened', gp.is_opened,
