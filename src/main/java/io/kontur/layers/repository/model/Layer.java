@@ -26,6 +26,7 @@ public class Layer {
     private String copyrights;
     private ObjectNode properties;
     private ObjectNode styleRule;
+    private ObjectNode displayRule;
     private ObjectNode featureProperties;
     private LayersGroupProperties group;
     private LayersCategoryProperties category;
