@@ -400,6 +400,66 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
 
     @Test
     @WithMockUser("pigeon")
+    public void saveNewCollectionDisplayRule() throws Exception {
+        //GIVEN
+        Application app = buildApplication(1);
+        testDataMapper.insertApplication(app);
+
+        CollectionUpdateDto collection = buildCollectionCreateDtoN(1);
+        collection.setAppId(app.getId());
+        final ObjectNode rule = new ObjectMapper().createObjectNode();
+        rule.put("rule1", "legendValue1");
+        collection.setDisplayRule(rule);
+
+        //WHEN
+        String response = mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.writeJson(collection)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.id", is("pubId_1")));
+        assertThat(json, hasJsonPath("$.displayRule.rule1", is("legendValue1")));
+    }
+
+    @Test
+    @WithMockUser("pigeon")
+    public void saveNewCollectionStyleAndDisplayRule() throws Exception {
+        //GIVEN
+        Application app = buildApplication(1);
+        testDataMapper.insertApplication(app);
+
+        CollectionUpdateDto collection = buildCollectionCreateDtoN(1);
+        collection.setAppId(app.getId());
+        final ObjectNode rule = new ObjectMapper().createObjectNode();
+        rule.put("rule1", "legendValue1");
+        collection.setDisplayRule(rule);
+        final ObjectNode styleRule = new ObjectMapper().createObjectNode();
+        styleRule.put("styleRule1", "styleRuleValue1");
+        collection.setStyleRule(styleRule);
+
+        //WHEN
+        String response = mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.writeJson(collection)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.id", is("pubId_1")));
+        assertThat(json, hasJsonPath("$.displayRule.rule1", is("legendValue1")));
+        assertThat(json, hasJsonPath("$.styleRule.styleRule1", is("styleRuleValue1")));
+    }
+
+    @Test
+    @WithMockUser("pigeon")
     public void skipStyleRuleSaving_UnknownAppId() throws Exception {
         //GIVEN
         CollectionUpdateDto collection = buildCollectionCreateDtoN(1);

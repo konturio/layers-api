@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.wololo.geojson.Feature;
 import org.wololo.geojson.FeatureCollection;
 import org.wololo.geojson.Geometry;
@@ -23,10 +24,7 @@ import org.wololo.geojson.Geometry;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -132,7 +130,10 @@ public class FeatureService {
                         OffsetDateTime.now()))
                 .collect(Collectors.toList());
 
-        List<LayerFeature> result = featureMapper.upsertFeatures(features);
+        List<LayerFeature> result = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(features)) {
+            result.addAll(featureMapper.upsertFeatures(features));
+        }
 
         List<String> resultedIds = result.stream()
                 .map(LayerFeature::getFeatureId)
