@@ -293,4 +293,37 @@ public class CollectionsItemsPutIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.fieldErrors.body.msg", not(emptyOrNullString())));
     }
 
+
+    @Test
+    @WithMockUser("owner_1")
+    public void testPutEmptyItems() throws Exception {
+        //GIVEN
+        Layer layer = buildLayerN(1);
+        final long id = testDataMapper.insertLayer(layer);
+
+        testDataMapper.insertFeature(id, buildPointN(1));
+        testDataMapper.insertFeature(id, buildPointN(10));
+        testDataMapper.insertFeature(id, buildPointN(100));
+
+        String updatedGeoJson = "{\"type\":\"FeatureCollection\",\"features\":[]}";
+
+        mockMvc.perform(put("/collections/" + layer.getPublicId() + "/items")
+                        .contentType(APPLICATION_JSON)
+                        .content(updatedGeoJson))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_GEO_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //WHEN
+        String response2 = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_GEO_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json2 = JsonPath.parse(response2);
+        assertThat(json2, hasJsonPath("$.features", hasSize(0)));
+    }
 }

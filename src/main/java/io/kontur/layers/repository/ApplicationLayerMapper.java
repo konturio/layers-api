@@ -21,7 +21,8 @@ public interface ApplicationLayerMapper {
     void deleteAppLayersNotInList(@Param("appId") UUID appId,
                                   @Param("layerIds") List<String> layerIds);
 
-    Optional<ObjectNode> updateStyleRule(@Param("appId") UUID appId,
-                                         @Param("layerId") String layerId,
-                                         @Param("styleRule") ObjectNode styleRule);
+    Optional<ApplicationLayer> updateStyleAndDisplayRules(@Param("appId") UUID appId,
+                                                    @Param("layerId") String layerId,
+                                                    @Param("styleRule") ObjectNode styleRule,
+                                                    @Param("displayRule") ObjectNode displayRule);
 }

@@ -32,6 +32,8 @@ public class CollectionUpdateDto {
     private ObjectNode featureProperties;
     @JsonProperty("styleRule")
     private ObjectNode styleRule;
+    @JsonProperty("displayRule")
+    private ObjectNode displayRule;
     @JsonProperty("appId")
     private UUID appId;
 

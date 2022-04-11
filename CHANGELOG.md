@@ -7,6 +7,7 @@
 - #9819 Pass collections displayRule to API
 
 #### Changed
+- PUT empty FeatureCollection into /collections/{collectionId}/items will not lead to an error
 
 #### Removed
 

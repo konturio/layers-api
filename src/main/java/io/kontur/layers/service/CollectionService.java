@@ -11,6 +11,7 @@ import io.kontur.layers.repository.ApplicationLayerMapper;
 import io.kontur.layers.repository.ApplicationMapper;
 import io.kontur.layers.repository.LayerMapper;
 import io.kontur.layers.repository.model.Application;
+import io.kontur.layers.repository.model.ApplicationLayer;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.util.AuthorizationUtils;
 import io.kontur.layers.util.JsonUtil;
@@ -202,17 +203,20 @@ public class CollectionService {
     }
 
     private void updateStyleRules(CollectionUpdateDto collection, Layer layer) {
-        if (collection.getAppId() != null && collection.getStyleRule() != null) {
+        if (collection.getAppId() != null &&
+                (collection.getStyleRule() != null || collection.getDisplayRule() != null)) {
             applicationMapper.getApplicationOwnedOrPublic(collection.getAppId(),
                     AuthorizationUtils.getAuthenticatedUserName())
                     .orElseThrow(() -> new WebApplicationException(HttpStatus.BAD_REQUEST,
                             "Application with such id can not be found"));
 
-            ObjectNode styleRules = applicationLayerMapper.updateStyleRule(collection.getAppId(), layer.getPublicId(),
-                            collection.getStyleRule())
+            ApplicationLayer appLayer = applicationLayerMapper.updateStyleAndDisplayRules(
+                            collection.getAppId(), layer.getPublicId(), collection.getStyleRule(),
+                            collection.getDisplayRule())
                     .orElseThrow(() -> new WebApplicationException(HttpStatus.BAD_REQUEST,
-                            "Isn't able to update style rules"));
-            layer.setStyleRule(styleRules);
+                            "Wasn't able to update style or display rules"));
+            layer.setStyleRule(appLayer.getStyleRule());
+            layer.setDisplayRule(appLayer.getDisplayRule());
         }
     }
 
