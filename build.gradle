@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'io.kontur'
-version = '1.2.0-SNAPSHOT'
+version = '1.2.0'
 sourceCompatibility = '17'
 
 repositories {

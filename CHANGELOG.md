@@ -3,6 +3,18 @@
 ## UNRELEASED
 
 #### Added
+
+#### Changed
+
+#### Removed
+
+#### Installation sequence
+
+
+
+## Release 1.2.0 - 2022.04.12
+
+#### Added
 - #9725 appId parameter into feature search endpoint
 - #9819 Pass collections displayRule to API
 
