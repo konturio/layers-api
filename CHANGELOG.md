@@ -5,6 +5,7 @@
 #### Added
 
 #### Changed
+- #10079 Improve search collection response time 
 
 #### Removed
 

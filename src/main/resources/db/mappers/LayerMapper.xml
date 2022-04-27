@@ -19,7 +19,11 @@
 
     <select id="getLayersTotal" resultType="java.lang.Integer">
         select count(*) AS numberMatched
-        from layers l
+        from
+             layers l
+             <if test="geometry != null">
+                 , ST_Subdivide(ST_GeomFromGeoJSON(#{geometry})) as inpgeom
+             </if>
         where is_visible
         <if test="publicIds != null">
             <foreach collection="publicIds" item="id" open="and l.public_id in (" separator="," close=")">
@@ -30,8 +34,8 @@
             and ((l.geom isnull
             and l.id in (select layer_id
             from layers_features ls
-            where ST_Intersects(ls.geom, ST_GeomFromGeoJSON(#{geometry}))))
-            or ST_Intersects(l.geom, ST_GeomFromGeoJSON(#{geometry})))
+            where ST_Intersects(ls.geom, inpgeom)))
+            or ST_Intersects(l.geom, inpgeom))
         </if>
         <choose>
             <when test="appId != null and !showAllPublic">
@@ -69,7 +73,11 @@
                           l.is_visible     as isVisible,
                           l.feature_properties as featureProperties,
                           l.owner as owner
-                   from layers l
+                   from
+                        layers l
+                        <if test="geometry != null">
+                            , ST_Subdivide(ST_GeomFromGeoJSON(#{geometry})) as inpgeom
+                        </if>
                    where is_visible
                    <if test="publicIds != null">
                        <foreach collection="publicIds" item="id" open="and l.public_id in (" separator="," close=")">
@@ -80,8 +88,8 @@
                        and ((l.geom isnull
                                 and l.id in (select layer_id
                                             from layers_features ls
-                                            where ST_Intersects(ls.geom, ST_GeomFromGeoJSON(#{geometry}))))
-                           or ST_Intersects(l.geom, ST_GeomFromGeoJSON(#{geometry})))
+                                            where ST_Intersects(ls.geom, inpgeom)))
+                           or ST_Intersects(l.geom, inpgeom))
                    </if>
                    <choose>
                        <when test="appId != null and !showAllPublic">
