@@ -18,7 +18,7 @@
     </select>
 
     <select id="getLayersTotal" resultType="java.lang.Integer">
-        select count(*) AS numberMatched
+        select count(distinct l.id) AS numberMatched
         from
              layers l
              <if test="geometry != null">
