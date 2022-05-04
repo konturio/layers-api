@@ -21,9 +21,6 @@
         select count(distinct l.id) AS numberMatched
         from
              layers l
-             <if test="geometry != null">
-                 , ST_Subdivide(ST_GeomFromGeoJSON(#{geometry})) as inpgeom
-             </if>
         where is_visible
         <if test="publicIds != null">
             <foreach collection="publicIds" item="id" open="and l.public_id in (" separator="," close=")">
@@ -31,11 +28,12 @@
             </foreach>
         </if>
         <if test="geometry != null">
-            and ((l.geom isnull
-            and l.id in (select layer_id
-            from layers_features ls
-            where ST_Intersects(ls.geom, inpgeom)))
-            or ST_Intersects(l.geom, inpgeom))
+            and (id in (select layer_id
+                            from layers_features as f,
+                                st_subdivide(ST_GeomFromGeoJSON(#{geometry})) as inpgeom
+                            where st_intersects(f.geom, inpgeom))
+                or st_intersects(geom, ST_GeomFromGeoJSON(#{geometry}))
+            )
         </if>
         <choose>
             <when test="appId != null and !showAllPublic">
@@ -57,27 +55,9 @@
     </select>
 
     <select id="getLayers" resultType="io.kontur.layers.repository.model.Layer">
-        with lrs as (select l.id,
-                          l.public_id as publicid,
-                          l.name as name,
-                          l.description,
-                          l.copyrights,
-                          l.properties,
-                          l.group_id,
-                          l.category_id,
-                          l.type,
-                          l.url,
-                          l.last_updated   as lastupdated,
-                          l.source_updated as sourcelastupdated,
-                          l.is_public      as isPublic,
-                          l.is_visible     as isVisible,
-                          l.feature_properties as featureProperties,
-                          l.owner as owner
+        with lrsids as (select l.id
                    from
                         layers l
-                        <if test="geometry != null">
-                            , ST_Subdivide(ST_GeomFromGeoJSON(#{geometry})) as inpgeom
-                        </if>
                    where is_visible
                    <if test="publicIds != null">
                        <foreach collection="publicIds" item="id" open="and l.public_id in (" separator="," close=")">
@@ -85,11 +65,12 @@
                        </foreach>
                    </if>
                    <if test="geometry != null">
-                       and ((l.geom isnull
-                                and l.id in (select layer_id
-                                            from layers_features ls
-                                            where ST_Intersects(ls.geom, inpgeom)))
-                           or ST_Intersects(l.geom, inpgeom))
+                       and (id in (select layer_id
+                                from layers_features as f,
+                                    st_subdivide(ST_GeomFromGeoJSON(#{geometry})) as inpgeom
+                                where st_intersects(f.geom, inpgeom))
+                            or st_intersects(geom, ST_GeomFromGeoJSON(#{geometry}))
+                       )
                    </if>
                    <choose>
                        <when test="appId != null and !showAllPublic">
@@ -108,9 +89,23 @@
                            and is_public
                        </otherwise>
                    </choose>
-                   group by l.id limit #{limit} offset #{offset}
             )
-        select lrs.*,
+        select lrs.id,
+               lrs.public_id                 as publicid,
+               lrs.name                      as name,
+               lrs.description,
+               lrs.copyrights,
+               lrs.properties,
+               lrs.group_id,
+               lrs.category_id,
+               lrs.type,
+               lrs.url,
+               lrs.last_updated              as lastupdated,
+               lrs.source_updated            as sourcelastupdated,
+               lrs.is_public                 as isPublic,
+               lrs.is_visible                as isVisible,
+               lrs.feature_properties        as featureProperties,
+               lrs.owner                     as owner,
                al.style_rule as styleRule,
                al.display_rule as displayRule,
                json_strip_nulls(json_build_object(
@@ -123,12 +118,14 @@
                    'isOpened', cp.is_opened,
                    'mutuallyExclusive', cp.mutually_exclusive,
                    'order', cp."order")) as category
-        from lrs
+        from layers as lrs
             left join apps_layers al on
-                al.app_id = #{appId} and al.layer_id = lrs.publicid
+                al.app_id = #{appId} and al.layer_id = lrs.public_id
             left join layers_group_properties gp on gp.id = lrs.group_id
             left join layers_category_properties cp on cp.id = lrs.category_id
+        where lrs.id in (select id from lrsids)
         order by lrs.id
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="insertLayer" resultType="io.kontur.layers.repository.model.Layer">
