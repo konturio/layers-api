@@ -5,6 +5,18 @@
 #### Added
 
 #### Changed
+
+#### Removed
+
+#### Installation sequence
+
+
+
+## Release 1.3.0 - 2022.05.05
+
+#### Added
+
+#### Changed
 - #10079 Improve search collection response time 
 
 #### Removed
