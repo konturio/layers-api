@@ -37,3 +37,29 @@ mybatis:
   mapper-locations: classpath:db/mappers/*Mapper.xml
   type-handlers-package: io.kontur.layers.repository.typehandler
 
+management:
+  metrics:
+    export:
+      simple:
+        enabled: false
+    distribution:
+      percentiles-histogram:
+       http.server.requests: true
+  health:
+    ping:
+      enabled: false
+    diskspace:
+      enabled: false
+  endpoint:
+    health:
+      status:
+        http-mapping:
+          down: 200
+      cache:
+        time-to-live: 10s
+      show-details: always
+      show-components: always
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus

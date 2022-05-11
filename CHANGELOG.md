@@ -5,6 +5,7 @@
 #### Added
 
 #### Changed
+- #9861 Add prometheus metrics
 
 #### Removed
 
