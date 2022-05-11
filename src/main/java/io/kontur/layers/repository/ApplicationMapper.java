@@ -9,20 +9,21 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Mapper
+@Timed(value = "db.query", histogram = true)
 public interface ApplicationMapper {
 
-    @Timed("db.queries.apps.byId")
+    @Timed(value = "db.query", histogram = true)
     Optional<Application> getApplication(@Param("appId") UUID appId);
 
-    @Timed("db.queries.apps.byId.public")
+    @Timed(value = "db.query", histogram = true)
     Optional<Application> getApplicationOwnedOrPublic(@Param("appId") UUID appId, @Param("owner") String owner);
 
-    @Timed("db.queries.apps.insert")
+    @Timed(value = "db.query", histogram = true)
     Application insertApplication(Application application);
 
-    @Timed("db.queries.apps.update")
+    @Timed(value = "db.query", histogram = true)
     Application updateApplication(Application application);
 
-    @Timed("db.queries.apps.delete")
+    @Timed(value = "db.query", histogram = true)
     Application deleteApplication(@Param("appId") UUID appId, @Param("owner") String owner);
 }
