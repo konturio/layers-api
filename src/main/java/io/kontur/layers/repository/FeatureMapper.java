@@ -12,9 +12,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Mapper
+@Timed(value = "db.query", histogram = true)
 public interface FeatureMapper {
 
-    @Timed("db.queries.features.search")
+    @Timed(value = "db.query", histogram = true)
     List<LayerFeature> getFeatures(@Param("collectionId") String collectionId,
                                    @Param("limit") Integer limit,
                                    @Param("offset") Integer offset,
@@ -23,25 +24,25 @@ public interface FeatureMapper {
                                    @Param("dateTime") DateTimeRange dateTime,
                                    @Param("propFilterList") List<FeaturePropertiesFilter> propFilterList);
 
-    @Timed("db.queries.features.byId")
+    @Timed(value = "db.query", histogram = true)
     Optional<LayerFeature> getFeature(@Param("collectionId") String collectionId, @Param("featureId") String featureId);
 
-    @Timed("db.queries.features.total")
+    @Timed(value = "db.query", histogram = true)
     Optional<Integer> getFeaturesTotal(@Param("collectionId") String collectionId,
                                        @Param("geometry") String geometry,
                                        @Param("bbox") List<BigDecimal> bbox,
                                        @Param("dateTime") DateTimeRange dateTime,
                                        @Param("propFilterList") List<FeaturePropertiesFilter> propFilterList);
 
-    @Timed("db.queries.features.upsert")
+    @Timed(value = "db.query", histogram = true)
     List<LayerFeature> upsertFeatures(List<LayerFeature> features);
 
-    @Timed("db.queries.features.delete.byId")
+    @Timed(value = "db.query", histogram = true)
     Optional<LayerFeature> deleteFeature(@Param("owner") String owner,
                                          @Param("collectionId") String collectionId,
                                          @Param("featureId") String featureId);
 
-    @Timed("db.queries.features.delete")
+    @Timed(value = "db.query", histogram = true)
     void deleteFeaturesNotInList(@Param("owner") String owner,
                                          @Param("collectionId") String collectionId,
                                          @Param("featureIds") List<String> featureIds);

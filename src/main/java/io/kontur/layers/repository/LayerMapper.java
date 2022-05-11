@@ -11,48 +11,50 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Mapper
+@Timed(value = "db.query", histogram = true)
 public interface LayerMapper {
 
-    @Timed("db.queries.layers.user.owned")
+    @Timed(value = "db.query", histogram = true)
     Optional<Layer> getOwnedLayer(String publicId, String userName);
 
-    @Timed("db.queries.layers.user.accessible")
+    @Timed(value = "db.query", histogram = true)
     default Optional<Layer> getLayer(String publicId, String userName) {
         return getLayer(publicId, userName, null, true);
     }
 
-    @Timed("db.queries.layers.user.accessible.byAppId")
+    @Timed(value = "db.query", histogram = true)
     default Optional<Layer> getLayer(String publicId, String userName, UUID appId, boolean showAllPublic) {
-        return getLayers(null, userName,1, 0, CollectionOwner.ANY, appId, showAllPublic, publicId).stream().findFirst();
+        return getLayers(null, userName, 1, 0, CollectionOwner.ANY, appId, showAllPublic, publicId).stream()
+                .findFirst();
     }
 
-    @Timed("db.queries.layers.total.noAppId")
+    @Timed(value = "db.query", histogram = true)
     default int getLayersTotal(@Param("geometry") String geometry,
-                           @Param("userName") String userName,
-                           @Param("collectionOwner") CollectionOwner collectionOwner,
-                           @Param("publicIds") String... publicIds) {
+                               @Param("userName") String userName,
+                               @Param("collectionOwner") CollectionOwner collectionOwner,
+                               @Param("publicIds") String... publicIds) {
         return getLayersTotal(geometry, userName, collectionOwner, null, true, publicIds);
     }
 
-    @Timed("db.queries.layers.total")
+    @Timed(value = "db.query", histogram = true)
     int getLayersTotal(@Param("geometry") String geometry,
-                           @Param("userName") String userName,
-                           @Param("collectionOwner") CollectionOwner collectionOwner,
-                           @Param("appId") UUID appId,
-                           @Param("showAllPublic") boolean showAllPublic,
-                           @Param("publicIds") String... publicIds);
+                       @Param("userName") String userName,
+                       @Param("collectionOwner") CollectionOwner collectionOwner,
+                       @Param("appId") UUID appId,
+                       @Param("showAllPublic") boolean showAllPublic,
+                       @Param("publicIds") String... publicIds);
 
-    @Timed("db.queries.layers.search.noAppId")
+    @Timed(value = "db.query", histogram = true)
     default List<Layer> getLayers(@Param("geometry") String geometry,
-                          @Param("userName") String userName,
-                          @Param("limit") Integer limit,
-                          @Param("offset") Integer offset,
-                          @Param("collectionOwner") CollectionOwner collectionOwner,
-                          @Param("publicIds") String... publicIds) {
+                                  @Param("userName") String userName,
+                                  @Param("limit") Integer limit,
+                                  @Param("offset") Integer offset,
+                                  @Param("collectionOwner") CollectionOwner collectionOwner,
+                                  @Param("publicIds") String... publicIds) {
         return getLayers(geometry, userName, limit, offset, collectionOwner, null, true, publicIds);
     }
 
-    @Timed("db.queries.layers.search")
+    @Timed(value = "db.query", histogram = true)
     List<Layer> getLayers(@Param("geometry") String geometry,
                           @Param("userName") String userName,
                           @Param("limit") Integer limit,
@@ -62,17 +64,17 @@ public interface LayerMapper {
                           @Param("showAllPublic") boolean showAllPublic,
                           @Param("publicIds") String... publicIds);
 
-    @Timed("db.queries.layers.add")
+    @Timed(value = "db.query", histogram = true)
     Layer insertLayer(Layer layer);
 
-    @Timed("db.queries.layers.update")
+    @Timed(value = "db.query", histogram = true)
     Layer updateLayer(Layer layer);
 
-    @Timed("db.queries.layers.delete")
+    @Timed(value = "db.query", histogram = true)
     Layer deleteLayer(@Param("owner") String owner,
                       @Param("id") String id);
 
-    @Timed("db.queries.layers.application.select")
+    @Timed(value = "db.query", histogram = true)
     List<Layer> getApplicationLayers(@Param("appId") UUID appId,
                                      @Param("getDefaultOnly") boolean getDefaultOnly);
 }

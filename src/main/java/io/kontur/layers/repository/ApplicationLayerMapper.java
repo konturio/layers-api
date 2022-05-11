@@ -14,20 +14,20 @@ import java.util.UUID;
 @Mapper
 public interface ApplicationLayerMapper {
 
-    @Timed("db.queries.appLayers.byId")
+    @Timed(value = "db.query", histogram = true)
     List<ApplicationLayer> getApplicationLayersRules(@Param("appId") UUID appId);
 
-    @Timed("db.queries.appLayers.upsert")
+    @Timed(value = "db.query", histogram = true)
     List<ApplicationLayer> upsertLayers(@Param("appId") UUID appId,
                                         @Param("layers") List<ApplicationLayerDto> layers);
 
-    @Timed("db.queries.appLayers.delete")
+    @Timed(value = "db.query", histogram = true)
     void deleteAppLayersNotInList(@Param("appId") UUID appId,
                                   @Param("layerIds") List<String> layerIds);
 
-    @Timed("db.queries.appLayers.update")
+    @Timed(value = "db.query", histogram = true)
     Optional<ApplicationLayer> updateStyleAndDisplayRules(@Param("appId") UUID appId,
-                                                    @Param("layerId") String layerId,
-                                                    @Param("styleRule") ObjectNode styleRule,
-                                                    @Param("displayRule") ObjectNode displayRule);
+                                                          @Param("layerId") String layerId,
+                                                          @Param("styleRule") ObjectNode styleRule,
+                                                          @Param("displayRule") ObjectNode displayRule);
 }
