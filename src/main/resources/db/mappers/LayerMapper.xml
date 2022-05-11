@@ -18,9 +18,10 @@
     </select>
 
     <select id="getLayersTotal" resultType="java.lang.Integer">
-        select count(distinct l.id) AS numberMatched
+        with g as (select ST_GeomFromGeoJSON(#{geometry}) as inpgeom),
+        lrsids as (select l.id
         from
-             layers l
+        layers l
         where is_visible
         <if test="publicIds != null">
             <foreach collection="publicIds" item="id" open="and l.public_id in (" separator="," close=")">
@@ -28,12 +29,8 @@
             </foreach>
         </if>
         <if test="geometry != null">
-            and (id in (select layer_id
-                            from layers_features as f,
-                                st_subdivide(ST_GeomFromGeoJSON(#{geometry})) as inpgeom
-                            where st_intersects(f.geom, inpgeom))
-                or st_intersects(geom, ST_GeomFromGeoJSON(#{geometry}))
-            )
+            and geom is not null
+            and st_intersects(l.geom, (select inpgeom from g))
         </if>
         <choose>
             <when test="appId != null and !showAllPublic">
@@ -51,11 +48,54 @@
             <otherwise>
                 and is_public
             </otherwise>
-        </choose>;
+        </choose>
+        <if test="geometry != null">
+            union
+            select l.id
+            from
+            layers l
+            join lateral (
+            select
+            layer_id
+            from
+            layers_features as lf
+            where
+            st_intersects(lf.geom, (select inpgeom from g))
+            and l.id = lf.layer_id
+            limit 1) as lff on true
+            where is_visible
+            and geom is null
+            <if test="publicIds != null">
+                <foreach collection="publicIds" item="id" open="and l.public_id in (" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <choose>
+                <when test="appId != null and !showAllPublic">
+                    and l.public_id in (select layer_id from apps_layers where app_id = #{appId})
+                </when>
+                <when test='collectionOwner.name().equals("ME")'>
+                    and owner = #{userName}
+                </when>
+                <when test='collectionOwner.name().equals("NOT_ME")'>
+                    and is_public and owner != #{userName}
+                </when>
+                <when test="userName != null">
+                    and (is_public or owner = #{userName})
+                </when>
+                <otherwise>
+                    and is_public
+                </otherwise>
+            </choose>
+        </if>
+        )
+        select count(distinct l.id) AS numberMatched
+        from lrsids l
     </select>
 
     <select id="getLayers" resultType="io.kontur.layers.repository.model.Layer">
-        with lrsids as (select l.id
+        with g as (select ST_GeomFromGeoJSON(#{geometry}) as inpgeom),
+        lrsids as (select l.id
                    from
                         layers l
                    where is_visible
@@ -65,12 +105,8 @@
                        </foreach>
                    </if>
                    <if test="geometry != null">
-                       and (id in (select layer_id
-                                from layers_features as f,
-                                    st_subdivide(ST_GeomFromGeoJSON(#{geometry})) as inpgeom
-                                where st_intersects(f.geom, inpgeom))
-                            or st_intersects(geom, ST_GeomFromGeoJSON(#{geometry}))
-                       )
+                       and geom is not null
+                       and st_intersects(l.geom, (select inpgeom from g))
                    </if>
                    <choose>
                        <when test="appId != null and !showAllPublic">
@@ -89,7 +125,46 @@
                            and is_public
                        </otherwise>
                    </choose>
-            )
+                <if test="geometry != null">
+                union
+                    select l.id
+                    from
+                    layers l
+                    join lateral (
+                        select
+                            layer_id
+                        from
+                            layers_features as lf
+                        where
+                            st_intersects(lf.geom, (select inpgeom from g))
+                            and l.id = lf.layer_id
+                        limit 1) as lff on true
+                    where is_visible
+                        and geom is null
+                    <if test="publicIds != null">
+                        <foreach collection="publicIds" item="id" open="and l.public_id in (" separator="," close=")">
+                            #{id}
+                        </foreach>
+                    </if>
+                    <choose>
+                        <when test="appId != null and !showAllPublic">
+                            and l.public_id in (select layer_id from apps_layers where app_id = #{appId})
+                        </when>
+                        <when test='collectionOwner.name().equals("ME")'>
+                            and owner = #{userName}
+                        </when>
+                        <when test='collectionOwner.name().equals("NOT_ME")'>
+                            and is_public and owner != #{userName}
+                        </when>
+                        <when test="userName != null">
+                            and (is_public or owner = #{userName})
+                        </when>
+                        <otherwise>
+                            and is_public
+                        </otherwise>
+                    </choose>
+                </if>
+        )
         select lrs.id,
                lrs.public_id                 as publicid,
                lrs.name                      as name,
