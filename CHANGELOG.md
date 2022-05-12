@@ -14,6 +14,20 @@
 
 
 
+## Release 1.4.0 - 2022.05.12
+
+#### Added
+- #9861 Add prometheus metrics
+
+#### Changed
+- #10168 Layers search query was updated
+
+#### Removed
+
+#### Installation sequence
+
+
+
 ## Release 1.3.0 - 2022.05.05
 
 #### Added
