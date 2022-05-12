@@ -5,8 +5,6 @@
 #### Added
 
 #### Changed
-- #10168 Layers search query was updated
-- #9861 Add prometheus metrics
 
 #### Removed
 
