@@ -23,8 +23,8 @@ public class LandingPageGetIT extends AbstractIntegrationTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.title").doesNotExist())
                 .andExpect(jsonPath("$.description").doesNotExist())
-                .andExpect(jsonPath("$.links[?(@.rel=='service-desc' && @.type=='application/yaml')].href").value(
-                        contains(url(BASE_URL + "/doc"))))
+                .andExpect(jsonPath("$.links[?(@.rel=='service-desc' && @.type=='application/vnd.oai.openapi;version=3.0')].href").value(
+                        contains(url(BASE_URL + "/v3/api-docs.yaml"))))
                 .andExpect(jsonPath("$.links[?(@.rel=='self' && @.type=='application/json')].href").value(
                         contains(url(BASE_URL + "/"))))
                 .andExpect(jsonPath("$.links[?(@.rel=='conformance' && @.type=='application/json')].href").value(

@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
-    url: 'jdbc:tc:postgis:13-3.1-alpine:///layers-db?TC_INITSCRIPT=db/init_test_db.sql'
+    url: 'jdbc:tc:postgis:14-3.2-alpine:///layers-db?TC_INITSCRIPT=db/init_test_db.sql'
     hikari:
       pool-name: HikariPool-1
       minimum-idle: 2
