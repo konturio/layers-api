@@ -4,8 +4,7 @@ import io.kontur.layers.dto.LandingPage;
 import org.springframework.stereotype.Service;
 
 import static io.kontur.layers.service.LinkFactory.Relation.*;
-import static io.kontur.layers.service.LinkFactory.Type.APPLICATION_JSON;
-import static io.kontur.layers.service.LinkFactory.Type.APPLICATION_YAML;
+import static io.kontur.layers.service.LinkFactory.Type.*;
 
 @Service
 public class LandingPageService {
@@ -19,7 +18,7 @@ public class LandingPageService {
     public LandingPage getLandingPage() {
         final LandingPage landingPage = new LandingPage();
         landingPage.addLinksItem(linkFactory.createLocal(
-                "/doc", SERVICE_DESC, APPLICATION_YAML, "OGC Features API definition"));
+                "/v3/api-docs.yaml", SERVICE_DESC, OPEN_API_YAML, "OGC Features API definition"));
         landingPage.addLinksItem(linkFactory.createLocal(
                 "", SELF, APPLICATION_JSON, "this document"));
         landingPage.addLinksItem(linkFactory.createLocal(

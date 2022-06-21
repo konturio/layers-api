@@ -3,6 +3,7 @@ package io.kontur.layers;
 public class ApiConstants {
     public static final String APPLICATION_GEO_JSON = "application/geo+json";
     public static final String APPLICATION_YAML = "application/yaml";
+    public static final String OPEN_API_YAML = "application/vnd.oai.openapi;version=3.0";
     public static final String COLLECTIONS_ENDPOINT = "/collections";
     public static final String COLLECTION_ID_ENDPOINT = "/collections/{collectionId}";
     public static final String COLLECTION_ITEMS_ENDPOINT = "/collections/{collectionId}/items";

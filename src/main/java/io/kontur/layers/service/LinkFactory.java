@@ -87,6 +87,7 @@ public class LinkFactory {
 
     public enum Type {
         APPLICATION_YAML(ApiConstants.APPLICATION_YAML),
+        OPEN_API_YAML(ApiConstants.OPEN_API_YAML),
         APPLICATION_JSON(MediaType.APPLICATION_JSON_VALUE),
         APPLICATION_GEO_JSON(ApiConstants.APPLICATION_GEO_JSON);
         private String str;
