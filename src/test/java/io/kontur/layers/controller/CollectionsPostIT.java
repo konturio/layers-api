@@ -70,6 +70,35 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
 
     @Test
     @WithMockUser("pigeon")
+    public void testPostRasterCollection() throws Exception {
+        //GIVEN
+        CollectionUpdateDto collection = buildCollectionCreateDtoN(1);
+        collection.setItemType(CollectionUpdateDto.Type.raster);
+        //WHEN
+        String response = mockMvc.perform(post("/collections")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.writeJson(collection)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.id", is("pubId_1")));
+        assertThat(json, hasJsonPath("$.title", is("name_1")));
+        assertThat(json, hasJsonPath("$.itemType", is("raster")));
+        assertThat(json, hasJsonPath("$.description", is("description_1")));
+        assertThat(json, hasJsonPath("$.copyrights", is("copyrights_1")));
+        assertThat(json, hasJsonPath("$.properties.prop1", is("propValue1_1")));
+        assertThat(json, hasJsonPath("$.properties.prop2", is("propValue2_1")));
+        assertThat(json, hasJsonPath("$.featureProperties.featureProp1", is("featureProperty_1")));
+        assertThat(json, hasJsonPath("$.links[?(@.rel=='tiles')].href", contains(url("https://www.example.com"))));
+        assertThat(json, hasNoJsonPath("$.extent"));//absent because no features
+    }
+
+    @Test
+    @WithMockUser("pigeon")
     public void testPostAndGetCollection() throws Exception {
         //GIVEN
         CollectionUpdateDto collection = buildCollectionCreateDtoN(1);
@@ -306,7 +335,7 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
     @WithMockUser("pigeon")
     public void featuresForLayersWithoutTitleCanBeFound_8986() throws Exception {
         //GIVEN
-        String collectionWithoutTitle = "{\"description\":\"\",\"link\":{\"href\":\"http://data.example.com/buildings/123\",\"rel\":\"alternate\",\"type\":\"application/geo+json\",\"hreflang\":\"en\",\"title\":\"My home\",\"length\":0},\"itemType\":\"tiles\",\"copyrights\":\"\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[98.3111572265625,68.32423359706064],[98.887939453125,68.32423359706064],[98.887939453125,68.52421309659984],[98.3111572265625,68.52421309659984],[98.3111572265625,68.32423359706064]]]},\"properties\":{},\"legend\":{},\"id\":\"test_layer15\"}";
+        String collectionWithoutTitle = "{\"description\":\"\",\"link\":{\"href\":\"http://data.example.com/buildings/123\",\"rel\":\"alternate\",\"type\":\"application/geo+json\",\"hreflang\":\"en\",\"title\":\"My home\",\"length\":0},\"itemType\":\"vector\",\"copyrights\":\"\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[98.3111572265625,68.32423359706064],[98.887939453125,68.32423359706064],[98.887939453125,68.52421309659984],[98.3111572265625,68.52421309659984],[98.3111572265625,68.32423359706064]]]},\"properties\":{},\"legend\":{},\"id\":\"test_layer15\"}";
 
         mockMvc.perform(post("/collections")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -329,7 +358,7 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
     @WithMockUser("pigeon")
     public void collectionWithInvalidGeometryIsNotSaved_8985() throws Exception {
         //GIVEN
-        String collection = "{\"description\":\"\",\"title\":\"test title\",\"itemType\":\"tiles\",\"copyrights\":\"\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[98.3111572265625,68.32423359706064],[98.887939453125,68.32423359706064],[98.887939453125,68.52421309659984],[98.3111572265625,68.52421309659984]]]},\"id\":\"test_layer15\"}";
+        String collection = "{\"description\":\"\",\"title\":\"test title\",\"itemType\":\"raster\",\"copyrights\":\"\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[98.3111572265625,68.32423359706064],[98.887939453125,68.32423359706064],[98.887939453125,68.52421309659984],[98.3111572265625,68.52421309659984]]]},\"id\":\"test_layer15\"}";
 
         //WHEN
         String json = mockMvc.perform(post("/collections")
