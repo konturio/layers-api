@@ -3,6 +3,7 @@
 ## UNRELEASED
 
 #### Added
+- #10807 Add ability to process raster and vector tiles
 
 #### Changed
 

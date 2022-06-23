@@ -192,4 +192,38 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
         //THEN
         assertThat(json, hasJsonPath("$.links[?(@.rel=='tiles')].href", contains("https://example.com")));
     }
+
+    @Test
+    public void returnLink_RasterLayer() throws Exception {
+        //GIVEN
+        final Layer layer = buildLayerN(1);
+        layer.setType("raster");
+        layer.setUrl("https://example.com");
+        testDataMapper.insertLayer(layer);
+        //WHEN
+        String json = mockMvc.perform(get("/collections/" + layer.getPublicId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
+        assertThat(json, hasJsonPath("$.links[?(@.rel=='tiles')].href", contains("https://example.com")));
+    }
+
+    @Test
+    public void returnLink_VectorLayer() throws Exception {
+        //GIVEN
+        final Layer layer = buildLayerN(1);
+        layer.setType("vector");
+        layer.setUrl("https://example.com");
+        testDataMapper.insertLayer(layer);
+        //WHEN
+        String json = mockMvc.perform(get("/collections/" + layer.getPublicId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
+        assertThat(json, hasJsonPath("$.links[?(@.rel=='tiles')].href", contains("https://example.com")));
+    }
 }

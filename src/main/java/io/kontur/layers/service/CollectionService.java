@@ -149,7 +149,7 @@ public class CollectionService {
 
     public Layer toLayer(CollectionUpdateDto c, String id) {
         String url = null;
-        if (c.getLink() != null && "tiles".equals(c.getLink().getRel())) {
+        if (c.getLink() != null) {
             url = c.getLink().getHref();
         }
 
@@ -172,15 +172,15 @@ public class CollectionService {
 
     public Collection toCollection(Layer layer) {
         Link link;
-        if ("tiles".equals(layer.getType())) {
-            link = new Link()
-                    .rel(layer.getType())
-                    .href(layer.getUrl());
-        } else {
+        if ("feature".equals(layer.getType())) {
             link = linkFactory.createLocal(
                     UriComponentsBuilder.fromPath(ApiConstants.COLLECTION_ITEMS_ENDPOINT)
                             .build(layer.getPublicId()).toString(),
                     ITEMS, APPLICATION_GEO_JSON, layer.getName());
+        } else {
+            link = new Link()
+                    .rel("tiles")
+                    .href(layer.getUrl());
         }
         return Collection.builder()
                 .id(layer.getPublicId())

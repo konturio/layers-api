@@ -164,7 +164,7 @@ public class CollectionsPutIT extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         //WHEN
-        String collectionString = "{\"description\":\"\",\"title\":\"test title\",\"itemType\":\"tiles\",\"copyrights\":\"\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[98.3111572265625,68.32423359706064],[98.887939453125,68.32423359706064],[98.887939453125,68.52421309659984],[98.3111572265625,68.52421309659984]]]}}";
+        String collectionString = "{\"description\":\"\",\"title\":\"test title\",\"itemType\":\"vector\",\"copyrights\":\"\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[98.3111572265625,68.32423359706064],[98.887939453125,68.32423359706064],[98.887939453125,68.52421309659984],[98.3111572265625,68.52421309659984]]]}}";
 
         String json = mockMvc.perform(put("/collections/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
