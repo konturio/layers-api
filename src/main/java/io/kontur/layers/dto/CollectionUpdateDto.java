@@ -38,7 +38,8 @@ public class CollectionUpdateDto {
     private UUID appId;
 
     public enum Type {
-        tiles,
+        raster,
+        vector,
         feature
     }
 }
