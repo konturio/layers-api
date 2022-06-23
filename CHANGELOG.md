@@ -4,6 +4,7 @@
 
 #### Added
 - #10807 Add ability to process raster and vector tiles
+- #10675 Add DB schema migrations 
 
 #### Changed
 
