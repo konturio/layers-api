@@ -43,7 +43,7 @@ public class CollectionsItemsPutIT extends AbstractIntegrationTest {
 
         testDataMapper.insertFeature(id, buildPointN(1));
         testDataMapper.insertFeature(id, buildPointN(10));
-        testDataMapper.insertFeature(id, buildPointN(100));
+        testDataMapper.insertFeature(id, buildPointN(50));
 
         String updatedGeoJson = "{\"type\":\"FeatureCollection\",\"features\":[{\"id\":\"featureId_1\",\"type\":\"Feature\",\"properties\":{\"prop1\":\"propValue1_updated\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.96484375,39.774769485295465]}},{\"id\":\"featureId_2\",\"type\":\"Feature\",\"properties\":{\"prop1\":\"propValue2_inserted\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[9.2724609375,39.50404070558415]}}]}";
 
@@ -100,7 +100,7 @@ public class CollectionsItemsPutIT extends AbstractIntegrationTest {
 
         testDataMapper.insertFeature(id, buildPointN(1));
         testDataMapper.insertFeature(id, buildPointN(10));
-        testDataMapper.insertFeature(id, buildPointN(100));
+        testDataMapper.insertFeature(id, buildPointN(50));
 
         Layer layer2 = buildLayerN(2);
         final long layerId2 = testDataMapper.insertLayer(layer2);
@@ -303,7 +303,7 @@ public class CollectionsItemsPutIT extends AbstractIntegrationTest {
 
         testDataMapper.insertFeature(id, buildPointN(1));
         testDataMapper.insertFeature(id, buildPointN(10));
-        testDataMapper.insertFeature(id, buildPointN(100));
+        testDataMapper.insertFeature(id, buildPointN(50));
 
         String updatedGeoJson = "{\"type\":\"FeatureCollection\",\"features\":[]}";
 

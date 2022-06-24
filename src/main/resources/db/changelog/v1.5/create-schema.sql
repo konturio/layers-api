@@ -2,10 +2,6 @@
 
 --changeset layers-api-migrations:create-schema.sql runOnChange:false
 
-CREATE EXTENSION IF NOT EXISTS postgis;
-CREATE EXTENSION IF NOT EXISTS h3;
-CREATE EXTENSION IF NOT exists btree_gist;
-
 CREATE TABLE IF NOT EXISTS layers_group_properties
 (
     id                 integer generated always as identity NOT NULL,
