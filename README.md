@@ -5,3 +5,12 @@
 First Production deploy procedure:
 - Read https://kontur.fibery.io/Tasks/document/Layers-DB-and-API-deployment-1072
 - Install migration scripts from migrations folder in layers-db repo
+
+## DB initialization
+
+TBD
+
+Required PostreSQL extensions:
+- postgis
+- btree_gist
+- uuid-ossp
