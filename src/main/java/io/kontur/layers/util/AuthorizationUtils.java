@@ -16,7 +16,9 @@ public class AuthorizationUtils {
 
     public static String getAuthenticatedUserName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+        if (authentication == null ||
+                !authentication.isAuthenticated() ||
+                authentication instanceof AnonymousAuthenticationToken) {
             return null;
         }
         switch (authentication.getPrincipal().getClass().getSimpleName()) {

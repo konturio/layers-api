@@ -26,7 +26,7 @@ import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static io.kontur.layers.ApiConstants.APPLICATION_GEO_JSON;
 import static io.kontur.layers.test.CustomMatchers.matchesRfc3339DatePattern;
 import static io.kontur.layers.test.CustomMatchers.url;
-import static io.kontur.layers.controller.CollectionsApi.COLLECTION_ITEMS_LIMIT;
+import static io.kontur.layers.controller.CollectionsItemsApi.COLLECTION_ITEMS_LIMIT;
 import static io.kontur.layers.test.TestDataHelper.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;

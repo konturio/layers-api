@@ -102,7 +102,6 @@ public class CollectionsItemsApi {
             @Parameter(in = ParameterIn.QUERY, style = ParameterStyle.SIMPLE, description = "Either a date-time or an interval, open or closed. Date and time expressions adhere to RFC 3339. Open intervals are expressed using double-dots.  Examples:  * A date-time: \"2018-02-12T23:20:50Z\" * A closed interval: \"2018-02-12T00:00:00Z/2018-03-18T12:31:12Z\" * Open intervals: \"2018-02-12T00:00:00Z/..\" or \"../2018-03-18T12:31:12Z\"  Only features that have a temporal property that intersects the value of `datetime` are selected.  If a feature has multiple temporal properties, it is the decision of the server whether only a single temporal property is used to determine the extent or all relevant temporal properties.")
             @RequestParam(value = "datetime", required = false)
                     DateTimeRange datetime) {
-        //TODO OGC API - Features - Part 2 needs to be supported
         int lmt = Math.min(limit == null ? COLLECTION_ITEMS_DEFAULT_LIMIT : limit, COLLECTION_ITEMS_LIMIT);
         Optional<FeatureCollectionGeoJSON> fc = featureService.getFeatureCollection(collectionId, lmt, offset,
                 null, bbox != null ? bbox : java.util.Collections.emptyList(),
@@ -123,7 +122,6 @@ public class CollectionsItemsApi {
                     String collectionId,
             @RequestBody @Valid CollectionsItemsSearchDto itemsSearchDto
     ) {
-        //TODO OGC API - Features - Part 2 needs to be supported
         int lmt = Math.min(itemsSearchDto.getLimit() == null ? COLLECTION_ITEMS_DEFAULT_LIMIT : itemsSearchDto.getLimit(), COLLECTION_ITEMS_LIMIT);
         Optional<FeatureCollectionGeoJSON> fc = featureService.getFeatureCollection(collectionId, lmt,
                 itemsSearchDto.getOffset(),

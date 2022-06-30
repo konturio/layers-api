@@ -1,7 +1,6 @@
 package io.kontur.layers.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.layers.ApiConstants;
 import io.kontur.layers.controller.exceptions.WebApplicationException;
 import io.kontur.layers.dto.*;
@@ -165,7 +164,7 @@ public class CollectionService {
                 .featureProperties(c.getFeatureProperties())
                 .lastUpdated(OffsetDateTime.now())
                 .sourceLastUpdated(OffsetDateTime.now())
-                .isPublic(false) //TODO how do we create public kontur layers?
+                .isPublic(false)
                 .owner(AuthorizationUtils.getAuthenticatedUserName())
                 .build();
     }
@@ -189,7 +188,6 @@ public class CollectionService {
                 .copyrights(layer.getCopyrights())
                 .properties(layer.getProperties())
                 .featureProperties(layer.getFeatureProperties())
-                .legend(layer.getStyleRule()) //TODO remove
                 .styleRule(layer.getStyleRule())
                 .displayRule(layer.getDisplayRule())
                 .group(layer.getGroup())

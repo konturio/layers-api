@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@Profile("!test-run")
+@Profile({"!(test-run | develop)"})
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
