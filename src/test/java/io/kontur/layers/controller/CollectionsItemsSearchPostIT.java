@@ -1,10 +1,10 @@
 package io.kontur.layers.controller;
 
-import io.kontur.layers.repository.model.Application;
-import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
+import io.kontur.layers.repository.model.Application;
 import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.service.FeatureService;
+import io.kontur.layers.test.AbstractIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -242,7 +242,8 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
         //WHEN
         String json = mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
                         .contentType(APPLICATION_JSON)
-                        .content("{\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[24.609375,12.897489183755892],[75.234375,12.897489183755892],[75.234375,45.336701909968134],[24.609375,45.336701909968134],[24.609375,12.897489183755892],[24.60222475,12.897412383755892]]]}}"))
+                        .content(
+                                "{\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[24.609375,12.897489183755892],[75.234375,12.897489183755892],[75.234375,45.336701909968134],[24.609375,45.336701909968134],[24.609375,12.897489183755892],[24.60222475,12.897412383755892]]]}}"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON))

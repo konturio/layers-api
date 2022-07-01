@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
 
-
 @Builder
 @Data
 @NoArgsConstructor

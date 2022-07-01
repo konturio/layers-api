@@ -44,6 +44,7 @@ public class Collections {
         this.collections = collections;
         return this;
     }
+
     public Collections numberReturned(Integer numberReturned) {
         this.numberReturned = numberReturned;
         return this;

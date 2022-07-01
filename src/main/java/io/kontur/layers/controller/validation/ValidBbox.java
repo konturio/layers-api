@@ -9,6 +9,7 @@ import java.lang.annotation.*;
 @Constraint(validatedBy = BboxValidator.class)
 @Documented
 public @interface ValidBbox {
+
     String message() default "bbox has wrong format";
 
     Class<?>[] groups() default {};

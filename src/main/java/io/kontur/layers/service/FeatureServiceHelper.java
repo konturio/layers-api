@@ -35,14 +35,18 @@ public class FeatureServiceHelper {
                                          List<FeaturePropertiesFilter> filterList) {
         List<Link> linkList = new ArrayList<>();
 
-        linkList.add(linkFactory.linkForCollectionItems(SELF, collectionId, collectionTitle, limit, offset, bbox, filterList));
+        linkList.add(linkFactory.linkForCollectionItems(SELF, collectionId, collectionTitle, limit, offset, bbox,
+                filterList));
 
         if ((numberMatched != null) && (offset + limit < numberMatched)) {
-            linkList.add(linkFactory.linkForCollectionItems(NEXT, collectionId, collectionTitle, limit, offset + limit, bbox, filterList));
+            linkList.add(
+                    linkFactory.linkForCollectionItems(NEXT, collectionId, collectionTitle, limit, offset + limit, bbox,
+                            filterList));
         }
 
         if (offset > 0) {
-            linkList.add(linkFactory.linkForCollectionItems(PREV, collectionId, collectionTitle, limit, Math.max(offset - limit, 0), bbox, filterList));
+            linkList.add(linkFactory.linkForCollectionItems(PREV, collectionId, collectionTitle, limit,
+                    Math.max(offset - limit, 0), bbox, filterList));
         }
 
         return linkList;
@@ -59,7 +63,8 @@ public class FeatureServiceHelper {
                         .build(collectionId, feature.getFeatureId()).toString(),
                 SELF, APPLICATION_GEO_JSON);
 
-        Link collectionLink = linkFactory.createLocal(UriComponentsBuilder.fromPath(ApiConstants.COLLECTION_ID_ENDPOINT).build(collectionId).toString(),
+        Link collectionLink = linkFactory.createLocal(
+                UriComponentsBuilder.fromPath(ApiConstants.COLLECTION_ID_ENDPOINT).build(collectionId).toString(),
                 COLLECTION, APPLICATION_GEO_JSON, title);
         return new FeatureGeoJSON()
                 .id(feature.getFeatureId())

@@ -3,6 +3,7 @@ package io.kontur.layers.controller.exceptions;
 import org.springframework.http.HttpStatus;
 
 public class WebApplicationException extends RuntimeException {
+
     private HttpStatus status;
     private Error err;
 

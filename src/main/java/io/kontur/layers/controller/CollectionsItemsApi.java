@@ -105,7 +105,7 @@ public class CollectionsItemsApi {
         int lmt = Math.min(limit == null ? COLLECTION_ITEMS_DEFAULT_LIMIT : limit, COLLECTION_ITEMS_LIMIT);
         Optional<FeatureCollectionGeoJSON> fc = featureService.getFeatureCollection(collectionId, lmt, offset,
                 null, bbox != null ? bbox : java.util.Collections.emptyList(),
-                        datetime, getCriteriaList(), true, null);
+                datetime, getCriteriaList(), true, null);
         return ResponseEntity.ok(fc.orElse(new FeatureCollectionGeoJSON()));
     }
 
@@ -122,7 +122,9 @@ public class CollectionsItemsApi {
                     String collectionId,
             @RequestBody @Valid CollectionsItemsSearchDto itemsSearchDto
     ) {
-        int lmt = Math.min(itemsSearchDto.getLimit() == null ? COLLECTION_ITEMS_DEFAULT_LIMIT : itemsSearchDto.getLimit(), COLLECTION_ITEMS_LIMIT);
+        int lmt = Math.min(
+                itemsSearchDto.getLimit() == null ? COLLECTION_ITEMS_DEFAULT_LIMIT : itemsSearchDto.getLimit(),
+                COLLECTION_ITEMS_LIMIT);
         Optional<FeatureCollectionGeoJSON> fc = featureService.getFeatureCollection(collectionId, lmt,
                 itemsSearchDto.getOffset(),
                 itemsSearchDto.getGeometry(),
@@ -171,8 +173,9 @@ public class CollectionsItemsApi {
                 .filter(stringEntry -> !PREDEFINED_FIELDS.contains(stringEntry.getKey()))
                 .map(e -> {
                     if (e.getValue().length > 1) {
-                        throw new WebApplicationException(BAD_REQUEST, objectError("incorrect query parameter", fieldError(
-                                e.getKey(), error("must not appear multiple times"))));
+                        throw new WebApplicationException(BAD_REQUEST,
+                                objectError("incorrect query parameter", fieldError(
+                                        e.getKey(), error("must not appear multiple times"))));
                     } else {
                         return new FeaturePropertiesFilter(
                                 e.getKey(), e.getValue().length == 0 ? null : e.getValue()[0].split(","));

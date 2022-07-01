@@ -49,7 +49,8 @@ public class CollectionsApi {
             @PathVariable("collectionId") String collectionId) {
         Optional<Collection> collection = collectionService.getCollection(collectionId);
         final Collection entity = collection.orElseThrow(
-                () -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found", collectionId)));
+                () -> new WebApplicationException(NOT_FOUND,
+                        Error.errorFmt("Collection '%s' not found", collectionId)));
         return ResponseEntity.ok(entity);
     }
 

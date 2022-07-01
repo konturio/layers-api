@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Error {
+
     private String msg;
     private Map<String, Error> fieldErrors;
 
@@ -41,6 +42,7 @@ public class Error {
     }
 
     public static class FieldErr<T> {
+
         private T key;
         private Error value;
 

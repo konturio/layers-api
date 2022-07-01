@@ -293,7 +293,6 @@ public class CollectionsItemsPutIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.fieldErrors.body.msg", not(emptyOrNullString())));
     }
 
-
     @Test
     @WithMockUser("owner_1")
     public void testPutEmptyItems() throws Exception {

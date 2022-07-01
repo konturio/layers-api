@@ -3,6 +3,7 @@ package io.kontur.layers.dto;
 import java.time.OffsetDateTime;
 
 public class DateTimeRange {
+
     private boolean includeFrom = true;
     private boolean includeTo = true;
     private OffsetDateTime from;
@@ -12,7 +13,8 @@ public class DateTimeRange {
         this(from, true, to, true);
     }
 
-    public DateTimeRange(final OffsetDateTime from, final boolean includeFrom, final OffsetDateTime to, final boolean includeTo) {
+    public DateTimeRange(final OffsetDateTime from, final boolean includeFrom, final OffsetDateTime to,
+                         final boolean includeTo) {
         this.includeFrom = includeFrom;
         this.includeTo = includeTo;
         this.from = from;
