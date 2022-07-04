@@ -13,6 +13,19 @@
 
 
 
+## Release 1.5.0 - 2022.07.04
+
+#### Added
+- #10807 Add ability to process raster and vector tiles
+
+#### Changed
+
+#### Removed
+
+#### Installation sequence
+
+
+
 ## Release 1.4.0 - 2022.05.12
 
 #### Added
