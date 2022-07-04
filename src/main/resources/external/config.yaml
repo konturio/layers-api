@@ -5,3 +5,9 @@ spring:
     password: 'PASSWORD'
   profiles:
     active: 'dev | test | prod'
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://keycloak.com/auth/realms/realm_name
+          jwk-set-uri: https://keycloak.com/auth/realms/realm_name/protocol/openid-connect/certs

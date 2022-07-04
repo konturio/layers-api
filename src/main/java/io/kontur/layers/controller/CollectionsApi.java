@@ -29,8 +29,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @RequestMapping("/collections")
 public class CollectionsApi {
 
-    protected static final int COLLECTION_ITEMS_LIMIT = 100000;
-    protected static final int COLLECTIONS_LIMIT = 100000;
+    protected static final int COLLECTIONS_LIMIT = 1000;
     protected static final int COLLECTIONS_DEFAULT_LIMIT = 10;
 
     private final CollectionService collectionService;
@@ -50,7 +49,8 @@ public class CollectionsApi {
             @PathVariable("collectionId") String collectionId) {
         Optional<Collection> collection = collectionService.getCollection(collectionId);
         final Collection entity = collection.orElseThrow(
-                () -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found", collectionId)));
+                () -> new WebApplicationException(NOT_FOUND,
+                        Error.errorFmt("Collection '%s' not found", collectionId)));
         return ResponseEntity.ok(entity);
     }
 
@@ -60,7 +60,7 @@ public class CollectionsApi {
             @ApiResponse(responseCode = "200", description = "The feature collections shared by this API.  The dataset is organized as one or more feature collections. This resource provides information about and access to the collections.  The response contains the list of collections. For each collection, a link to the items in the collection (path `/collections/{collectionId}/items`, link relation `items`) as well as key information about the collection. This information includes:  * A local identifier for the collection that is unique for the dataset; * A list of coordinate reference systems (CRS) in which geometries may be returned by the server. The first CRS is the default coordinate reference system (the default is always WGS 84 with axis order longitude/latitude); * An optional title and description for the collection; * An optional extent that can be used to provide an indication of the spatial and temporal extent of the collection - typically derived from the data; * An optional indicator about the type of the items in the collection (the default value, if the indicator is not provided, is 'feature').", content = @Content(schema = @Schema(implementation = Collections.class))),
             @ApiResponse(responseCode = "500", description = "A server error occurred.", content = @Content(schema = @Schema(implementation = Exception.class)))})
     public ResponseEntity getCollections(
-            @Parameter(in = ParameterIn.QUERY, description = "The optional limit parameter limits the number of collections that are presented in the response document. Minimum = 1. Maximum = 100000. Default = 10.", schema = @Schema(allowableValues = {}, minimum = "1", maximum = "100000"))
+            @Parameter(in = ParameterIn.QUERY, description = "The optional limit parameter limits the number of collections that are presented in the response document. Minimum = 1. Maximum = 1000. Default = 10.", schema = @Schema(allowableValues = {}, minimum = "1", maximum = "1000"))
             @Min(1)
             @RequestParam(value = "limit", defaultValue = "10") Integer limit,
             @Parameter(in = ParameterIn.QUERY, description = "The optional offset parameter specifies the index within the result set from which the server begins presenting results in the response. Minimum = 0", schema = @Schema(allowableValues = {}, minimum = "0"))

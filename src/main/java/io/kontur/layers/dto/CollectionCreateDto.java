@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 import javax.validation.constraints.Pattern;
 
 @Data
-@EqualsAndHashCode(callSuper=true)
+@EqualsAndHashCode(callSuper = true)
 public class CollectionCreateDto extends CollectionUpdateDto {
 
     @JsonProperty("id")

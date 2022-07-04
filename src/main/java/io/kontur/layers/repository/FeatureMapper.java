@@ -44,6 +44,6 @@ public interface FeatureMapper {
 
     @Timed(value = "db.query", histogram = true)
     void deleteFeaturesNotInList(@Param("owner") String owner,
-                                         @Param("collectionId") String collectionId,
-                                         @Param("featureIds") List<String> featureIds);
+                                 @Param("collectionId") String collectionId,
+                                 @Param("featureIds") List<String> featureIds);
 }

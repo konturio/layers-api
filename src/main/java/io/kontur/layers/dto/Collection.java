@@ -38,9 +38,6 @@ public class Collection {
     @JsonProperty("featureProperties")
     private ObjectNode featureProperties;
 
-    @JsonProperty("legend")
-    private ObjectNode legend; //TODO remove
-
     @JsonProperty("group")
     private LayersGroupProperties group;
 

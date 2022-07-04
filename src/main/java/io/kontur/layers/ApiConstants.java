@@ -1,6 +1,7 @@
 package io.kontur.layers;
 
 public class ApiConstants {
+
     public static final String APPLICATION_GEO_JSON = "application/geo+json";
     public static final String APPLICATION_YAML = "application/yaml";
     public static final String OPEN_API_YAML = "application/vnd.oai.openapi;version=3.0";

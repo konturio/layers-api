@@ -1,7 +1,0 @@
-spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: https://keycloak01.konturlabs.com/auth/realms/test
-          jwk-set-uri: https://keycloak01.konturlabs.com/auth/realms/test/protocol/openid-connect/certs

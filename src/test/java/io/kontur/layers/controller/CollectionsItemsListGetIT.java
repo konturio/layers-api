@@ -2,12 +2,12 @@ package io.kontur.layers.controller;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.JsonPath;
-import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.LayerMapper;
 import io.kontur.layers.repository.TestDataMapper;
-import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.repository.model.Layer;
+import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.service.FeatureService;
+import io.kontur.layers.test.AbstractIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.io.WKTReader;
@@ -24,9 +24,9 @@ import java.util.stream.IntStream;
 
 import static com.jayway.jsonpath.matchers.JsonPathMatchers.hasJsonPath;
 import static io.kontur.layers.ApiConstants.APPLICATION_GEO_JSON;
+import static io.kontur.layers.controller.CollectionsItemsApi.COLLECTION_ITEMS_LIMIT;
 import static io.kontur.layers.test.CustomMatchers.matchesRfc3339DatePattern;
 import static io.kontur.layers.test.CustomMatchers.url;
-import static io.kontur.layers.controller.CollectionsApi.COLLECTION_ITEMS_LIMIT;
 import static io.kontur.layers.test.TestDataHelper.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -573,7 +573,9 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         final long id = testDataMapper.insertLayer(layer);
         final String wkt = "MULTIPOLYGON(((0 0,4 0,4 4,0 4,0 0),(1 1,2 1,2 2,1 2,1 1)), ((-1 -1,-1 -2,-2 -2,-2 -1,-1 -1)))";
         final OffsetDateTime lastUpdated = OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusMinutes(10);
-        testDataMapper.insertFeature(id, new LayerFeature(null, "featureId_" + 10, new GeoJSONWriter().write(new WKTReader().read(wkt)), null, lastUpdated));
+        testDataMapper.insertFeature(id,
+                new LayerFeature(null, "featureId_" + 10, new GeoJSONWriter().write(new WKTReader().read(wkt)), null,
+                        lastUpdated));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
                 .andDo(print())

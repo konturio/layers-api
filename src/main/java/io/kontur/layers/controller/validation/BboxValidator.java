@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class BboxValidator implements ConstraintValidator<ValidBbox, List<BigDecimal>> {
+
     @Override
     public void initialize(ValidBbox value) {
     }

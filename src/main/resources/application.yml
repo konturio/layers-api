@@ -19,12 +19,6 @@ spring:
       auto-commit: false
   jackson:
     default-property-inclusion: non_null
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: https://keycloak01.konturlabs.com/auth/realms/dev
-          jwk-set-uri: https://keycloak01.konturlabs.com/auth/realms/dev/protocol/openid-connect/certs
 
 springdoc:
   swagger-ui:

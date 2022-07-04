@@ -2,10 +2,10 @@ package io.kontur.layers.controller;
 
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
-import io.kontur.layers.repository.model.Layer;
-import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
+import io.kontur.layers.repository.model.Layer;
 import io.kontur.layers.repository.model.LayerFeature;
+import io.kontur.layers.test.AbstractIntegrationTest;
 import net.minidev.json.JSONArray;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -120,7 +120,7 @@ public class CollectionsListGetIT extends AbstractIntegrationTest {
         assertThat(json.read("$.collections[0].title"), is("name_1"));
         assertThat(json.read("$.collections[0].description"), is("description_1"));
         assertThat(json.read("$.collections[0].links[?(@.rel && @.type)]"),
-                   hasSize(json.read("$.collections[0].links", List.class).size()));
+                hasSize(json.read("$.collections[0].links", List.class).size()));
     }
 
     @Test
@@ -136,7 +136,8 @@ public class CollectionsListGetIT extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
         //THEN
         final DocumentContext json = JsonPath.parse(response);
-        assertThat(json.read("$.collections[0].links[?(@.rel=='items' && @.type=='application/geo+json' && @.href)]"), hasSize(1));
+        assertThat(json.read("$.collections[0].links[?(@.rel=='items' && @.type=='application/geo+json' && @.href)]"),
+                hasSize(1));
     }
 
     @Test
@@ -180,7 +181,8 @@ public class CollectionsListGetIT extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
         //THEN
         final DocumentContext json = JsonPath.parse(response);
-        final JSONArray read = json.read("$.collections[0].links[?(@.rel=='items' && @.type=='application/geo+json')].href");
+        final JSONArray read = json.read(
+                "$.collections[0].links[?(@.rel=='items' && @.type=='application/geo+json')].href");
         assertThat(read, hasSize(1));
         assertThat(read.get(0), is(BASE_URL + "/collections/pubId_1/items"));
     }
@@ -199,7 +201,7 @@ public class CollectionsListGetIT extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
         //THEN
         assertThat(json, hasJsonPath("$.collections[0].links[?(@.rel=='items' && @.type=='application/geo+json')].href",
-                                     hasJsonPath("$[0]", is("http://proxyhost:123/collections/pubId_1/items"))));
+                hasJsonPath("$[0]", is("http://proxyhost:123/collections/pubId_1/items"))));
     }
 
 //    @Test
@@ -272,9 +274,9 @@ public class CollectionsListGetIT extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
         //THEN
         assertThat(json, hasJsonPath("$.links[?(@.rel=='next' && @.type=='application/json')].href",
-                                     contains(url(BASE_URL + "/collections?limit=10&offset=20"))));
+                contains(url(BASE_URL + "/collections?limit=10&offset=20"))));
         assertThat(json, hasJsonPath("$.links[?(@.rel=='prev' && @.type=='application/json')].href",
-                                     contains(url(BASE_URL + "/collections?limit=10&offset=0"))));
+                contains(url(BASE_URL + "/collections?limit=10&offset=0"))));
         assertThat(json, hasJsonPath("$.numberMatched", is(25)));
         assertThat(json, hasJsonPath("$.numberReturned", is(10)));
     }
@@ -295,7 +297,7 @@ public class CollectionsListGetIT extends AbstractIntegrationTest {
         //THEN
         assertThat(json, hasJsonPath("$.links[?(@.rel=='next' && @.type=='application/json')].href", empty()));
         assertThat(json, hasJsonPath("$.links[?(@.rel=='prev' && @.type=='application/json')].href",
-                                     contains(url(BASE_URL + "/collections?limit=10&offset=10"))));
+                contains(url(BASE_URL + "/collections?limit=10&offset=10"))));
         assertThat(json, hasJsonPath("$.numberMatched", is(25)));
         assertThat(json, hasJsonPath("$.numberReturned", is(5)));
     }
@@ -316,7 +318,7 @@ public class CollectionsListGetIT extends AbstractIntegrationTest {
         //THEN
         assertThat(json, hasJsonPath("$.links[?(@.rel=='prev' && @.type=='application/json')].href", empty()));
         assertThat(json, hasJsonPath("$.links[?(@.rel=='next' && @.type=='application/json')].href",
-                                     contains(url(BASE_URL + "/collections?limit=10&offset=10"))));
+                contains(url(BASE_URL + "/collections?limit=10&offset=10"))));
         assertThat(json, hasJsonPath("$.numberMatched", is(25)));
         assertThat(json, hasJsonPath("$.numberReturned", is(10)));
     }

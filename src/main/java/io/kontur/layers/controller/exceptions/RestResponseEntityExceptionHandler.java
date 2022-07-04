@@ -51,12 +51,14 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex, WebRequest request) {
+    public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex,
+                                                                            WebRequest request) {
         String msg = "invalid field value";
         if (ex.getCause() instanceof NumberFormatException) {
             msg = "invalid numeric value";
         }
-        return new ResponseEntity<>(Error.objectError(null, Error.fieldError(ex.getName(), Error.error(msg))), BAD_REQUEST);
+        return new ResponseEntity<>(Error.objectError(null, Error.fieldError(ex.getName(), Error.error(msg))),
+                BAD_REQUEST);
     }
 
     @Override
@@ -70,7 +72,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         } else if (ex.getCause() instanceof JsonParseException) {
             return new ResponseEntity<>(Error.error(ex.getCause().getMessage()), BAD_REQUEST);
         }
-        return new ResponseEntity<>(Error.objectError(null, Error.fieldError(fieldName, Error.error(msg))), BAD_REQUEST);
+        return new ResponseEntity<>(Error.objectError(null, Error.fieldError(fieldName, Error.error(msg))),
+                BAD_REQUEST);
     }
 
     private String getInvalidFormatExceptionFieldName(MismatchedInputException ex) {
@@ -94,7 +97,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex, WebRequest request) {
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException ex,
+                                                                     WebRequest request) {
         var errors = new ArrayList<Error.FieldErr<String>>();
         for (ConstraintViolation<?> v : ex.getConstraintViolations()) {
             String prop = StringUtils.substringAfterLast(v.getPropertyPath().toString(), ".");
