@@ -79,5 +79,4 @@ CREATE TABLE IF NOT EXISTS layers_dependencies
 CREATE INDEX IF NOT exists layers_geom_idx ON layers USING gist (geom);
 CREATE INDEX IF NOT exists layers_features_layer_id_geom_idx ON layers_features USING gist (layer_id, geom);
 CREATE INDEX IF not exists layers_features_3857_idx ON layers_features USING GIST (ST_Transform(geom, 3857));
-
-
+create index if not exists layers_features_layer_id_zoom_geom_idx on layers_features using gist(layer_id, zoom, geom);
