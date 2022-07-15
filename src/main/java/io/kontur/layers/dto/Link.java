@@ -122,7 +122,6 @@ public class Link {
         this.length = length;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

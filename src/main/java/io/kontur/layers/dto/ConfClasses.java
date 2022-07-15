@@ -34,7 +34,6 @@ public class ConfClasses {
         this.conformsTo = conformsTo;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

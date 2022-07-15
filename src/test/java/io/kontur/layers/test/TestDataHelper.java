@@ -79,7 +79,8 @@ public class TestDataHelper {
         props.put("prop2", "propValue2_" + n);
         final OffsetDateTime lastUpdated = OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusMinutes(n);
         try {
-            return new LayerFeature(null, "featureId_" + n, wkt == null ? null : geoJSONWriter.write(wktReader.read(wkt)), props, lastUpdated);
+            return new LayerFeature(null, "featureId_" + n,
+                    wkt == null ? null : geoJSONWriter.write(wktReader.read(wkt)), props, lastUpdated);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
@@ -107,7 +108,8 @@ public class TestDataHelper {
         dto.setProperties(props);
         dto.setItemType(CollectionUpdateDto.Type.raster);
         dto.setFeatureProperties(featureProps);
-        dto.setGeometry(JsonUtil.readJson(String.format("{\"type\":\"Point\",\"coordinates\":[0,%1$d]}", n), Geometry.class));
+        dto.setGeometry(
+                JsonUtil.readJson(String.format("{\"type\":\"Point\",\"coordinates\":[0,%1$d]}", n), Geometry.class));
         dto.setCopyrights("copyrights_" + n);
         return dto;
     }

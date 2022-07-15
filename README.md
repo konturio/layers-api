@@ -2,9 +2,9 @@
 
 ## Layers API
 
-First Production deploy procedure:
-- Read https://kontur.fibery.io/Tasks/document/Layers-DB-and-API-deployment-1072
-- Install migration scripts from migrations folder in layers-db repo
+Available profiles:
+
+- Use `develop` profile to run application on local environment. Security is disabled in this profile
 
 ## DB initialization
 

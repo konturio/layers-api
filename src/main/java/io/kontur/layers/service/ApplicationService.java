@@ -59,7 +59,6 @@ public class ApplicationService {
                         Collection collection = collectionService.toCollection(layer);
                         collection.setDisplayRule(applicationLayer.getDisplayRule());
                         collection.setStyleRule(applicationLayer.getStyleRule());
-                        collection.setLegend(applicationLayer.getStyleRule()); //TODO remove
                         return collection;
                     })
                     .toList();

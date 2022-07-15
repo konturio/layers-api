@@ -1,12 +1,11 @@
 package io.kontur.layers.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.kontur.layers.ApiConstants;
 import io.kontur.layers.controller.exceptions.WebApplicationException;
-import io.kontur.layers.dto.*;
 import io.kontur.layers.dto.Collection;
 import io.kontur.layers.dto.Collections;
+import io.kontur.layers.dto.*;
 import io.kontur.layers.repository.ApplicationLayerMapper;
 import io.kontur.layers.repository.ApplicationMapper;
 import io.kontur.layers.repository.LayerMapper;
@@ -69,8 +68,10 @@ public class CollectionService {
             numberMatched = layerMapper.getLayersTotal(geometryString, userName, ownershipFilter,
                     app.getId(), app.getShowAllPublicLayers(), collectionIds.toArray(new String[0]));
         } else {
-            layers = layerMapper.getLayers(geometryString, userName, limit, offset, ownershipFilter, collectionIds.toArray(new String[0]));
-            numberMatched = layerMapper.getLayersTotal(geometryString, userName, ownershipFilter, collectionIds.toArray(new String[0]));
+            layers = layerMapper.getLayers(geometryString, userName, limit, offset, ownershipFilter,
+                    collectionIds.toArray(new String[0]));
+            numberMatched = layerMapper.getLayersTotal(geometryString, userName, ownershipFilter,
+                    collectionIds.toArray(new String[0]));
         }
 
         final List<Collection> collections = layers.stream().map(this::toCollection).collect(Collectors.toList());
@@ -99,7 +100,8 @@ public class CollectionService {
 
     @Transactional(readOnly = true)
     public Optional<Collection> getCollection(String collectionId) {
-        return layerMapper.getLayer(collectionId, AuthorizationUtils.getAuthenticatedUserName()).map(this::toCollection);
+        return layerMapper.getLayer(collectionId, AuthorizationUtils.getAuthenticatedUserName())
+                .map(this::toCollection);
     }
 
     @Transactional
@@ -165,7 +167,7 @@ public class CollectionService {
                 .featureProperties(c.getFeatureProperties())
                 .lastUpdated(OffsetDateTime.now())
                 .sourceLastUpdated(OffsetDateTime.now())
-                .isPublic(false) //TODO how do we create public kontur layers?
+                .isPublic(false)
                 .owner(AuthorizationUtils.getAuthenticatedUserName())
                 .build();
     }
@@ -189,7 +191,6 @@ public class CollectionService {
                 .copyrights(layer.getCopyrights())
                 .properties(layer.getProperties())
                 .featureProperties(layer.getFeatureProperties())
-                .legend(layer.getStyleRule()) //TODO remove
                 .styleRule(layer.getStyleRule())
                 .displayRule(layer.getDisplayRule())
                 .group(layer.getGroup())
@@ -206,7 +207,7 @@ public class CollectionService {
         if (collection.getAppId() != null &&
                 (collection.getStyleRule() != null || collection.getDisplayRule() != null)) {
             applicationMapper.getApplicationOwnedOrPublic(collection.getAppId(),
-                    AuthorizationUtils.getAuthenticatedUserName())
+                            AuthorizationUtils.getAuthenticatedUserName())
                     .orElseThrow(() -> new WebApplicationException(HttpStatus.BAD_REQUEST,
                             "Application with such id can not be found"));
 
@@ -226,7 +227,8 @@ public class CollectionService {
             extent = new Extent();
             if (layer.getSpatialExtent() != null) {
                 //parse as float to fix float to double conversion artifacts in postgis
-                List<Float> box = JsonUtil.readJson(layer.getSpatialExtent(), new TypeReference<>() {});
+                List<Float> box = JsonUtil.readJson(layer.getSpatialExtent(), new TypeReference<>() {
+                });
                 if (box.get(2) == 0 && box.get(5) == 0) {
                     box = List.of(box.get(0), box.get(1), box.get(3), box.get(4));
                 }

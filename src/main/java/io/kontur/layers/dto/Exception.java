@@ -59,7 +59,6 @@ public class Exception {
         this.description = description;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

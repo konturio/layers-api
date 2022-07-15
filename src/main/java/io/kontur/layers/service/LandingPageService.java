@@ -4,7 +4,8 @@ import io.kontur.layers.dto.LandingPage;
 import org.springframework.stereotype.Service;
 
 import static io.kontur.layers.service.LinkFactory.Relation.*;
-import static io.kontur.layers.service.LinkFactory.Type.*;
+import static io.kontur.layers.service.LinkFactory.Type.APPLICATION_JSON;
+import static io.kontur.layers.service.LinkFactory.Type.OPEN_API_YAML;
 
 @Service
 public class LandingPageService {

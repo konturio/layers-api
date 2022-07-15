@@ -271,7 +271,6 @@ public class ApplicationsPutIT extends AbstractIntegrationTest {
                 .andExpect(status().isNotFound());
     }
 
-
     @Test
     @WithMockUser("owner_1")
     public void updateApplicationLayers_RemoveLayersFromApplication() throws Exception {

@@ -1,9 +1,9 @@
 package io.kontur.layers.controller;
 
-import io.kontur.layers.test.AbstractIntegrationTest;
 import io.kontur.layers.repository.TestDataMapper;
-import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.repository.model.Layer;
+import io.kontur.layers.repository.model.LayerFeature;
+import io.kontur.layers.test.AbstractIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

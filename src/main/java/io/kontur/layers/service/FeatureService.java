@@ -7,8 +7,8 @@ import io.kontur.layers.repository.ApplicationMapper;
 import io.kontur.layers.repository.FeatureMapper;
 import io.kontur.layers.repository.LayerMapper;
 import io.kontur.layers.repository.model.Application;
-import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.repository.model.Layer;
+import io.kontur.layers.repository.model.LayerFeature;
 import io.kontur.layers.util.AuthorizationUtils;
 import io.kontur.layers.util.JsonUtil;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -90,14 +90,15 @@ public class FeatureService {
     }
 
     private FeatureCollectionGeoJSON convertFeatures(String collectionId, String title,
-                                                                 List<LayerFeature> features) {
+                                                     List<LayerFeature> features) {
         return new FeatureCollectionGeoJSON()
                 .timeStamp(OffsetDateTime.now(ZoneOffset.UTC))
                 .features(featureServiceHelper.toFeatureGeoJson(features, collectionId, title))
                 .numberReturned(features.size());
     }
 
-    private List<FeaturePropertiesFilter> convertAdditionalPropertiesIntoFilterList(List<FeaturePropertiesFilter> propFilterList) {
+    private List<FeaturePropertiesFilter> convertAdditionalPropertiesIntoFilterList(
+            List<FeaturePropertiesFilter> propFilterList) {
         return propFilterList.stream().map(c -> new FeaturePropertiesFilter(
                 String.format("{%s}", c.getFieldName()),
                 Arrays.stream(c.getPattern())
@@ -120,7 +121,8 @@ public class FeatureService {
         String userName = AuthorizationUtils.getAuthenticatedUserName();
         final Layer layer = layerMapper.getOwnedLayer(collectionId, userName)
                 .orElseThrow(
-                        () -> new WebApplicationException(NOT_FOUND, Error.errorFmt("Collection '%s' not found", collectionId)));
+                        () -> new WebApplicationException(NOT_FOUND,
+                                Error.errorFmt("Collection '%s' not found", collectionId)));
 
         List<LayerFeature> features = Arrays.stream(fc.getFeatures())
                 .map(f -> new LayerFeature(layer.getId(),
