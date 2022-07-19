@@ -26,6 +26,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     implementation 'org.locationtech.jts.io:jts-io-common:1.18.2'
     implementation 'org.wololo:jts2geojson:0.17.0'
+    implementation 'org.liquibase:liquibase-core:4.11.0'
 
     //health
     implementation 'org.springframework.boot:spring-boot-starter-actuator'

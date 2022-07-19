@@ -1,0 +1,14 @@
+## Database Changelog
+databaseChangeLog:
+  - include:
+      relativeToChangelogFile: true
+      file: create-schema.sql
+  - include:
+      relativeToChangelogFile: true
+      file: insert-groups-and-categories.sql
+  - include:
+      relativeToChangelogFile: true
+      file: alter-layers-add-feature-properties.sql
+  - include:
+      relativeToChangelogFile: true
+      file: add-apps-and-apps-layers.sql
