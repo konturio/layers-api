@@ -3,7 +3,18 @@
 ## UNRELEASED
 
 #### Added
-- #10807 Add ability to process raster and vector tiles
+
+#### Changed
+
+#### Removed
+
+#### Installation sequence
+
+
+
+## Release 1.6.0 - 2022.07.20
+
+#### Added
 - #10675 Add DB schema migrations 
 
 #### Changed
