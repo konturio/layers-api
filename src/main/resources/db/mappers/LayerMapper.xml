@@ -175,6 +175,8 @@
                lrs.category_id,
                lrs.type,
                lrs.url,
+               api_key                       as apiKey,
+               api_tag                       as apiTag,
                lrs.last_updated              as lastupdated,
                lrs.source_updated            as sourcelastupdated,
                lrs.is_public                 as isPublic,
@@ -204,9 +206,9 @@
     </select>
 
     <select id="insertLayer" resultType="io.kontur.layers.repository.model.Layer">
-        with ins as (insert into layers (public_id, name, description, url, type, geom, last_updated, source_updated,
+        with ins as (insert into layers (public_id, name, description, url, api_tag, api_key, type, geom, last_updated, source_updated,
                                          copyrights, properties, is_public, owner, is_visible, group_id, feature_properties)
-            values (#{publicId}, #{name}, #{description}, #{url}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated},
+            values (#{publicId}, #{name}, #{description}, #{url}, #{apiTag}, #{apiKey}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated},
                     #{sourceLastUpdated}, #{copyrights}, #{properties}::jsonb, #{isPublic}, #{owner}, true,
                     (select id from layers_group_properties where name = 'user_layers'), #{featureProperties}::jsonb)
             returning *)
@@ -215,6 +217,8 @@
                ins.name,
                ins.description,
                ins.url,
+               ins.api_tag,
+               ins.api_key,
                ins.type,
                ins.geom               as geometry,
                ins.last_updated       as lastUpdated,

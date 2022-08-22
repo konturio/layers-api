@@ -20,6 +20,8 @@ public class Layer {
     private String name;
     private String description;
     private String url;
+    private String apiTag;
+    private String apiKey;
     private String type;
     private String geometry;
     private String copyrights;
