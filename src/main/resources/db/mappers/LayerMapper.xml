@@ -175,8 +175,7 @@
                lrs.category_id,
                lrs.type,
                lrs.url,
-               api_key                       as apiKey,
-               api_tag                       as apiTag,
+               lrs.api_key                   as apiKey,
                lrs.last_updated              as lastupdated,
                lrs.source_updated            as sourcelastupdated,
                lrs.is_public                 as isPublic,
@@ -206,9 +205,9 @@
     </select>
 
     <select id="insertLayer" resultType="io.kontur.layers.repository.model.Layer">
-        with ins as (insert into layers (public_id, name, description, url, api_tag, api_key, type, geom, last_updated, source_updated,
+        with ins as (insert into layers (public_id, name, description, url, api_key, type, geom, last_updated, source_updated,
                                          copyrights, properties, is_public, owner, is_visible, group_id, feature_properties)
-            values (#{publicId}, #{name}, #{description}, #{url}, #{apiTag}, #{apiKey}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated},
+            values (#{publicId}, #{name}, #{description}, #{url}, #{apiKey}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated},
                     #{sourceLastUpdated}, #{copyrights}, #{properties}::jsonb, #{isPublic}, #{owner}, true,
                     (select id from layers_group_properties where name = 'user_layers'), #{featureProperties}::jsonb)
             returning *)
@@ -217,7 +216,6 @@
                ins.name,
                ins.description,
                ins.url,
-               ins.api_tag,
                ins.api_key,
                ins.type,
                ins.geom               as geometry,
@@ -245,9 +243,9 @@
     </select>
 
     <select id="updateLayer" resultType="io.kontur.layers.repository.model.Layer">
-        with upd as (update layers set (name, description, url, type, geom, last_updated, source_updated,
+        with upd as (update layers set (name, description, url, api_key, type, geom, last_updated, source_updated,
                                         copyrights, properties, is_public, feature_properties) =
-                (#{name}, #{description}, #{url}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated}, #{sourceLastUpdated},
+                (#{name}, #{description}, #{url}, #{apiKey}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated}, #{sourceLastUpdated},
                  #{copyrights}, #{properties}::jsonb, #{isPublic}, #{featureProperties}::jsonb)
             where public_id = #{publicId} and owner = #{owner}
             returning *)
@@ -256,6 +254,7 @@
                upd.name,
                upd.description,
                upd.url,
+               upd.api_key,
                upd.type,
                upd.geom               as geometry,
                upd.last_updated       as lastUpdated,
@@ -290,6 +289,7 @@
                name,
                description,
                url,
+               api_key,
                type,
                geom               as geometry,
                last_updated       as lastUpdated,

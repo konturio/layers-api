@@ -26,30 +26,12 @@ public class Link {
     @JsonProperty("length")
     private Integer length;
 
-    @JsonProperty("apiTag")
-    private String apiTag;
-
     @JsonProperty("apiKey")
     private String apiKey;
 
     public Link href(String href) {
         this.href = href;
         return this;
-    }
-
-    public Link apiTag(String apiTag) {
-        this.apiTag = apiTag;
-        return this;
-    }
-
-    @JsonProperty("apiTag")
-    @Schema(description = "Url tag to send api key.")
-    public String getApiTag() {
-        return apiTag;
-    }
-
-    public void setApiTag(String apiTag) {
-        this.apiTag = apiTag;
     }
 
     public Link apiKey(String apiKey) {
@@ -65,7 +47,7 @@ public class Link {
     }
 
     public void setApiKey(String apiKey) {
-        this.apiTag = apiKey;
+        this.apiKey = apiKey;
     }
 
     @JsonProperty("href")
@@ -172,7 +154,6 @@ public class Link {
                 Objects.equals(this.rel, link.rel) &&
                 Objects.equals(this.type, link.type) &&
                 Objects.equals(this.hreflang, link.hreflang) &&
-                Objects.equals(this.apiTag, link.apiTag) &&
                 Objects.equals(this.apiKey, link.apiKey) &&
                 Objects.equals(this.title, link.title) &&
                 Objects.equals(this.length, link.length);
@@ -180,6 +161,6 @@ public class Link {
 
     @Override
     public int hashCode() {
-        return Objects.hash(href, rel, type, hreflang, apiTag, apiKey, title, length);
+        return Objects.hash(href, rel, type, hreflang, apiKey, title, length);
     }
 }

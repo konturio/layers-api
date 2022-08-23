@@ -15,8 +15,8 @@ import java.util.UUID;
 @Mapper
 public interface TestDataMapper {
 
-    @Select({"with ins as (insert into layers (public_id, name, description, geom, last_updated, source_updated, copyrights, properties, is_public, is_visible, owner, type, url, api_tag, api_key, feature_properties) values ",
-            "(#{publicId},#{name},#{description},#{geometry}::geometry,#{lastUpdated},#{sourceLastUpdated},#{copyrights},#{properties}::jsonb,#{isPublic},#{isVisible},#{owner},#{type},#{url},#{apiTag},#{apiKey},#{featureProperties}::jsonb) returning id) ",
+    @Select({"with ins as (insert into layers (public_id, name, description, geom, last_updated, source_updated, copyrights, properties, is_public, is_visible, owner, type, url, api_key, feature_properties) values ",
+            "(#{publicId},#{name},#{description},#{geometry}::geometry,#{lastUpdated},#{sourceLastUpdated},#{copyrights},#{properties}::jsonb,#{isPublic},#{isVisible},#{owner},#{type},#{url},#{apiKey},#{featureProperties}::jsonb) returning id) ",
             "select * from ins"})
     long insertLayer(Layer layer);
 

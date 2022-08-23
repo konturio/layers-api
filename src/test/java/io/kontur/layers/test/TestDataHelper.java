@@ -34,7 +34,7 @@ public class TestDataHelper {
         final ObjectNode featureProps = objectMapper.createObjectNode();
         featureProps.put("featureProp1", "featureProperty_" + n);
 
-        return new Layer(null, "pubId_" + n, "name_" + n, "description_" + n, null, "apiTag", "apiKey", "feature",
+        return new Layer(null, "pubId_" + n, "name_" + n, "description_" + n, null, "apiKey", "feature",
                 String.format("SRID=4326;POLYGON((0 0, %1$d 0, %1$d %1$d, 0 %1$d, 0 0))", n),
                 "copyrights_" + n, props, null, null, featureProps, null, null,
                 OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusSeconds(n),
