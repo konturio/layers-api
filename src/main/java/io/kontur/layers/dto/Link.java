@@ -26,9 +26,28 @@ public class Link {
     @JsonProperty("length")
     private Integer length;
 
+    @JsonProperty("apiKey")
+    private String apiKey;
+
     public Link href(String href) {
         this.href = href;
         return this;
+    }
+
+    public Link apiKey(String apiKey) {
+        this.apiKey = apiKey;
+        return this;
+    }
+
+    @JsonProperty("apiKey")
+    @Schema(description = "Api key of layer")
+    @NotNull
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
     }
 
     @JsonProperty("href")
@@ -135,12 +154,13 @@ public class Link {
                 Objects.equals(this.rel, link.rel) &&
                 Objects.equals(this.type, link.type) &&
                 Objects.equals(this.hreflang, link.hreflang) &&
+                Objects.equals(this.apiKey, link.apiKey) &&
                 Objects.equals(this.title, link.title) &&
                 Objects.equals(this.length, link.length);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(href, rel, type, hreflang, title, length);
+        return Objects.hash(href, rel, type, hreflang, apiKey, title, length);
     }
 }

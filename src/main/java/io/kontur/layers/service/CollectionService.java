@@ -151,8 +151,10 @@ public class CollectionService {
 
     public Layer toLayer(CollectionUpdateDto c, String id) {
         String url = null;
+        String apiKey = null;
         if (c.getLink() != null) {
             url = c.getLink().getHref();
+            apiKey = c.getLink().getApiKey();
         }
 
         return Layer.builder()
@@ -160,6 +162,7 @@ public class CollectionService {
                 .name(c.getTitle())
                 .description(c.getDescription())
                 .url(url)
+                .apiKey(apiKey)
                 .type(c.getItemType().name())
                 .geometry(c.getGeometry() != null ? JsonUtil.writeJson(c.getGeometry()) : null)
                 .copyrights(c.getCopyrights())
@@ -182,7 +185,8 @@ public class CollectionService {
         } else {
             link = new Link()
                     .rel("tiles")
-                    .href(layer.getUrl());
+                    .href(layer.getUrl())
+                    .apiKey(layer.getApiKey());
         }
         return Collection.builder()
                 .id(layer.getPublicId())
