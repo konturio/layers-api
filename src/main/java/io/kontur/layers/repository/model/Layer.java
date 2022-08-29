@@ -36,5 +36,6 @@ public class Layer {
     private DateTimeRange temporalExtent;
     private boolean isPublic;
     private boolean isVisible;
+    private boolean isGlobal;
     private String owner;
 }

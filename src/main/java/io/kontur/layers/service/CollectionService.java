@@ -53,7 +53,7 @@ public class CollectionService {
     public Collections getCollections(Geometry geometry, Integer limit,
                                       Integer offset, boolean includeLinks,
                                       CollectionOwner collectionOwner, UUID appId,
-                                      List<String> collectionIds) {
+                                      List<String> collectionIds, boolean omitLocalCollections) {
         String geometryString = geometry != null ? JsonUtil.writeJson(geometry) : null;
         String userName = AuthorizationUtils.getAuthenticatedUserName();
         CollectionOwner ownershipFilter = StringUtils.isBlank(userName) ? CollectionOwner.ANY : collectionOwner;
@@ -63,14 +63,14 @@ public class CollectionService {
             Application app = applicationMapper.getApplicationOwnedOrPublic(appId, userName)
                     .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Application is not found"));
 
-            layers = layerMapper.getLayers(geometryString, userName, limit, offset, ownershipFilter,
+            layers = layerMapper.getLayers(geometryString, omitLocalCollections, userName, limit, offset, ownershipFilter,
                     app.getId(), app.getShowAllPublicLayers(), collectionIds.toArray(new String[0]));
-            numberMatched = layerMapper.getLayersTotal(geometryString, userName, ownershipFilter,
+            numberMatched = layerMapper.getLayersTotal(geometryString, omitLocalCollections, userName, ownershipFilter,
                     app.getId(), app.getShowAllPublicLayers(), collectionIds.toArray(new String[0]));
         } else {
-            layers = layerMapper.getLayers(geometryString, userName, limit, offset, ownershipFilter,
+            layers = layerMapper.getLayers(geometryString, omitLocalCollections, userName, limit, offset, ownershipFilter,
                     collectionIds.toArray(new String[0]));
-            numberMatched = layerMapper.getLayersTotal(geometryString, userName, ownershipFilter,
+            numberMatched = layerMapper.getLayersTotal(geometryString, omitLocalCollections, userName, ownershipFilter,
                     collectionIds.toArray(new String[0]));
         }
 

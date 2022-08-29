@@ -17,6 +17,7 @@ public class CollectionsSearchDto {
 
     @ValidGeoJSON
     private Geometry geometry;
+    private boolean omitLocalCollections;
     @Schema(defaultValue = "ANY")
     private CollectionOwner collectionOwner = CollectionOwner.ANY;
     private UUID appId;
