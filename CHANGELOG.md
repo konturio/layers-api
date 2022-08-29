@@ -12,6 +12,20 @@
 
 
 
+## Release 1.7.0 - 2022.08.29
+
+#### Added
+- #8187 API key layer parameter
+- 10685 Add is_global property to layers. Add omitLocalCollections filter.
+
+#### Changed
+
+#### Removed
+
+#### Installation sequence
+
+
+
 ## Release 1.6.0 - 2022.07.20
 
 #### Added
