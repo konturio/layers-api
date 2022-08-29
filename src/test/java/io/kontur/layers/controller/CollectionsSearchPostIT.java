@@ -138,6 +138,7 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json.read("$.collections"), hasSize(1));
         assertThat(json, hasJsonPath("$.collections[0].id", is("pubId_3")));
+        assertThat(json.read("$.numberMatched"), is(1));
     }
 
     @Test
@@ -163,6 +164,63 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json.read("$.collections"), hasSize(1));
         assertThat(json, hasJsonPath("$.collections[0].id", is("pubId_3")));
+        assertThat(json.read("$.numberMatched"), is(1));
+    }
+
+    @Test
+    public void testGetCollectionGeometryIntersectionAndGlobal() throws Exception {
+        //GIVEN
+        Layer layer1 = buildLayerN(1);
+        ReflectionTestUtils.setField(layer1, "geometry", null);
+        ReflectionTestUtils.setField(layer1, "isGlobal", false);
+        testDataMapper.insertLayer(layer1);
+        Layer layer2 = buildLayerN(2);
+        ReflectionTestUtils.setField(layer2, "geometry", null);
+        ReflectionTestUtils.setField(layer2, "isGlobal", true);
+        testDataMapper.insertLayer(layer2);
+
+        testDataMapper.insertLayer(buildLayerN(3));
+        //WHEN
+        String response = mockMvc.perform(post("/collections/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"geometry\":{\"type\":\"Point\",\"coordinates\":[0,3]}}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json.read("$.collections"), hasSize(2));
+        assertThat(json, hasJsonPath("$.collections[0].id", is("pubId_2")));
+        assertThat(json, hasJsonPath("$.collections[1].id", is("pubId_3")));
+        assertThat(json.read("$.numberMatched"), is(2));
+    }
+
+    @Test
+    public void testGetGlobalCollections() throws Exception {
+        //GIVEN
+        testDataMapper.insertLayer(buildLayerN(1));
+        Layer layer = buildLayerN(2);
+        ReflectionTestUtils.setField(layer, "geometry", null);
+        ReflectionTestUtils.setField(layer, "isGlobal", true);
+        testDataMapper.insertLayer(layer);
+
+        testDataMapper.insertLayer(buildLayerN(3));
+        //WHEN
+        String response = mockMvc.perform(post("/collections/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"omitLocalCollections\": true}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json.read("$.collections"), hasSize(1));
+        assertThat(json, hasJsonPath("$.collections[0].id", is("pubId_2")));
+        assertThat(json.read("$.numberMatched"), is(1));
     }
 
     @Test

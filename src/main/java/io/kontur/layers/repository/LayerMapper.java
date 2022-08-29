@@ -24,20 +24,22 @@ public interface LayerMapper {
 
     @Timed(value = "db.query", histogram = true)
     default Optional<Layer> getLayer(String publicId, String userName, UUID appId, boolean showAllPublic) {
-        return getLayers(null, userName, 1, 0, CollectionOwner.ANY, appId, showAllPublic, publicId).stream()
+        return getLayers(null, false, userName, 1, 0, CollectionOwner.ANY, appId, showAllPublic, publicId).stream()
                 .findFirst();
     }
 
     @Timed(value = "db.query", histogram = true)
     default int getLayersTotal(@Param("geometry") String geometry,
+                               @Param("omitLocalCollections") boolean omitLocalCollections,
                                @Param("userName") String userName,
                                @Param("collectionOwner") CollectionOwner collectionOwner,
                                @Param("publicIds") String... publicIds) {
-        return getLayersTotal(geometry, userName, collectionOwner, null, true, publicIds);
+        return getLayersTotal(geometry, omitLocalCollections, userName, collectionOwner, null, true, publicIds);
     }
 
     @Timed(value = "db.query", histogram = true)
     int getLayersTotal(@Param("geometry") String geometry,
+                       @Param("omitLocalCollections") boolean omitLocalCollections,
                        @Param("userName") String userName,
                        @Param("collectionOwner") CollectionOwner collectionOwner,
                        @Param("appId") UUID appId,
@@ -46,16 +48,18 @@ public interface LayerMapper {
 
     @Timed(value = "db.query", histogram = true)
     default List<Layer> getLayers(@Param("geometry") String geometry,
+                                  @Param("omitLocalCollections") boolean omitLocalCollections,
                                   @Param("userName") String userName,
                                   @Param("limit") Integer limit,
                                   @Param("offset") Integer offset,
                                   @Param("collectionOwner") CollectionOwner collectionOwner,
                                   @Param("publicIds") String... publicIds) {
-        return getLayers(geometry, userName, limit, offset, collectionOwner, null, true, publicIds);
+        return getLayers(geometry, omitLocalCollections, userName, limit, offset, collectionOwner, null, true, publicIds);
     }
 
     @Timed(value = "db.query", histogram = true)
     List<Layer> getLayers(@Param("geometry") String geometry,
+                          @Param("omitLocalCollections") boolean omitLocalCollections,
                           @Param("userName") String userName,
                           @Param("limit") Integer limit,
                           @Param("offset") Integer offset,

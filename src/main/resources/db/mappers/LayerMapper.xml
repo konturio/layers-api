@@ -18,7 +18,10 @@
     </select>
 
     <select id="getLayersTotal" resultType="java.lang.Integer">
-        with g as (select ST_GeomFromGeoJSON(#{geometry}) as inpgeom),
+        with
+        <if test="geometry != null">
+            g as (select ST_GeomFromGeoJSON(#{geometry}) as inpgeom),
+        </if>
         lrsids as (select l.id
         from
         layers l
@@ -28,10 +31,15 @@
                 #{id}
             </foreach>
         </if>
-        <if test="geometry != null">
-            and geom is not null
-            and st_intersects(l.geom, (select inpgeom from g))
-        </if>
+        <choose>
+            <when test="geometry != null">
+                and (st_intersects(l.geom, (select inpgeom from g))
+                    or is_global)
+            </when>
+            <when test="geometry == null and omitLocalCollections">
+                and is_global
+            </when>
+        </choose>
         <choose>
             <when test="appId != null and !showAllPublic">
                 and l.public_id in (select layer_id from apps_layers where app_id = #{appId})
@@ -94,7 +102,10 @@
     </select>
 
     <select id="getLayers" resultType="io.kontur.layers.repository.model.Layer">
-        with g as (select ST_GeomFromGeoJSON(#{geometry}) as inpgeom),
+        with
+        <if test="geometry != null">
+            g as (select ST_GeomFromGeoJSON(#{geometry}) as inpgeom),
+        </if>
         lrsids as (select l.id
                    from
                         layers l
@@ -104,10 +115,15 @@
                        #{id}
                        </foreach>
                    </if>
-                   <if test="geometry != null">
-                       and geom is not null
-                       and st_intersects(l.geom, (select inpgeom from g))
-                   </if>
+                   <choose>
+                       <when test="geometry != null">
+                           and (st_intersects(l.geom, (select inpgeom from g))
+                                or is_global)
+                       </when>
+                       <when test="geometry == null and omitLocalCollections">
+                           and is_global
+                       </when>
+                   </choose>
                    <choose>
                        <when test="appId != null and !showAllPublic">
                            and l.public_id in (select layer_id from apps_layers where app_id = #{appId})
@@ -182,8 +198,10 @@
                lrs.is_visible                as isVisible,
                lrs.feature_properties        as featureProperties,
                lrs.owner                     as owner,
-               al.style_rule as styleRule,
-               al.display_rule as displayRule,
+               <if test="appId != null">
+                   al.style_rule as styleRule,
+                   al.display_rule as displayRule,
+               </if>
                json_strip_nulls(json_build_object(
                    'name', gp."name",
                    'isOpened', gp.is_opened,
@@ -195,8 +213,10 @@
                    'mutuallyExclusive', cp.mutually_exclusive,
                    'order', cp."order")) as category
         from layers as lrs
-            left join apps_layers al on
-                al.app_id = #{appId} and al.layer_id = lrs.public_id
+            <if test="appId != null">
+                left join apps_layers al on
+                    al.app_id = #{appId} and al.layer_id = lrs.public_id
+            </if>
             left join layers_group_properties gp on gp.id = lrs.group_id
             left join layers_category_properties cp on cp.id = lrs.category_id
         where lrs.id in (select id from lrsids)

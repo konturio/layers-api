@@ -106,7 +106,7 @@ public class ApplicationService {
                 .map(ApplicationLayerDto::getLayerId)
                 .toList();
 
-        List<String> layersIdsToUpdate = layerMapper.getLayers(null, AuthorizationUtils.getAuthenticatedUserName(),
+        List<String> layersIdsToUpdate = layerMapper.getLayers(null, false, AuthorizationUtils.getAuthenticatedUserName(),
                         appLayers.size(), 0, CollectionOwner.ANY, layerIds.toArray(new String[0]))
                 .stream()
                 .map(Layer::getPublicId)
