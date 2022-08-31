@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset layers-api-migrations:insert-groups-and-categories.sql runOnChange:false
+--changeset layers-api-migrations:insert-layers-group.sql runOnChange:false
 
 INSERT INTO layers_group_properties (name, is_opened, mutually_exclusive)
 VALUES ('bivariate', true, true),
