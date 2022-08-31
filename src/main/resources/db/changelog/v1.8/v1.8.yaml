@@ -3,3 +3,6 @@ databaseChangeLog:
   - include:
       relativeToChangelogFile: true
       file: alter-layers-add-is-global.sql
+  - include:
+      relativeToChangelogFile: true
+      file: insert-layers-group.sql
