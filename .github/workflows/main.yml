@@ -26,10 +26,10 @@ jobs:
 
       - name: Checking and building with Gradle
         env:
-          NEXUS_DEPLOYER: ${{ secrets.NEXUS_DEPLOYER }}
-          NEXUS_DEPLOYER_PASS: ${{ secrets.NEXUS_DEPLOYER_PASS }}
-          NEXUS_READER: ${{ secrets.NEXUS_READER }}
-          NEXUS_READER_PASS: ${{ secrets.NEXUS_READER_PASS }}
+          NEXUS_DEPLOYER: '${{ secrets.NEXUS_DEPLOYER }}'
+          NEXUS_DEPLOYER_PASS: '${{ secrets.NEXUS_DEPLOYER_PASS }}'
+          NEXUS_READER: '${{ secrets.NEXUS_READER }}'
+          NEXUS_READER_PASS: '${{ secrets.NEXUS_READER_PASS }}'
         run: |-
           set -x
           for t in check build; do
