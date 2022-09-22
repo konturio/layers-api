@@ -1,4 +1,4 @@
---- # Time-stamp: <2022-09-21 15:11:27>
+--- # Time-stamp: <2022-09-21 15:17:06>
 
 name: 10 Manual Deployment
 
@@ -79,18 +79,18 @@ jobs:
         run: >
           ansible-playbook -vD -e "version=${{needs.helper.outputs.CI_COMMIT_REF_SLUG}}-${{github.run_id}}
           path_to_dist=$(find $GITHUB_WORKSPACE -maxdepth 1 -name layers-api\*.tar.xz -print -quit)"
-          --limit=zigzag_user_profile_api ansible/deploy.yml
+          --limit=dev_layers_api ansible/deploy.yml
 
-      # - name: deploy-test
-      #   if: "'deploy-test' == github.event.inputs.deployment_target"
-      #   run: >
-      #     ansible-playbook -vD -e "version=${{needs.helper.outputs.CI_COMMIT_REF_SLUG}}-${{github.run_id}}
-      #     path_to_dist=$(find $GITHUB_WORKSPACE -maxdepth 1 -name layers-api\*.tar.xz -print -quit)"
-      #     --limit=sonic_user_profile_api ansible/deploy.yml
-      #
-      # - name: deploy-prod
-      #   if: "'deploy-prod' == github.event.inputs.deployment_target"
-      #   run: >
-      #     ansible-playbook -vD -e "version=${{needs.helper.outputs.CI_COMMIT_REF_SLUG}}-${{github.run_id}}
-      #     path_to_dist=$(find $GITHUB_WORKSPACE -maxdepth 1 -name layers-api\*.tar.xz -print -quit)"
-      #     --limit=lima_user_profile_api ansible/deploy.yml
+      - name: deploy-test
+        if: "'deploy-test' == github.event.inputs.deployment_target"
+        run: >
+          ansible-playbook -vD -e "version=${{needs.helper.outputs.CI_COMMIT_REF_SLUG}}-${{github.run_id}}
+          path_to_dist=$(find $GITHUB_WORKSPACE -maxdepth 1 -name layers-api\*.tar.xz -print -quit)"
+          --limit=dev_layers_api ansible/deploy.yml
+
+      - name: deploy-prod
+        if: "'deploy-prod' == github.event.inputs.deployment_target"
+        run: >
+          ansible-playbook -vD -e "version=${{needs.helper.outputs.CI_COMMIT_REF_SLUG}}-${{github.run_id}}
+          path_to_dist=$(find $GITHUB_WORKSPACE -maxdepth 1 -name layers-api\*.tar.xz -print -quit)"
+          --limit=dev_layers_api ansible/deploy.yml
