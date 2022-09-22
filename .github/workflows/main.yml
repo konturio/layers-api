@@ -1,4 +1,4 @@
---- # Time-stamp: <2022-09-21 14:56:35>
+--- # Time-stamp: <2022-09-21 14:58:53>
 
 name: 01 Building with Gradle
 
@@ -49,7 +49,8 @@ jobs:
         if: always()
         with:
           name: 'layers-api-${{needs.helper.outputs.CI_COMMIT_REF_SLUG}}'
-          path: *.tar.xz
+          path:
+            - '*.tar.xz'
 
       - name: Publishing JUnit Test result report
         uses: konturio/action-junit-report@v3

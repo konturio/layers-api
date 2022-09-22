@@ -1,4 +1,4 @@
---- # Time-stamp: <2022-09-15 21:25:57>
+--- # Time-stamp: <2022-09-21 20:58:50>
 
 name: 10 Manual Deployment
 
@@ -13,8 +13,6 @@ name: 10 Manual Deployment
         options:
           - deploy-dev
           - deploy-test
-          - deploy-spi-plugin-dev-and-test
-          - deploy-spi-plugin-prod
           - deploy-prod
       git_ref:
         description: Git ref (optional) # The branch, tag or SHA to checkout
@@ -50,57 +48,7 @@ jobs:
           workflow: main.yml
           workflow_conclusion: success
           commit: '${{steps.get-cloned.outputs.SHA}}'
-          name: 'user-profile-api-${{needs.helper.outputs.CI_COMMIT_REF_SLUG}}'
-
-      - name: deploy-spi-plugin-dev-and-test
-        if: "'deploy-spi-plugin-dev-and-test' == github.event.inputs.deployment_target"
-        env:
-          METADATA_FILE_NAME: keycloak01-artifacts.txt
-          SOURCE_JAR_PATH: keycloak-user-spi/build/libs/keycloak-user-spi.jar
-          AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}'
-          AWS_DEFAULT_REGION: '${{ secrets.AWS_DEFAULT_REGION }}'
-          AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
-        run: |-
-          echo 'source file:'
-          ls -l $SOURCE_JAR_PATH
-          SHA=$(sha256sum $SOURCE_JAR_PATH | awk '{print $1}')
-          echo 'SHA='$SHA
-          DATE=$(date -ur $SOURCE_JAR_PATH "+%Y%m%d%H%M.%S")
-          sed -i 's!sha256!'$SHA'!g' keycloak-user-spi/$METADATA_FILE_NAME
-          sed -i 's!datetime!'$DATE'!g' keycloak-user-spi/$METADATA_FILE_NAME
-          aws s3 cp keycloak-user-spi/$METADATA_FILE_NAME s3://user-profile-service-locker01/DEV/$METADATA_FILE_NAME --sse
-          aws s3 cp keycloak-user-spi/$METADATA_FILE_NAME s3://user-profile-service-locker01/TEST/$METADATA_FILE_NAME --sse
-          aws s3 cp --content-type='text/plain' $SOURCE_JAR_PATH s3://user-profile-service-locker01/DEV/keycloak-user-spi.jar --sse
-          aws s3 cp --content-type='text/plain' $SOURCE_JAR_PATH s3://user-profile-service-locker01/TEST/keycloak-user-spi.jar --sse
-
-      - name: deploy-spi-plugin-prod
-        if: "'deploy-spi-plugin-prod' == github.event.inputs.deployment_target"
-        env:
-          ALLOWED_REFS_PCRE: /^refs\/heads\/release-.*/
-          METADATA_FILE_NAME: keycloak01-artifacts.txt
-          SOURCE_JAR_PATH: keycloak-user-spi/build/libs/keycloak-user-spi.jar
-          AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}'
-          AWS_DEFAULT_REGION: '${{ secrets.AWS_DEFAULT_REGION }}'
-          AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
-        run: |-
-          if [[ -z "${{steps.get-cloned.outputs.REF}}" ]]; then
-            echo "::error file=${{github.event.workflow}}::${{github.event.inputs.deployment_target}} refuses to deploy from a non-symbolic ref (commit ${{steps.get-cloned.outputs.SHA}})"
-            exit 1
-          fi
-          if [[ -z $(echo '${{steps.get-cloned.outputs.REF}}' | perl -ne "print if $ALLOWED_REFS_PCRE") ]]; then
-            echo "::error file=${{github.event.workflow}}::${{github.event.inputs.deployment_target}} refuses to deploy from '${{steps.get-cloned.outputs.REF}}'"
-            exit 1
-          fi
-
-          echo 'source file:'
-          ls -l $SOURCE_JAR_PATH
-          SHA=$(sha256sum $SOURCE_JAR_PATH | awk '{print $1}')
-          echo 'SHA='$SHA
-          DATE=$(date -ur $SOURCE_JAR_PATH "+%Y%m%d%H%M.%S")
-          sed -i 's!sha256!'$SHA'!g' keycloak-user-spi/$METADATA_FILE_NAME
-          sed -i 's!datetime!'$DATE'!g' keycloak-user-spi/$METADATA_FILE_NAME
-          aws s3 cp keycloak-user-spi/$METADATA_FILE_NAME s3://user-profile-service-locker01/PROD/$METADATA_FILE_NAME --sse
-          aws s3 cp --content-type='text/plain' $SOURCE_JAR_PATH s3://user-profile-service-locker01/PROD/keycloak-user-spi.jar --sse
+          name: 'layers-api-${{needs.helper.outputs.CI_COMMIT_REF_SLUG}}'
 
       - name: Preparing Ansible's environment
         if: >-
@@ -130,19 +78,19 @@ jobs:
         if: "'deploy-dev' == github.event.inputs.deployment_target"
         run: >
           ansible-playbook -vD -e "version=${{needs.helper.outputs.CI_COMMIT_REF_SLUG}}-${{github.run_id}}
-          path_to_dist=$(find $GITHUB_WORKSPACE -maxdepth 1 -name user-profile-api\*.tar.xz -print -quit)"
+          path_to_dist=$(find $GITHUB_WORKSPACE -maxdepth 1 -name layers-api\*.tar.xz -print -quit)"
           --limit=zigzag_user_profile_api ansible/deploy.yml
 
       - name: deploy-test
         if: "'deploy-test' == github.event.inputs.deployment_target"
         run: >
           ansible-playbook -vD -e "version=${{needs.helper.outputs.CI_COMMIT_REF_SLUG}}-${{github.run_id}}
-          path_to_dist=$(find $GITHUB_WORKSPACE -maxdepth 1 -name user-profile-api\*.tar.xz -print -quit)"
+          path_to_dist=$(find $GITHUB_WORKSPACE -maxdepth 1 -name layers-api\*.tar.xz -print -quit)"
           --limit=sonic_user_profile_api ansible/deploy.yml
 
       - name: deploy-prod
         if: "'deploy-prod' == github.event.inputs.deployment_target"
         run: >
           ansible-playbook -vD -e "version=${{needs.helper.outputs.CI_COMMIT_REF_SLUG}}-${{github.run_id}}
-          path_to_dist=$(find $GITHUB_WORKSPACE -maxdepth 1 -name user-profile-api\*.tar.xz -print -quit)"
+          path_to_dist=$(find $GITHUB_WORKSPACE -maxdepth 1 -name layers-api\*.tar.xz -print -quit)"
           --limit=lima_user_profile_api ansible/deploy.yml
