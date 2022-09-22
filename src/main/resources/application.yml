@@ -2,6 +2,7 @@ server:
   servlet:
     context-path: '/layers/v2'
   port: 8630
+  shutdown: graceful
 
 spring:
   datasource:
@@ -19,6 +20,8 @@ spring:
       auto-commit: false
   jackson:
     default-property-inclusion: non_null
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
 
 springdoc:
   swagger-ui:
@@ -53,7 +56,12 @@ management:
         time-to-live: 10s
       show-details: always
       show-components: always
+      probes:
+        enabled: true
   endpoints:
     web:
       exposure:
         include: health, info, prometheus
+      base-path: /
+      path-mapping:
+        prometheus: metrics

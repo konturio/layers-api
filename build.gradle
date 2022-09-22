@@ -3,39 +3,73 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'jacoco'
-    id "io.freefair.lombok" version "6.3.0"
+    id 'io.freefair.lombok' version '6.3.0'
+    id 'com.google.cloud.tools.jib' version '3.3.0'
+    id 'de.undercouch.download' version '5.1.2'
+    id 'com.palantir.git-version' version '0.15.0'
 }
 
 group = 'io.kontur'
 version = '1.8.0-SNAPSHOT'
 sourceCompatibility = '17'
+def details = versionDetails()
 
 repositories {
     mavenCentral()
+    maven {
+        url 'https://nexus.kontur.io:8084'
+        credentials {
+            username = System.getenv()['NEXUS_READER'] ?: "".trim()
+            password = System.getenv()['NEXUS_READER_PASS'] ?: "".trim()
+        }
+    }
+    maven {
+        url 'https://nexus.kontur.io:8085'
+        credentials {
+            username = System.getenv()['NEXUS_DEPLOYER'] ?: "".trim()
+            password = System.getenv()['NEXUS_DEPLOYER_PASS'] ?: "".trim()
+        }
+    }
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    //model
+    implementation 'org.wololo:jts2geojson:0.17.0'
+    implementation 'org.locationtech.jts.io:jts-io-common:1.19.0'
+
+    //json logging
+    implementation 'ch.qos.logback.contrib:logback-jackson:0.1.5'
+    implementation 'ch.qos.logback.contrib:logback-json-classic:0.1.5'
+
+    //spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
-    runtimeOnly 'org.postgresql:postgresql'
-    implementation 'org.locationtech.jts.io:jts-io-common:1.18.2'
-    implementation 'org.wololo:jts2geojson:0.17.0'
-    implementation 'org.liquibase:liquibase-core:4.11.0'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    //spring security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+
+    //swagger
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
 
     //health
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'io.micrometer:micrometer-registry-prometheus:1.9.0'
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.9.3'
 
+    //liquibase
+    implementation 'org.liquibase:liquibase-core:4.16.0'
 
+    //postgresql
+    runtimeOnly 'org.postgresql:postgresql'
+
+    //mybatis
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
+
+    //testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'org.testcontainers:postgresql:1.17.2'
+    testImplementation 'org.testcontainers:postgresql:1.17.3'
     testImplementation 'com.jayway.jsonpath:json-path-assert:2.7.0'
     testImplementation 'org.hamcrest:hamcrest-core:2.2'
 }
@@ -57,3 +91,61 @@ jacocoTestReport {
 jar {
     enabled = false
 }
+
+jib {
+    from {
+        image = 'nexus.kontur.io:8084/library/openjdk:17-alpine'
+        auth {
+            username = System.getenv()['NEXUS_READER'] ?: "".trim()
+            password = System.getenv()['NEXUS_READER_PASS'] ?: "".trim()
+        }
+    }
+    to {
+        image = "nexus.kontur.io:8085/konturdev/${project.name}:${project.version}"
+        tags = ['latest', details.branchName, details.branchName + '.' + details.gitHash, details.branchName.startsWith("release") ? details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : 'latest' ]
+        auth {
+            username = System.getenv()['NEXUS_DEPLOYER'] ?: "".trim()
+            password = System.getenv()['NEXUS_DEPLOYER_PASS'] ?: "".trim()
+        }
+    } //todo check
+    container {
+        mainClass 'io.kontur.layers.LayersApiApplication'
+
+        jvmFlags = ['-server', '-Xms256m', '-Xmx512m', '-XX:+HeapDumpOnOutOfMemoryError',
+                    '-javaagent:/opentelemetry/opentelemetry-javaagent.jar',
+                    '-XX:HeapDumpPath=/tmp/ups_oom.hprof', '-XX:MaxMetaspaceSize=384m']
+        //if GC log is required: '-Xlog:gc*:file=/tmp/user-profile-api.GC.log'
+    }
+//    dockerClient { //todo use for local minikube
+//        environment = [
+//                "DOCKER_TLS_VERIFY"      : System.env.DOCKER_TLS_VERIFY,
+//                "DOCKER_HOST"            : System.env.DOCKER_HOST,
+//                "DOCKER_CERT_PATH"       : System.env.DOCKER_CERT_PATH,
+//                "MINIKUBE_ACTIVE_DOCKERD": System.env.MINIKUBE_ACTIVE_DOCKERD
+//        ]
+//    }
+    extraDirectories {
+        paths {
+            path {
+                from = "${buildDir}/../jib/"
+                into = '/opentelemetry/'
+            }
+        }
+    }
+}
+
+task downloadFile(type: Download) {
+    src 'https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v1.16.0/opentelemetry-javaagent.jar'
+    dest "${buildDir}/../jib/opentelemetry-javaagent.jar"
+    onlyIfModified true
+}
+
+task verifyFile(type: Verify, dependsOn: downloadFile) {
+    dependsOn downloadFile
+    src new File("${buildDir}/../jib/", 'opentelemetry-javaagent.jar')
+    algorithm 'MD5'
+    checksum '4f97ebd74d075e60c76ecdf47b61006a'
+}
+
+tasks.jib.dependsOn(verifyFile)
+tasks.jibDockerBuild.dependsOn(verifyFile) //TODO can this be moved into the plugins block?
