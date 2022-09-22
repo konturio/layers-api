@@ -14,11 +14,16 @@ stages:
 build:
   extends: .default-job-settings
   stage: build
+  variables:
+    NEXUS_DEPLOYER: $NEXUS_DEPLOYER
+    NEXUS_DEPLOYER_PASS: $NEXUS_DEPLOYER_PASS
+    NEXUS_READER: $NEXUS_READER
+    NEXUS_READER_PASS: $NEXUS_READER_PASS
   script:
     - ln -svf /usr/local/jdk-17/bin/* /usr/bin/
     - |-
       set -x
-      for t in check build; do
+      for t in check jib; do
           sh gradlew --console plain "$t" \
             || { \
                   tar --show-transformed-names --transform="s@^build/reports/tests/test@test_report@" -cvf - build/reports/tests/test/* | xz -1 > test-report-${CI_COMMIT_REF_SLUG}.tar.xz; \
