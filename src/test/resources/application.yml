@@ -16,7 +16,6 @@ spring:
   jackson:
     default-property-inclusion: non_null
 
-
 mybatis:
   mapper-locations: classpath:db/mappers/*Mapper.xml
   type-handlers-package: io.kontur.layers.repository.typehandler

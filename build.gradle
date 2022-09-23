@@ -3,36 +3,56 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'jacoco'
-    id "io.freefair.lombok" version "6.3.0"
+    id 'io.freefair.lombok' version '6.3.0'
+    id 'com.google.cloud.tools.jib' version '3.3.0'
+    id 'de.undercouch.download' version '5.1.2'
+    id 'com.palantir.git-version' version '0.15.0'
 }
 
 group = 'io.kontur'
 version = '1.8.0-SNAPSHOT'
 sourceCompatibility = '17'
+def details = versionDetails()
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    //model
+    implementation 'org.wololo:jts2geojson:0.17.0'
+    implementation 'org.locationtech.jts.io:jts-io-common:1.19.0'
+
+    //json logging
+    implementation 'ch.qos.logback.contrib:logback-jackson:0.1.5'
+    implementation 'ch.qos.logback.contrib:logback-json-classic:0.1.5'
+
+    //spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
-    runtimeOnly 'org.postgresql:postgresql'
-    implementation 'org.locationtech.jts.io:jts-io-common:1.18.2'
-    implementation 'org.wololo:jts2geojson:0.17.0'
-    implementation 'org.liquibase:liquibase-core:4.11.0'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    //spring security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+
+    //swagger
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
 
     //health
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'io.micrometer:micrometer-registry-prometheus:1.9.0'
+    implementation 'io.micrometer:micrometer-registry-prometheus:1.9.4'
 
+    //liquibase
+    implementation 'org.liquibase:liquibase-core:4.16.1'
 
+    //postgresql
+    runtimeOnly 'org.postgresql:postgresql'
+
+    //mybatis
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
+
+    //testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'org.testcontainers:postgresql:1.17.2'
@@ -57,3 +77,45 @@ jacocoTestReport {
 jar {
     enabled = false
 }
+
+jib {
+    from {
+        image = 'nexus.kontur.io:8084/library/openjdk:17-alpine'
+    }
+    to {
+        image = "nexus.kontur.io:8085/konturdev/${project.name}:latest"
+        tags = [details.branchName, details.branchName + '.' + details.gitHash, details.branchName.startsWith("release") ? details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : 'latest' ]
+    } //todo check
+    container {
+        mainClass 'io.kontur.layers.LayersApiApplication'
+
+        jvmFlags = ['-server', '-XX:+HeapDumpOnOutOfMemoryError',
+                    '-javaagent:/opentelemetry/opentelemetry-javaagent.jar',
+                    '-XX:HeapDumpPath=/tmp/ups_oom.hprof']
+        //if GC log is required: '-Xlog:gc*:file=/tmp/user-profile-api.GC.log'
+    }
+    extraDirectories {
+        paths {
+            path {
+                from = "${buildDir}/../jib/"
+                into = '/opentelemetry/'
+            }
+        }
+    }
+}
+
+task downloadFile(type: Download) {
+    src 'https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v1.16.0/opentelemetry-javaagent.jar'
+    dest "${buildDir}/../jib/opentelemetry-javaagent.jar"
+    onlyIfModified true
+}
+
+task verifyFile(type: Verify, dependsOn: downloadFile) {
+    dependsOn downloadFile
+    src new File("${buildDir}/../jib/", 'opentelemetry-javaagent.jar')
+    algorithm 'MD5'
+    checksum '4f97ebd74d075e60c76ecdf47b61006a'
+}
+
+tasks.jib.dependsOn(verifyFile)
+tasks.jibDockerBuild.dependsOn(verifyFile) //TODO can this be moved into the plugins block?
