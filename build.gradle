@@ -16,20 +16,6 @@ def details = versionDetails()
 
 repositories {
     mavenCentral()
-    maven {
-        url 'https://nexus.kontur.io:8084'
-        credentials {
-            username = System.getenv()['NEXUS_READER'] ?: "".trim()
-            password = System.getenv()['NEXUS_READER_PASS'] ?: "".trim()
-        }
-    }
-    maven {
-        url 'https://nexus.kontur.io:8085'
-        credentials {
-            username = System.getenv()['NEXUS_DEPLOYER'] ?: "".trim()
-            password = System.getenv()['NEXUS_DEPLOYER_PASS'] ?: "".trim()
-        }
-    }
 }
 
 dependencies {
@@ -95,25 +81,17 @@ jar {
 jib {
     from {
         image = 'nexus.kontur.io:8084/library/openjdk:17-alpine'
-        auth {
-            username = System.getenv()['NEXUS_READER'] ?: "".trim()
-            password = System.getenv()['NEXUS_READER_PASS'] ?: "".trim()
-        }
     }
     to {
         image = "nexus.kontur.io:8085/konturdev/${project.name}:${project.version}"
         tags = ['latest', details.branchName, details.branchName + '.' + details.gitHash, details.branchName.startsWith("release") ? details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : 'latest' ]
-        auth {
-            username = System.getenv()['NEXUS_DEPLOYER'] ?: "".trim()
-            password = System.getenv()['NEXUS_DEPLOYER_PASS'] ?: "".trim()
-        }
     } //todo check
     container {
         mainClass 'io.kontur.layers.LayersApiApplication'
 
-        jvmFlags = ['-server', '-Xms256m', '-Xmx512m', '-XX:+HeapDumpOnOutOfMemoryError',
+        jvmFlags = ['-server', '-XX:+HeapDumpOnOutOfMemoryError',
                     '-javaagent:/opentelemetry/opentelemetry-javaagent.jar',
-                    '-XX:HeapDumpPath=/tmp/ups_oom.hprof', '-XX:MaxMetaspaceSize=384m']
+                    '-XX:HeapDumpPath=/tmp/ups_oom.hprof']
         //if GC log is required: '-Xlog:gc*:file=/tmp/user-profile-api.GC.log'
     }
 //    dockerClient { //todo use for local minikube
