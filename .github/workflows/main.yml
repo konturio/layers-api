@@ -27,13 +27,13 @@ jobs:
 
       - name: Checking and building with Gradle
         env:
-          NEXUS_DEPLOYER: '${{ secrets.NEXUS_DEPLOYER }}'
-          NEXUS_DEPLOYER_PASS: '${{ secrets.NEXUS_DEPLOYER_PASS }}'
-          NEXUS_READER: '${{ secrets.NEXUS_READER }}'
-          NEXUS_READER_PASS: '${{ secrets.NEXUS_READER_PASS }}'
+          NEXUS_DEPLOYER: ${{ secrets.NEXUS_DEPLOYER }}
+          NEXUS_DEPLOYER_PASS: ${{ secrets.NEXUS_DEPLOYER_PASS }}
+          NEXUS_READER: ${{ secrets.NEXUS_READER }}
+          NEXUS_READER_PASS: ${{ secrets.NEXUS_READER_PASS }}
         run: |-
           set -x
-          for t in check jib; do
+          for t in check build jib; do
               sh gradlew --console plain "$t" \
                 || { \
                       tar --show-transformed-names --transform="s@^build/reports/tests/test@test_report@" -cvf - build/reports/tests/test/* | xz -1 > test-report-${{needs.helper.outputs.CI_COMMIT_REF_SLUG}}.tar.xz; \
