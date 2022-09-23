@@ -83,8 +83,8 @@ jib {
         image = 'nexus.kontur.io:8084/library/openjdk:17-alpine'
     }
     to {
-        image = "nexus.kontur.io:8085/konturdev/${project.name}:${project.version}"
-        tags = ['latest', details.branchName, details.branchName + '.' + details.gitHash, details.branchName.startsWith("release") ? details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : 'latest' ]
+        image = "nexus.kontur.io:8085/konturdev/${project.name}:latest"
+        tags = [details.branchName, details.branchName + '.' + details.gitHash, details.branchName.startsWith("release") ? details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : 'latest' ]
     } //todo check
     container {
         mainClass 'io.kontur.layers.LayersApiApplication'
