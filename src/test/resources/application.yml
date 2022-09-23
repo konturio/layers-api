@@ -15,11 +15,6 @@ spring:
       auto-commit: false
   jackson:
     default-property-inclusion: non_null
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health, info, prometheus
 
 mybatis:
   mapper-locations: classpath:db/mappers/*Mapper.xml
