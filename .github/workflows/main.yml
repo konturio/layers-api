@@ -1,4 +1,4 @@
---- # Time-stamp: <2022-09-21 15:30:12>
+--- # Time-stamp: <2022-09-22 09:50:06>
 
 name: 01 Building with Gradle
 
@@ -25,12 +25,16 @@ jobs:
         with:
           gradle-version: 7.3.2
 
-      - name: Checking and building with Gradle
+      - name: Logging into Kontur Nexus
         env:
           NEXUS_DEPLOYER: ${{ secrets.NEXUS_DEPLOYER }}
           NEXUS_DEPLOYER_PASS: ${{ secrets.NEXUS_DEPLOYER_PASS }}
-          NEXUS_READER: ${{ secrets.NEXUS_READER }}
-          NEXUS_READER_PASS: ${{ secrets.NEXUS_READER_PASS }}
+        run: |-
+          set -e
+          echo '${{ secrets.NEXUS_DEPLOYER_PASS }}' | docker login nexus.kontur.io:8084 -u '${{ secrets.NEXUS_DEPLOYER }}' --password-stdin
+          echo '${{ secrets.NEXUS_DEPLOYER_PASS }}' | docker login nexus.kontur.io:8085 -u '${{ secrets.NEXUS_DEPLOYER }}' --password-stdin
+
+      - name: Checking and building with Gradle
         run: |-
           set -x
           for t in check build jib; do
