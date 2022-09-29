@@ -120,7 +120,7 @@ task verifyFile(type: Verify, dependsOn: downloadFile) {
 task displayImageTag {
     doLast {
         exec {
-            commandLine 'echo', 'Image tag: ' + details.branchName + '.' + details.gitHash + ' >> $GITHUB_STEP_SUMMARY'
+            commandLine 'echo', 'Image tag: ' + details.branchName + '.' + details.gitHash
         }
     }
 }
