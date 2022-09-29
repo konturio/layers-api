@@ -117,9 +117,11 @@ task verifyFile(type: Verify, dependsOn: downloadFile) {
     checksum '4f97ebd74d075e60c76ecdf47b61006a'
 }
 
-task displayImageTag(type: Exec) {
+task displayImageTag {
     doLast {
-        commandLine 'echo', 'Image tag: ' + details.branchName + '.' + details.gitHash >> $GITHUB_STEP_SUMMARY
+        exec {
+            commandLine 'echo', 'Image tag: ' + details.branchName + '.' + details.gitHash >> $GITHUB_STEP_SUMMARY
+        }
     }
 }
 
