@@ -84,7 +84,7 @@ jib {
     }
     to {
         image = "nexus.kontur.io:8085/konturdev/${project.name}:latest"
-        tags = [details.branchName, details.branchName + '.' + details.gitHash, details.branchName.startsWith("release") ? details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : 'latest' ]
+        tags = [details.branchName, details.branchName + '.' + details.gitHash, details.branchName.startsWith("release") ? details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : 'latest']
     } //todo check
     container {
         mainClass 'io.kontur.layers.LayersApiApplication'
@@ -117,14 +117,16 @@ task verifyFile(type: Verify, dependsOn: downloadFile) {
     checksum '4f97ebd74d075e60c76ecdf47b61006a'
 }
 
-task displayImageTag {
+task writeImageTagsIntoFile {
     doLast {
-        exec {
-            commandLine 'echo', 'Image tag: ' + details.branchName + '.' + details.gitHash
-        }
+        new File("${buildDir}", 'imageTags.md').text =
+                "### Docker image tags\n" +
+                        "- ${details.branchName}\n" +
+                        "- ${details.branchName + '.' + details.gitHash}\n" +
+                        "- ${details.lastTag + '.' + details.commitDistance + '.' + details.gitHash}"
     }
 }
 
 tasks.jib.dependsOn(verifyFile)
 tasks.jibDockerBuild.dependsOn(verifyFile)
-tasks.jib.finalizedBy(displayImageTag)
+tasks.jib.finalizedBy(writeImageTagsIntoFile)
