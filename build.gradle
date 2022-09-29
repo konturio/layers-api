@@ -118,7 +118,9 @@ task verifyFile(type: Verify, dependsOn: downloadFile) {
 }
 
 task displayImageTag(type: Exec) {
-    commandLine 'echo', 'Image tag: ' + details.branchName + '.' + details.gitHash >> $GITHUB_STEP_SUMMARY
+    doLast {
+        commandLine 'echo', 'Image tag: ' + details.branchName + '.' + details.gitHash >> $GITHUB_STEP_SUMMARY
+    }
 }
 
 tasks.jib.dependsOn(verifyFile)
