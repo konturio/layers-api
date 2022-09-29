@@ -123,7 +123,7 @@ task writeImageTagsIntoFile {
                 "### Docker image tags\n" +
                         "- ${details.branchName}\n" +
                         "- ${details.branchName + '.' + details.gitHash}\n" +
-                        "- ${details.branchName.startsWith("release") ? details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : 'latest'}"
+                        "${details.branchName.startsWith("release") ? '- ' + details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : ''}"
     }
 }
 
