@@ -55,7 +55,7 @@ dependencies {
     //testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'org.testcontainers:postgresql:1.17.2'
+    testImplementation 'org.testcontainers:postgresql:1.17.3'
     testImplementation 'com.jayway.jsonpath:json-path-assert:2.7.0'
     testImplementation 'org.hamcrest:hamcrest-core:2.2'
 }
@@ -84,7 +84,7 @@ jib {
     }
     to {
         image = "nexus.kontur.io:8085/konturdev/${project.name}:latest"
-        tags = [details.branchName, details.branchName + '.' + details.gitHash, details.branchName.startsWith("release") ? details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : 'latest' ]
+        tags = [details.branchName, details.branchName + '.' + details.gitHash, details.branchName.startsWith("release") ? details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : 'latest']
     } //todo check
     container {
         mainClass 'io.kontur.layers.LayersApiApplication'
@@ -117,5 +117,16 @@ task verifyFile(type: Verify, dependsOn: downloadFile) {
     checksum '4f97ebd74d075e60c76ecdf47b61006a'
 }
 
+task writeImageTagsIntoFile {
+    doLast {
+        new File("${buildDir}", 'imageTags.md').text =
+                "### Docker image tags\n" +
+                        "- ${details.branchName}\n" +
+                        "- ${details.branchName + '.' + details.gitHash}\n" +
+                        "${details.branchName.startsWith("release") ? '- ' + details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : ''}"
+    }
+}
+
 tasks.jib.dependsOn(verifyFile)
-tasks.jibDockerBuild.dependsOn(verifyFile) //TODO can this be moved into the plugins block?
+tasks.jibDockerBuild.dependsOn(verifyFile)
+tasks.jib.finalizedBy(writeImageTagsIntoFile)
