@@ -9,5 +9,5 @@ VALUES ('bivariate', true, true),
     ('elevation', true, false),
     ('photo', true, false),
     ('map', true, false),
-    ('Open Aerial Map', true, false)
+    ('OpenAerialMap', true, false)
 ON CONFLICT (name) DO NOTHING;
