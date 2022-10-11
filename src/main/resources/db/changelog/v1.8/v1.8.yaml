@@ -6,6 +6,3 @@ databaseChangeLog:
   - include:
       relativeToChangelogFile: true
       file: insert-layers-group.sql
-  - include:
-      relativeToChangelogFile: true
-      file: create-index-layers-features-layer-id-3857.sql
