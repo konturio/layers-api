@@ -71,8 +71,9 @@
             st_intersects(lf.geom, (select inpgeom from g))
             and l.id = lf.layer_id
             limit 1) as lff on true
-            where is_visible
-            and geom is null
+            where l.is_visible
+            and l.geom is null
+            and not l.is_global
             <if test="publicIds != null">
                 <foreach collection="publicIds" item="id" open="and l.public_id in (" separator="," close=")">
                     #{id}
@@ -155,8 +156,9 @@
                             st_intersects(lf.geom, (select inpgeom from g))
                             and l.id = lf.layer_id
                         limit 1) as lff on true
-                    where is_visible
-                        and geom is null
+                    where l.is_visible
+                    and l.geom is null
+                    and not l.is_global
                     <if test="publicIds != null">
                         <foreach collection="publicIds" item="id" open="and l.public_id in (" separator="," close=")">
                             #{id}
