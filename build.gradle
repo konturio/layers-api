@@ -1,6 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version '2.7.1'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.springframework.boot' version '2.7.4'
+    id 'io.spring.dependency-management' version '1.0.14.RELEASE'
     id 'java'
     id 'jacoco'
     id 'io.freefair.lombok' version '6.3.0'
@@ -55,9 +55,18 @@ dependencies {
     //testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'org.testcontainers:postgresql:1.17.3'
+    testImplementation 'org.testcontainers:postgresql:1.17.4'
     testImplementation 'com.jayway.jsonpath:json-path-assert:2.7.0'
     testImplementation 'org.hamcrest:hamcrest-core:2.2'
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails detail ->
+        if (detail.requested.group.startsWith('com.fasterxml.jackson')) {
+            detail.useVersion '2.14.0-rc2'
+            detail.because 'fixes critical vulnerability in lower versions'
+        }
+    }
 }
 
 test {
@@ -84,7 +93,9 @@ jib {
     }
     to {
         image = "nexus.kontur.io:8085/konturdev/${project.name}:latest"
-        tags = [details.branchName, details.branchName + '.' + details.gitHash, details.branchName.startsWith("release") ? details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : 'latest']
+        tags = [details.branchName, details.branchName + '.' + details.gitHash,
+                details.branchName != null && details.branchName.startsWith("release") ?
+                        details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : 'latest']
     } //todo check
     container {
         mainClass 'io.kontur.layers.LayersApiApplication'
@@ -123,7 +134,7 @@ task writeImageTagsIntoFile {
                 "### Docker image tags\n" +
                         "- ${details.branchName}\n" +
                         "- ${details.branchName + '.' + details.gitHash}\n" +
-                        "${details.branchName.startsWith("release") ? '- ' + details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : ''}"
+                        "${details.branchName != null && details.branchName.startsWith("release") ? '- ' + details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : ''}"
     }
 }
 
