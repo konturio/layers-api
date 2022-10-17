@@ -55,7 +55,7 @@ jobs:
           set +x
           tar --show-transformed-names --transform="s@^build/libs/@@;s@^build/resources/main/external/@@;" -cvf - build/libs/*.jar build/resources/main/external/* | xz -1 > layers-api-${{needs.helper.outputs.CI_COMMIT_REF_SLUG}}.tar.xz
           # awk -F"," '{ instructions += $4 + $5; covered += $5 } END { print covered, "/", instructions, " instructions covered"; print 100*covered/instructions, "% covered" }' build/jacoco.csv
-          echo "<h3>Docker image tag</h3> $IMAGE_TAG <br>___<br>" >> $GITHUB_STEP_SUMMARY
+          echo "<h3>Docker image tag</h3> $IMAGE_TAG <br><br><br>" >> $GITHUB_STEP_SUMMARY
 
       - name: Uploading build and test artifacts
         uses: actions/upload-artifact@v3.1.0
