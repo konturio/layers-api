@@ -38,7 +38,7 @@ jobs:
         env:
           TAG: ${{ github.ref_name }}.${{ steps.get-cloned.outputs.SHA }}.${{ github.run_attempt }}
         run: |-
-          IMAGE_TAG="$TAG"
+          set IMAGE_TAG="$TAG"
           set -x
           for t in check build jib; do
               sh gradlew --console plain "$t" \

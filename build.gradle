@@ -11,7 +11,7 @@ plugins {
 group = 'io.kontur'
 version = '1.8.0'
 sourceCompatibility = '17'
-String imageTag = System.getenv("IMAGE_TAG") ?: ''
+String imageTag = System.getenv("IMAGE_TAG") ?: 'latest'
 
 repositories {
     mavenCentral()
