@@ -6,13 +6,12 @@ plugins {
     id 'io.freefair.lombok' version '6.3.0'
     id 'com.google.cloud.tools.jib' version '3.3.0'
     id 'de.undercouch.download' version '5.1.2'
-    id 'com.palantir.git-version' version '0.15.0'
 }
 
 group = 'io.kontur'
 version = '1.8.0'
 sourceCompatibility = '17'
-def details = versionDetails()
+String imageTag = System.getenv("IMAGE_TAG") ?: ''
 
 repositories {
     mavenCentral()
@@ -61,10 +60,10 @@ dependencies {
 }
 
 configurations.all {
-    resolutionStrategy.eachDependency { DependencyResolveDetails detail ->
-        if (detail.requested.group.startsWith('com.fasterxml.jackson')) {
-            detail.useVersion '2.14.0-rc2'
-            detail.because 'fixes critical vulnerability in lower versions'
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group.startsWith('com.fasterxml.jackson')) {
+            details.useVersion '2.14.0-rc2'
+            details.because 'fixes critical vulnerability in lower versions'
         }
     }
 }
@@ -92,11 +91,9 @@ jib {
         image = 'nexus.kontur.io:8084/library/openjdk:17-alpine'
     }
     to {
-        image = "nexus.kontur.io:8085/konturdev/${project.name}:latest"
-        tags = [details.branchName, details.branchName + '.' + details.gitHash,
-                details.branchName != null && details.branchName.startsWith("release") ?
-                        details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : 'latest']
-    } //todo check
+        image = "nexus.kontur.io:8085/konturdev/${project.name}:${imageTag}"
+        tags = ["${imageTag}"]
+    }
     container {
         mainClass 'io.kontur.layers.LayersApiApplication'
 
@@ -128,16 +125,5 @@ task verifyFile(type: Verify, dependsOn: downloadFile) {
     checksum '4f97ebd74d075e60c76ecdf47b61006a'
 }
 
-task writeImageTagsIntoFile {
-    doLast {
-        new File("${buildDir}", 'imageTags.md').text =
-                "### Docker image tags\n" +
-                        "- ${details.branchName}\n" +
-                        "- ${details.branchName + '.' + details.gitHash}\n" +
-                        "${details.branchName != null && details.branchName.startsWith("release") ? '- ' + details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : ''}"
-    }
-}
-
 tasks.jib.dependsOn(verifyFile)
 tasks.jibDockerBuild.dependsOn(verifyFile)
-tasks.jib.finalizedBy(writeImageTagsIntoFile)
