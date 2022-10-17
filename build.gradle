@@ -1,18 +1,17 @@
 plugins {
-    id 'org.springframework.boot' version '2.7.1'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'org.springframework.boot' version '2.7.4'
+    id 'io.spring.dependency-management' version '1.0.14.RELEASE'
     id 'java'
     id 'jacoco'
     id 'io.freefair.lombok' version '6.3.0'
     id 'com.google.cloud.tools.jib' version '3.3.0'
     id 'de.undercouch.download' version '5.1.2'
-    id 'com.palantir.git-version' version '0.15.0'
 }
 
 group = 'io.kontur'
 version = '1.8.0'
 sourceCompatibility = '17'
-def details = versionDetails()
+String imageTag = System.getenv("IMAGE_TAG") ?: 'latest'
 
 repositories {
     mavenCentral()
@@ -55,9 +54,18 @@ dependencies {
     //testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
-    testImplementation 'org.testcontainers:postgresql:1.17.3'
+    testImplementation 'org.testcontainers:postgresql:1.17.4'
     testImplementation 'com.jayway.jsonpath:json-path-assert:2.7.0'
     testImplementation 'org.hamcrest:hamcrest-core:2.2'
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.group.startsWith('com.fasterxml.jackson')) {
+            details.useVersion '2.14.0-rc2'
+            details.because 'fixes critical vulnerability in lower versions'
+        }
+    }
 }
 
 test {
@@ -83,9 +91,9 @@ jib {
         image = 'nexus.kontur.io:8084/library/openjdk:17-alpine'
     }
     to {
-        image = "nexus.kontur.io:8085/konturdev/${project.name}:latest"
-        tags = [details.branchName, details.branchName + '.' + details.gitHash, details.branchName.startsWith("release") ? details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : 'latest']
-    } //todo check
+        image = "nexus.kontur.io:8085/konturdev/${project.name}:${imageTag}"
+        tags = ["${imageTag}"]
+    }
     container {
         mainClass 'io.kontur.layers.LayersApiApplication'
 
@@ -117,16 +125,5 @@ task verifyFile(type: Verify, dependsOn: downloadFile) {
     checksum '4f97ebd74d075e60c76ecdf47b61006a'
 }
 
-task writeImageTagsIntoFile {
-    doLast {
-        new File("${buildDir}", 'imageTags.md').text =
-                "### Docker image tags\n" +
-                        "- ${details.branchName}\n" +
-                        "- ${details.branchName + '.' + details.gitHash}\n" +
-                        "${details.branchName.startsWith("release") ? '- ' + details.lastTag + '.' + details.commitDistance + '.' + details.gitHash : ''}"
-    }
-}
-
 tasks.jib.dependsOn(verifyFile)
 tasks.jibDockerBuild.dependsOn(verifyFile)
-tasks.jib.finalizedBy(writeImageTagsIntoFile)
