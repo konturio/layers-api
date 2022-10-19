@@ -1,12 +1,15 @@
 ## Database Changelog
 ---
 databaseChangeLog:
-- include:
-  - relativeToChangelogFile: true
-  - file: v1.5/v1.5.yaml
-- include:
-  - relativeToChangelogFile: true
-  - file: v1.7/v1.7.yaml
-- include:
-  - relativeToChangelogFile: true
-  - file: v1.8/v1.8.yaml
+  - include:
+      - relativeToChangelogFile: true
+      - file: v1.5/v1.5.yaml
+  - include:
+      - relativeToChangelogFile: true
+      - file: v1.7/v1.7.yaml
+  - include:
+      - relativeToChangelogFile: true
+      - file: v1.8/v1.8.yaml
+  - include:
+      - relativeToChangelogFile: true
+      - file: v1.9/v1.9.yaml
