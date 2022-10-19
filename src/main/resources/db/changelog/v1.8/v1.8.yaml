@@ -9,3 +9,6 @@ databaseChangeLog:
   - include:
       relativeToChangelogFile: true
       file: create-index-layers-features-layer-id-3857.sql
+  - include:
+      relativeToChangelogFile: true
+      file: create-smart-city-application-12813.sql
