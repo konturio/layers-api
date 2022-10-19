@@ -1,0 +1,5 @@
+## Database Changelog
+databaseChangeLog:
+  - include:
+      relativeToChangelogFile: true
+      file: create-smart-city-application-12813.sql
