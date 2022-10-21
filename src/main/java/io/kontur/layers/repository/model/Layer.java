@@ -37,5 +37,6 @@ public class Layer {
     private boolean isPublic;
     private boolean isVisible;
     private boolean isGlobal;
+    private Integer tileSize;
     private String owner;
 }

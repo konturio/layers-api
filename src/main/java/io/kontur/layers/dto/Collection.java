@@ -70,4 +70,7 @@ public class Collection {
 
     @JsonProperty("displayRule")
     private ObjectNode displayRule;
+
+    @JsonProperty("tileSize")
+    private Integer tileSize;
 }

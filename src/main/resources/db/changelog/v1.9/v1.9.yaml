@@ -3,3 +3,6 @@ databaseChangeLog:
   - include:
       relativeToChangelogFile: true
       file: create-smart-city-application-12813.sql
+  - include:
+      relativeToChangelogFile: true
+      file: alter-layers-add-tile-size.sql
