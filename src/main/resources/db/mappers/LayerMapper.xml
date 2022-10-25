@@ -200,6 +200,7 @@
                lrs.is_visible                as isVisible,
                lrs.feature_properties        as featureProperties,
                lrs.owner                     as owner,
+               lrs.tile_size                 as tileSize,
                <if test="appId != null">
                    al.style_rule as styleRule,
                    al.display_rule as displayRule,

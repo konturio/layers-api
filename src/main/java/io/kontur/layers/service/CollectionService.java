@@ -204,6 +204,7 @@ public class CollectionService {
                 .links(List.of(link))
                 .extent(getExtent(layer))
                 .ownedByUser(isUserOwnsLayer(layer))
+                .tileSize(layer.getTileSize())
                 .build();
     }
 
