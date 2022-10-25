@@ -13,6 +13,7 @@ CREATE OR REPLACE FUNCTION trigger_layers_tile_size_default_value()
         NEW.tile_size := CASE NEW.type
                              WHEN ''raster'' THEN 256
                              WHEN ''vector'' THEN 512
+                             WHEN ''tiles'' THEN 512
             END;
         RETURN NEW;
     END
@@ -31,7 +32,8 @@ WHERE type = 'raster';
 
 UPDATE layers
 SET tile_size=512
-WHERE type = 'vector';
+WHERE type = 'vector'
+   OR type = 'tiles';
 
 UPDATE layers
 SET tile_size=512
