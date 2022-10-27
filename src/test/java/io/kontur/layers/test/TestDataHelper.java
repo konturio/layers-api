@@ -111,6 +111,7 @@ public class TestDataHelper {
         dto.setGeometry(
                 JsonUtil.readJson(String.format("{\"type\":\"Point\",\"coordinates\":[0,%1$d]}", n), Geometry.class));
         dto.setCopyrights("copyrights_" + n);
+        dto.setTileSize(n);
         return dto;
     }
 
