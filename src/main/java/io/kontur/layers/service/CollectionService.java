@@ -172,6 +172,7 @@ public class CollectionService {
                 .sourceLastUpdated(OffsetDateTime.now())
                 .isPublic(false)
                 .owner(AuthorizationUtils.getAuthenticatedUserName())
+                .tileSize(c.getTileSize())
                 .build();
     }
 

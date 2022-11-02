@@ -36,6 +36,8 @@ public class CollectionUpdateDto {
     private ObjectNode displayRule;
     @JsonProperty("appId")
     private UUID appId;
+    @JsonProperty("tileSize")
+    private Integer tileSize;
 
     public enum Type {
         raster,
