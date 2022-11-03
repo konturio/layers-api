@@ -6,6 +6,6 @@ ALTER TABLE layers
     ADD COLUMN IF NOT EXISTS min_zoom INTEGER,
     ADD COLUMN IF NOT EXISTS max_zoom INTEGER;
 
-UPDATE TABLE layers
+UPDATE layers
     SET min_zoom = null,
         max_zoom = null;
