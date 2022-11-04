@@ -173,6 +173,8 @@ public class CollectionService {
                 .isPublic(false)
                 .owner(AuthorizationUtils.getAuthenticatedUserName())
                 .tileSize(c.getTileSize())
+                .minZoom(c.getMinZoom())
+                .maxZoom(c.getMaxZoom())
                 .build();
     }
 
@@ -206,6 +208,8 @@ public class CollectionService {
                 .extent(getExtent(layer))
                 .ownedByUser(isUserOwnsLayer(layer))
                 .tileSize(layer.getTileSize())
+                .minZoom(layer.getMinZoom())
+                .maxZoom(layer.getMaxZoom())
                 .build();
     }
 

@@ -201,6 +201,8 @@
                lrs.feature_properties        as featureProperties,
                lrs.owner                     as owner,
                lrs.tile_size                 as tileSize,
+               lrs.min_zoom                  as minZoom,
+               lrs.max_zoom                  as maxZoom,
                <if test="appId != null">
                    al.style_rule as styleRule,
                    al.display_rule as displayRule,
@@ -229,10 +231,12 @@
 
     <select id="insertLayer" resultType="io.kontur.layers.repository.model.Layer">
         with ins as (insert into layers (public_id, name, description, url, api_key, type, geom, last_updated, source_updated,
-                                         copyrights, properties, is_public, owner, is_visible, group_id, feature_properties, tile_size)
+                                         copyrights, properties, is_public, owner, is_visible, group_id, feature_properties,
+                                         tile_size, min_zoom, max_zoom)
             values (#{publicId}, #{name}, #{description}, #{url}, #{apiKey}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated},
                     #{sourceLastUpdated}, #{copyrights}, #{properties}::jsonb, #{isPublic}, #{owner}, true,
-                    (select id from layers_group_properties where name = 'user_layers'), #{featureProperties}::jsonb, #{tileSize})
+                    (select id from layers_group_properties where name = 'user_layers'), #{featureProperties}::jsonb,
+                    #{tileSize}, #{minZoom}, #{maxZoom})
             returning *)
         select ins.id,
                ins.public_id          as publicId,
@@ -251,6 +255,8 @@
                ins.feature_properties as featureProperties,
                ins.owner,
                ins.tile_size          as tileSize,
+               ins.min_zoom           as minZoom,
+               ins.max_zoom           as maxZoom,
                json_strip_nulls(json_build_object(
                        'name', gp."name",
                        'isOpened', gp.is_opened,
@@ -268,9 +274,11 @@
 
     <select id="updateLayer" resultType="io.kontur.layers.repository.model.Layer">
         with upd as (update layers set (name, description, url, api_key, type, geom, last_updated, source_updated,
-                                        copyrights, properties, is_public, feature_properties, tile_size) =
+                                        copyrights, properties, is_public, feature_properties, tile_size, min_zoom,
+                                        max_zoom) =
                 (#{name}, #{description}, #{url}, #{apiKey}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated}, #{sourceLastUpdated},
-                 #{copyrights}, #{properties}::jsonb, #{isPublic}, #{featureProperties}::jsonb, #{tileSize})
+                 #{copyrights}, #{properties}::jsonb, #{isPublic}, #{featureProperties}::jsonb, #{tileSize},
+                 #{minZoom}, #{maxZoom})
             where public_id = #{publicId} and owner = #{owner}
             returning *)
         select upd.id,
@@ -290,6 +298,8 @@
                upd.feature_properties as featureProperties,
                upd.owner,
                upd.tile_size          as tileSize,
+               upd.min_zoom           as minZoom,
+               upd.max_zoom           as maxZoom,
                json_strip_nulls(json_build_object(
                        'name', gp."name",
                        'isOpened', gp.is_opened,

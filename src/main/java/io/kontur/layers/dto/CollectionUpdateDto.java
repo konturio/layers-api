@@ -38,6 +38,10 @@ public class CollectionUpdateDto {
     private UUID appId;
     @JsonProperty("tileSize")
     private Integer tileSize;
+    @JsonProperty("minZoom")
+    private Integer minZoom;
+    @JsonProperty("maxZoom")
+    private Integer maxZoom;
 
     public enum Type {
         raster,
