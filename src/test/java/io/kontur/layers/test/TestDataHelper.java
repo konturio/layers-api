@@ -39,7 +39,7 @@ public class TestDataHelper {
                 "copyrights_" + n, props, null, null, featureProps, null, null,
                 OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusSeconds(n),
                 OffsetDateTime.of(2020, 4, 15, 15, 0, 0, 0, offset()).plusSeconds(n),
-                null, null, true, true, false, null, "owner_" + n);
+                null, null, true, true, false, null, null, null, "owner_" + n);
     }
 
     public static LayerFeature buildPointN(int n) {
@@ -112,6 +112,8 @@ public class TestDataHelper {
                 JsonUtil.readJson(String.format("{\"type\":\"Point\",\"coordinates\":[0,%1$d]}", n), Geometry.class));
         dto.setCopyrights("copyrights_" + n);
         dto.setTileSize(n);
+        dto.setMinZoom(n);
+        dto.setMaxZoom(n);
         return dto;
     }
 

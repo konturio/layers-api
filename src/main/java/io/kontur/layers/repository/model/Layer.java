@@ -38,5 +38,7 @@ public class Layer {
     private boolean isVisible;
     private boolean isGlobal;
     private Integer tileSize;
+    private Integer minZoom;
+    private Integer maxZoom;
     private String owner;
 }

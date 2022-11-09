@@ -19,7 +19,7 @@ repositories {
 
 dependencies {
     //model
-    implementation 'org.wololo:jts2geojson:0.17.0'
+    implementation 'org.wololo:jts2geojson:0.18.1'
     implementation 'org.locationtech.jts.io:jts-io-common:1.19.0'
 
     //json logging
