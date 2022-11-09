@@ -134,6 +134,8 @@ public class ApplicationService {
                 .id(app.getId())
                 .isPublic(app.getIsPublic())
                 .showAllPublicLayers(app.getShowAllPublicLayers())
+                .name(app.getName())
+                .iconUrl(app.getIconUrl())
                 .build();
     }
 
@@ -143,6 +145,8 @@ public class ApplicationService {
                 .isPublic(body.isPublic())
                 .showAllPublicLayers(body.isShowAllPublicLayers())
                 .owner(AuthorizationUtils.getAuthenticatedUserName())
+                .name(body.getName())
+                .iconUrl(body.getIconUrl())
                 .build();
     }
 }

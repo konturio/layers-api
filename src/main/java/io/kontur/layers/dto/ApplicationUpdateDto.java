@@ -18,4 +18,6 @@ public class ApplicationUpdateDto {
     @JsonProperty("isPublic")
     private boolean isPublic;
     private List<ApplicationLayerDto> layers;
+    private String name;
+    private String iconUrl;
 }

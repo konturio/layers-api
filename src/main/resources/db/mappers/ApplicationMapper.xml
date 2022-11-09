@@ -5,7 +5,9 @@
         select id,
                show_all_public_layers as showAllPublicLayers,
                is_public              as isPublic,
-               owner
+               owner,
+               name,
+               icon_url               as iconUrl
         from apps
         where id = #{appId};
     </select>
@@ -14,31 +16,37 @@
         select id,
                show_all_public_layers as showAllPublicLayers,
                is_public              as isPublic,
-               owner
+               owner,
+               name,
+               icon_url               as iconUrl
         from apps
         where id = #{appId}
           and (owner = #{owner} or is_public);
     </select>
 
     <select id="insertApplication" resultType="io.kontur.layers.repository.model.Application">
-        with ins as (INSERT INTO apps (id, show_all_public_layers, is_public, owner)
-            VALUES (#{id}, ${showAllPublicLayers}, #{isPublic}, #{owner})
+        with ins as (INSERT INTO apps (id, show_all_public_layers, is_public, owner, name, icon_url)
+            VALUES (#{id}, ${showAllPublicLayers}, #{isPublic}, #{owner}, #{name}, #{iconUrl})
             RETURNING *)
         select id,
                show_all_public_layers as showAllPublicLayers,
                is_public              as isPublic,
-               owner
+               owner,
+               name,
+               icon_url               as iconUrl
         from ins;
     </select>
 
     <select id="updateApplication" resultType="io.kontur.layers.repository.model.Application">
-        with upd as (UPDATE apps SET (show_all_public_layers, is_public) =
-                (${showAllPublicLayers}, #{isPublic}) WHERE id = #{id} and owner = #{owner}
+        with upd as (UPDATE apps SET (show_all_public_layers, is_public, name, icon_url) =
+                (${showAllPublicLayers}, #{isPublic}, #{name}, #{iconUrl}) WHERE id = #{id} and owner = #{owner}
             RETURNING *)
         select id,
                show_all_public_layers as showAllPublicLayers,
                is_public              as isPublic,
-               owner
+               owner,
+               name,
+               icon_url               as iconUrl
         from upd;
     </select>
 
@@ -48,7 +56,9 @@
         select id,
                show_all_public_layers as showAllPublicLayers,
                is_public              as isPublic,
-               owner
+               owner,
+               name,
+               icon_url               as iconUrl
         from del;
     </select>
 

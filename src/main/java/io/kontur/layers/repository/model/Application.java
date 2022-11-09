@@ -17,5 +17,6 @@ public class Application {
     private Boolean showAllPublicLayers;
     private Boolean isPublic;
     private String owner;
-
+    private String name;
+    private String iconUrl;
 }

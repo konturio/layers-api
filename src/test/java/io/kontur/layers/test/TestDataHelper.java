@@ -123,6 +123,8 @@ public class TestDataHelper {
         dto.setIsPublic(true);
         dto.setShowAllPublicLayers(true);
         dto.setOwner("owner_" + n);
+        dto.setName("name_" + n);
+        dto.setIconUrl("url_" + n);
         return dto;
     }
 
@@ -131,6 +133,8 @@ public class TestDataHelper {
         dto.setPublic(true);
         dto.setShowAllPublicLayers(true);
         dto.setLayers(new ArrayList<>());
+        dto.setName("name");
+        dto.setIconUrl("url");
         return dto;
     }
 

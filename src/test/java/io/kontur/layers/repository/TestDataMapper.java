@@ -33,8 +33,8 @@ public interface TestDataMapper {
             "</script>"})
     void insertFeatures(@Param("collectionId") long collectionId, @Param("features") List<LayerFeature> features);
 
-    @Select({"with ins as (insert into apps (id, show_all_public_layers, is_public, owner) values ",
-            "(#{id},#{showAllPublicLayers},#{isPublic},#{owner}) returning id) ",
+    @Select({"with ins as (insert into apps (id, show_all_public_layers, is_public, owner, name, icon_url) values ",
+            "(#{id},#{showAllPublicLayers},#{isPublic},#{owner},#{name},#{iconUrl}) returning id) ",
             "select * from ins"})
     UUID insertApplication(Application app);
 

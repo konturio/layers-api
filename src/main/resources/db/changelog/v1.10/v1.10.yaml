@@ -3,3 +3,6 @@ databaseChangeLog:
   - include:
       relativeToChangelogFile: true
       file: alter-layers-add-min-max-zoom.sql
+  - include:
+      relativeToChangelogFile: true
+      file: alter-apps-add-name-and-icon-url.sql

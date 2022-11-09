@@ -20,5 +20,7 @@ public class ApplicationDto {
     @JsonProperty("isPublic")
     private boolean isPublic;
     private List<Collection> defaultCollections;
+    private String name;
+    private String iconUrl;
 
 }
