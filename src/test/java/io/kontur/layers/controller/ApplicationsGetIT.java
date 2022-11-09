@@ -44,7 +44,8 @@ public class ApplicationsGetIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.showAllPublicLayers", is(application.getShowAllPublicLayers())));
         assertThat(json, hasJsonPath("$.isPublic", is(application.getIsPublic())));
         assertThat(json, hasJsonPath("$.name", is(application.getName())));
-        assertThat(json, hasJsonPath("$.iconUrl", is(application.getIconUrl())));
+        assertThat(json, hasJsonPath("$.sidebarIconUrl", is(application.getSidebarIconUrl())));
+        assertThat(json, hasJsonPath("$.faviconUrl", is(application.getFaviconUrl())));
     }
 
     @Test

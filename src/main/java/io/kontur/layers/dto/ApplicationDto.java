@@ -21,6 +21,7 @@ public class ApplicationDto {
     private boolean isPublic;
     private List<Collection> defaultCollections;
     private String name;
-    private String iconUrl;
+    private String sidebarIconUrl;
+    private String faviconUrl;
 
 }

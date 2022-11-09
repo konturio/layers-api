@@ -45,7 +45,8 @@ public class ApplicationsPutIT extends AbstractIntegrationTest {
         application.setIsPublic(false);
         application.setShowAllPublicLayers(false);
         application.setName("name");
-        application.setIconUrl("url");
+        application.setSidebarIconUrl("sidebar_icon_url");
+        application.setFaviconUrl("favicon_url");
         String response = mockMvc.perform(put("/apps/" + application.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(JsonUtil.writeJson(application)))
@@ -59,7 +60,8 @@ public class ApplicationsPutIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.showAllPublicLayers", is(application.getShowAllPublicLayers())));
         assertThat(json, hasJsonPath("$.isPublic", is(application.getIsPublic())));
         assertThat(json, hasJsonPath("$.name", is(application.getName())));
-        assertThat(json, hasJsonPath("$.iconUrl", is(application.getIconUrl())));
+        assertThat(json, hasJsonPath("$.sidebarIconUrl", is(application.getSidebarIconUrl())));
+        assertThat(json, hasJsonPath("$.faviconUrl", is(application.getFaviconUrl())));
     }
 
     @Test
@@ -155,7 +157,8 @@ public class ApplicationsPutIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.showAllPublicLayers", is(applicationDto.isShowAllPublicLayers())));
         assertThat(json, hasJsonPath("$.isPublic", is(applicationDto.isPublic())));
         assertThat(json, hasJsonPath("$.name", is(applicationDto.getName())));
-        assertThat(json, hasJsonPath("$.iconUrl", is(applicationDto.getIconUrl())));
+        assertThat(json, hasJsonPath("$.sidebarIconUrl", is(applicationDto.getSidebarIconUrl())));
+        assertThat(json, hasJsonPath("$.faviconUrl", is(applicationDto.getFaviconUrl())));
 
         json = mockMvc.perform(get("/apps/" + appId)
                         .param("defaultCollections", "true")

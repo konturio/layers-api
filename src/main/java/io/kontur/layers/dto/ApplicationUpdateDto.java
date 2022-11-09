@@ -19,5 +19,6 @@ public class ApplicationUpdateDto {
     private boolean isPublic;
     private List<ApplicationLayerDto> layers;
     private String name;
-    private String iconUrl;
+    private String sidebarIconUrl;
+    private String faviconUrl;
 }

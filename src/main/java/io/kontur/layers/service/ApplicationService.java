@@ -135,7 +135,8 @@ public class ApplicationService {
                 .isPublic(app.getIsPublic())
                 .showAllPublicLayers(app.getShowAllPublicLayers())
                 .name(app.getName())
-                .iconUrl(app.getIconUrl())
+                .sidebarIconUrl(app.getSidebarIconUrl())
+                .faviconUrl(app.getFaviconUrl())
                 .build();
     }
 
@@ -146,7 +147,8 @@ public class ApplicationService {
                 .showAllPublicLayers(body.isShowAllPublicLayers())
                 .owner(AuthorizationUtils.getAuthenticatedUserName())
                 .name(body.getName())
-                .iconUrl(body.getIconUrl())
+                .sidebarIconUrl(body.getSidebarIconUrl())
+                .faviconUrl(body.getFaviconUrl())
                 .build();
     }
 }

@@ -124,7 +124,8 @@ public class TestDataHelper {
         dto.setShowAllPublicLayers(true);
         dto.setOwner("owner_" + n);
         dto.setName("name_" + n);
-        dto.setIconUrl("url_" + n);
+        dto.setSidebarIconUrl("sidebar_icon_url_" + n);
+        dto.setFaviconUrl("favicon_url_" + n);
         return dto;
     }
 
@@ -134,7 +135,8 @@ public class TestDataHelper {
         dto.setShowAllPublicLayers(true);
         dto.setLayers(new ArrayList<>());
         dto.setName("name");
-        dto.setIconUrl("url");
+        dto.setSidebarIconUrl("sidebar_icon_url");
+        dto.setFaviconUrl("favicon_url");
         return dto;
     }
 
