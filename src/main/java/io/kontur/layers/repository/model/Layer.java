@@ -28,6 +28,7 @@ public class Layer {
     private ObjectNode styleRule;
     private ObjectNode displayRule;
     private ObjectNode featureProperties;
+    private ObjectNode mapboxStyles;
     private LayersGroupProperties group;
     private LayersCategoryProperties category;
     private OffsetDateTime lastUpdated;

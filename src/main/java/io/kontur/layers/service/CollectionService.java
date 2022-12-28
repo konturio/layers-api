@@ -200,6 +200,7 @@ public class CollectionService {
                 .featureProperties(layer.getFeatureProperties())
                 .styleRule(layer.getStyleRule())
                 .displayRule(layer.getDisplayRule())
+                .mapboxStyles(layer.getMapboxStyles())
                 .group(layer.getGroup())
                 .category(layer.getCategory())
                 .itemType(layer.getType())

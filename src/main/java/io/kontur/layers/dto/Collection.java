@@ -71,6 +71,9 @@ public class Collection {
     @JsonProperty("displayRule")
     private ObjectNode displayRule;
 
+    @JsonProperty("mapboxStyles")
+    private ObjectNode mapboxStyles;
+
     @JsonProperty("tileSize")
     private Integer tileSize;
 
