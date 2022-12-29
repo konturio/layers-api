@@ -179,19 +179,7 @@ public class CollectionService {
     }
 
     public Collection toCollection(Layer layer) {
-        Link link;
-        if ("feature".equals(layer.getType())) {
-            link = linkFactory.createLocal(
-                    UriComponentsBuilder.fromPath(ApiConstants.COLLECTION_ITEMS_ENDPOINT)
-                            .build(layer.getPublicId()).toString(),
-                    ITEMS, APPLICATION_GEO_JSON, layer.getName());
-        } else {
-            link = new Link()
-                    .rel("tiles")
-                    .href(layer.getUrl())
-                    .apiKey(layer.getApiKey());
-        }
-        return Collection.builder()
+        Collection.CollectionBuilder builder = Collection.builder()
                 .id(layer.getPublicId())
                 .title(layer.getName())
                 .description(layer.getDescription())
@@ -205,12 +193,24 @@ public class CollectionService {
                 .category(layer.getCategory())
                 .itemType(layer.getType())
                 .crs(List.of("http://www.opengis.net/def/crs/OGC/1.3/CRS84"))
-                .links(List.of(link))
                 .extent(getExtent(layer))
                 .ownedByUser(isUserOwnsLayer(layer))
                 .tileSize(layer.getTileSize())
                 .minZoom(layer.getMinZoom())
-                .maxZoom(layer.getMaxZoom())
+                .maxZoom(layer.getMaxZoom());
+
+        if ("feature".equals(layer.getType())) {
+            builder.links(List.of(linkFactory.createLocal(
+                    UriComponentsBuilder.fromPath(ApiConstants.COLLECTION_ITEMS_ENDPOINT)
+                            .build(layer.getPublicId()).toString(),
+                    ITEMS, APPLICATION_GEO_JSON, layer.getName())));
+        } else if (StringUtils.isNotEmpty(layer.getUrl())) {
+            builder.links(List.of(new Link()
+                    .rel("tiles")
+                    .href(layer.getUrl())
+                    .apiKey(layer.getApiKey())));
+        }
+        return builder
                 .build();
     }
 
