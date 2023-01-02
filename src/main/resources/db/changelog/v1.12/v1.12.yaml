@@ -1,0 +1,5 @@
+## Database Changelog
+databaseChangeLog:
+  - include:
+      relativeToChangelogFile: true
+      file: create-oam-application-13984.sql
