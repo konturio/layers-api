@@ -1,0 +1,8 @@
+## Database Changelog
+databaseChangeLog:
+  - include:
+      relativeToChangelogFile: true
+      file: alter-layers-add-mapbox-styles.sql
+  - include:
+      relativeToChangelogFile: true
+      file: insert-kontur-group.sql

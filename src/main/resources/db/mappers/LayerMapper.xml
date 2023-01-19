@@ -199,6 +199,7 @@
                lrs.is_public                 as isPublic,
                lrs.is_visible                as isVisible,
                lrs.feature_properties        as featureProperties,
+               lrs.mapbox_styles             as mapboxStyles,
                lrs.owner                     as owner,
                lrs.tile_size                 as tileSize,
                lrs.min_zoom                  as minZoom,
@@ -314,7 +315,6 @@
             left join layers_group_properties gp on gp.id = upd.group_id
             left join layers_category_properties cp on cp.id = upd.category_id
     </select>
-
 
     <select id="deleteLayer" resultType="io.kontur.layers.repository.model.Layer">
         with del as (delete from layers

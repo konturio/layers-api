@@ -48,6 +48,8 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.copyrights", is("copyrights_1")));
         assertThat(json, hasJsonPath("$.properties.prop1", is("propValue1_1")));
         assertThat(json, hasJsonPath("$.properties.prop2", is("propValue2_1")));
+        assertThat(json, hasJsonPath("$.mapboxStyles.url", is("http_1")));
+        assertThat(json, hasJsonPath("$.mapboxStyles.placeholder", is("placeholder_1")));
         assertThat(json, hasJsonPath("$.links[?(@.rel=='items' && @.type=='application/geo+json')].href",
                 contains(url(BASE_URL + "/collections/pubId_1/items"))));
         assertThat(json, hasNoJsonPath("$.extent"));//absent because no features
