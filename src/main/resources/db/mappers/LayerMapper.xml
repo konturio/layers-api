@@ -254,6 +254,7 @@
                ins.is_public          as isPublic,
                ins.is_visible         as isVisible,
                ins.feature_properties as featureProperties,
+               ins.mapbox_styles      as mapboxStyles,
                ins.owner,
                ins.tile_size          as tileSize,
                ins.min_zoom           as minZoom,
@@ -297,6 +298,7 @@
                upd.is_public          as isPublic,
                upd.is_visible         as isVisible,
                upd.feature_properties as featureProperties,
+               upd.mapbox_styles      as mapboxStyles,
                upd.owner,
                upd.tile_size          as tileSize,
                upd.min_zoom           as minZoom,
@@ -334,27 +336,47 @@
                is_public          as isPublic,
                is_visible         as isVisible,
                feature_properties as featureProperties,
-               owner
+               mapbox_styles      as mapboxStyles,
+               owner,
+               tile_size          as tileSize,
+               min_zoom           as minZoom,
+               max_zoom           as maxZoom
         from del
     </select>
 
     <select id="getApplicationLayers" resultType="io.kontur.layers.repository.model.Layer">
-        select id,
-               public_id          as publicId,
-               name,
-               description,
-               url,
-               type,
-               geom               as geometry,
-               last_updated       as lastUpdated,
-               source_updated     as sourceLastUpdated,
-               copyrights,
-               properties,
-               is_public          as isPublic,
-               is_visible         as isVisible,
-               feature_properties as featureProperties,
-               owner
-        from layers
+        select l.id,
+               l.public_id          as publicId,
+               l.name,
+               l.description,
+               l.url,
+               l.type,
+               l.geom               as geometry,
+               l.last_updated       as lastUpdated,
+               l.source_updated     as sourceLastUpdated,
+               l.copyrights,
+               l.properties,
+               l.is_public          as isPublic,
+               l.is_visible         as isVisible,
+               l.feature_properties as featureProperties,
+               l.mapbox_styles      as mapboxStyles,
+               l.owner,
+               l.tile_size          as tileSize,
+               l.min_zoom           as minZoom,
+               l.max_zoom           as maxZoom,
+               json_strip_nulls(json_build_object(
+                   'name', gp."name",
+                   'isOpened', gp.is_opened,
+                   'mutuallyExclusive', gp.mutually_exclusive,
+                   'order', gp."order")) as group,
+               json_strip_nulls(json_build_object(
+                   'name', cp."name",
+                   'isOpened', cp.is_opened,
+                   'mutuallyExclusive', cp.mutually_exclusive,
+                   'order', cp."order")) as category
+        from layers l
+            left join layers_group_properties gp on gp.id = l.group_id
+            left join layers_category_properties cp on cp.id = l.category_id
         where is_visible
           and public_id in (select layer_id
                     from apps_layers
