@@ -137,7 +137,7 @@ public class CollectionsItemsApi {
     }
 
     @PutMapping(produces = APPLICATION_GEO_JSON)
-    @Operation(summary = "Updates feature set", tags = {"Data"})
+    @Operation(summary = "Rewrite feature set", tags = {"Data"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "fetch the set of features", content = @Content(schema = @Schema(implementation = FeatureGeoJSON.class))),
             @ApiResponse(responseCode = "404", description = "The requested URI was not found.")})
@@ -148,6 +148,21 @@ public class CollectionsItemsApi {
             @RequestBody @Valid @ValidGeoJSON FeatureCollection body) {
         validateFeatures(body);
         FeatureCollectionGeoJSON fc = featureService.upsertFeatures(collectionId, body);
+        return ResponseEntity.ok(fc);
+    }
+
+    @PostMapping(produces = APPLICATION_GEO_JSON)
+    @Operation(summary = "Add features into set", tags = {"Data"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "fetch the set of features", content = @Content(schema = @Schema(implementation = FeatureGeoJSON.class))),
+            @ApiResponse(responseCode = "404", description = "The requested URI was not found.")})
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<FeatureCollectionGeoJSON> addFeatures(
+            @Parameter(in = ParameterIn.PATH, description = "local identifier of a collection", required = true)
+            @PathVariable("collectionId") String collectionId,
+            @RequestBody @Valid @ValidGeoJSON FeatureCollection body) {
+        validateFeatures(body);
+        FeatureCollectionGeoJSON fc = featureService.addFeatures(collectionId, body);
         return ResponseEntity.ok(fc);
     }
 

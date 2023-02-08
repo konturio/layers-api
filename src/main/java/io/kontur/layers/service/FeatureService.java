@@ -25,8 +25,10 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -124,13 +126,7 @@ public class FeatureService {
                         () -> new WebApplicationException(NOT_FOUND,
                                 Error.errorFmt("Collection '%s' not found", collectionId)));
 
-        List<LayerFeature> features = Arrays.stream(fc.getFeatures())
-                .map(f -> new LayerFeature(layer.getId(),
-                        getOrGenerateFeatureId(f),
-                        f.getGeometry(),
-                        f.getProperties() != null ? JsonUtil.writeObjectNode(f.getProperties()) : null,
-                        OffsetDateTime.now()))
-                .collect(Collectors.toList());
+        List<LayerFeature> features = convertFeatureCollectionIntoLayerFeaturesWithIdGeneration(fc, layer);
 
         List<LayerFeature> result = new ArrayList<>();
         if (!CollectionUtils.isEmpty(features)) {
@@ -146,9 +142,62 @@ public class FeatureService {
         return convertFeatures(collectionId, layer.getName(), result);
     }
 
-    private String getOrGenerateFeatureId(Feature feature) {
+    @Transactional
+    public FeatureCollectionGeoJSON addFeatures(String collectionId, FeatureCollection fc) {
+        String userName = AuthorizationUtils.getAuthenticatedUserName();
+        final Layer layer = layerMapper.getOwnedLayer(collectionId, userName)
+                .orElseThrow(
+                        () -> new WebApplicationException(NOT_FOUND,
+                                Error.errorFmt("Collection '%s' not found", collectionId)));
+
+        if (fc.getFeatures() == null || fc.getFeatures().length == 0) {
+            return new FeatureCollectionGeoJSON()
+                    .timeStamp(OffsetDateTime.now(ZoneOffset.UTC))
+                    .numberReturned(0);
+        }
+
+        validateIfAnyFeatureIdAlreadyExist(layer.getId(), fc);
+
+        List<LayerFeature> features = convertFeatureCollectionIntoLayerFeaturesWithIdGeneration(fc, layer);
+
+        List<LayerFeature> result = new ArrayList<>(featureMapper.addFeatures(features));
+
+        return convertFeatures(collectionId, layer.getName(), result);
+    }
+
+    private List<LayerFeature> convertFeatureCollectionIntoLayerFeaturesWithIdGeneration(FeatureCollection fc, Layer layer) {
+        return Arrays.stream(fc.getFeatures())
+                .map(f -> new LayerFeature(layer.getId(),
+                        getOrGenerateFeatureId(layer.getId(), f),
+                        f.getGeometry(),
+                        f.getProperties() != null ? JsonUtil.writeObjectNode(f.getProperties()) : null,
+                        OffsetDateTime.now()))
+                .collect(Collectors.toList());
+    }
+
+    private void validateIfAnyFeatureIdAlreadyExist(Long layerId, FeatureCollection fc) {
+        List<String> featuresIds = Arrays.stream(fc.getFeatures())
+                .filter(f -> f.getId() != null)
+                .map(f -> String.valueOf(f.getId()))
+                .toList();
+        if (CollectionUtils.isEmpty(featuresIds)) {
+            return;
+        }
+        List<String> existingIds = featureMapper.checkIfFeatureIdExists(layerId, featuresIds);
+        if (!existingIds.isEmpty()) {
+            throw new WebApplicationException(BAD_REQUEST, "Features can't be created due to id duplication: " + existingIds);
+        }
+    }
+
+    //TODO method is not thread safe and possibly slow due to DB check. Generate IDs on DB side instead?
+    private String getOrGenerateFeatureId(Long layerId, Feature feature) {
         if (feature.getId() == null || StringUtils.isBlank(String.valueOf(feature.getId()))) {
-            return RandomStringUtils.randomAlphanumeric(8);
+            while (true) {
+                String newId = RandomStringUtils.randomAlphanumeric(8);
+                if (featureMapper.checkIfFeatureIdExists(layerId, Collections.singletonList(newId)).isEmpty()) {
+                    return newId;
+                }
+            }
         }
         return String.valueOf(feature.getId());
     }
