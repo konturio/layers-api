@@ -35,6 +35,9 @@ public interface FeatureMapper {
                                        @Param("propFilterList") List<FeaturePropertiesFilter> propFilterList);
 
     @Timed(value = "db.query", histogram = true)
+    List<LayerFeature> addFeatures(List<LayerFeature> features);
+
+    @Timed(value = "db.query", histogram = true)
     List<LayerFeature> upsertFeatures(List<LayerFeature> features);
 
     @Timed(value = "db.query", histogram = true)
@@ -46,4 +49,8 @@ public interface FeatureMapper {
     void deleteFeaturesNotInList(@Param("owner") String owner,
                                  @Param("collectionId") String collectionId,
                                  @Param("featureIds") List<String> featureIds);
+
+    @Timed(value = "db.query", histogram = true)
+    List<String> checkIfFeatureIdExists(@Param("layerId") Long layerId,
+                                        @Param("featureIds") List<String> featureIds);
 }
