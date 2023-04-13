@@ -29,5 +29,7 @@ public interface ApplicationLayerMapper {
     Optional<ApplicationLayer> updateStyleAndDisplayRules(@Param("appId") UUID appId,
                                                           @Param("layerId") String layerId,
                                                           @Param("styleRule") ObjectNode styleRule,
-                                                          @Param("displayRule") ObjectNode displayRule);
+                                                          @Param("displayRule") ObjectNode displayRule,
+                                                          @Param("style") ObjectNode style,
+                                                          @Param("popupConfig") ObjectNode popupConfig);
 }

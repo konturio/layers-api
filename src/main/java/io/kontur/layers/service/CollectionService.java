@@ -58,23 +58,26 @@ public class CollectionService {
         String userName = AuthorizationUtils.getAuthenticatedUserName();
         CollectionOwner ownershipFilter = StringUtils.isBlank(userName) ? CollectionOwner.ANY : collectionOwner;
         final List<Layer> layers;
-        int numberMatched;
+        int numberMatched = 0;
+        Application app = null;
         if (appId != null) {
-            Application app = applicationMapper.getApplicationOwnedOrPublic(appId, userName)
+            app = applicationMapper.getApplicationOwnedOrPublic(appId, userName)
                     .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Application is not found"));
-
-            layers = layerMapper.getLayers(geometryString, omitLocalCollections, userName, limit, offset, ownershipFilter,
-                    app.getId(), app.getShowAllPublicLayers(), collectionIds.toArray(new String[0]));
+        }
+        layers = layerMapper.getLayers(geometryString, omitLocalCollections, userName, limit, offset, ownershipFilter,
+                app != null ? app.getId() : null, app != null ? app.getShowAllPublicLayers() : true,
+                collectionIds.toArray(new String[0]));
+        if (layers != null && layers.size() >= limit) {
             numberMatched = layerMapper.getLayersTotal(geometryString, omitLocalCollections, userName, ownershipFilter,
-                    app.getId(), app.getShowAllPublicLayers(), collectionIds.toArray(new String[0]));
-        } else {
-            layers = layerMapper.getLayers(geometryString, omitLocalCollections, userName, limit, offset, ownershipFilter,
+                    app != null ? app.getId() : null, app != null ? app.getShowAllPublicLayers() : true,
                     collectionIds.toArray(new String[0]));
-            numberMatched = layerMapper.getLayersTotal(geometryString, omitLocalCollections, userName, ownershipFilter,
-                    collectionIds.toArray(new String[0]));
+        } else if (layers != null) {
+            numberMatched = layers.size();
         }
 
-        final List<Collection> collections = layers.stream().map(this::toCollection).collect(Collectors.toList());
+        final List<Collection> collections = layers != null
+                ? layers.stream().map(this::toCollection).collect(Collectors.toList())
+                : java.util.Collections.emptyList();
 
         final List<Link> links = new ArrayList<>();
 
@@ -187,8 +190,10 @@ public class CollectionService {
                 .properties(layer.getProperties())
                 .featureProperties(layer.getFeatureProperties())
                 .styleRule(layer.getStyleRule())
+                .style(layer.getStyle())
                 .displayRule(layer.getDisplayRule())
                 .mapboxStyles(layer.getMapboxStyles())
+                .popupConfig(layer.getPopupConfig())
                 .group(layer.getGroup())
                 .category(layer.getCategory())
                 .itemType(layer.getType())
@@ -224,11 +229,13 @@ public class CollectionService {
 
             ApplicationLayer appLayer = applicationLayerMapper.updateStyleAndDisplayRules(
                             collection.getAppId(), layer.getPublicId(), collection.getStyleRule(),
-                            collection.getDisplayRule())
+                            collection.getDisplayRule(), collection.getStyle(), collection.getPopupConfig())
                     .orElseThrow(() -> new WebApplicationException(HttpStatus.BAD_REQUEST,
                             "Wasn't able to update style or display rules"));
             layer.setStyleRule(appLayer.getStyleRule());
             layer.setDisplayRule(appLayer.getDisplayRule());
+            layer.setStyle(appLayer.getStyle());
+            layer.setPopupConfig(appLayer.getPopupConfig());
         }
     }
 

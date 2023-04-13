@@ -68,6 +68,11 @@ public class Collection {
     @JsonProperty("styleRule")
     private ObjectNode styleRule;
 
+    @JsonProperty("style")
+    private ObjectNode style;
+    @JsonProperty("popupConfig")
+    private ObjectNode popupConfig;
+
     @JsonProperty("displayRule")
     private ObjectNode displayRule;
 

@@ -26,6 +26,8 @@ public class Layer {
     private String copyrights;
     private ObjectNode properties;
     private ObjectNode styleRule;
+    private ObjectNode style;
+    private ObjectNode popupConfig;
     private ObjectNode displayRule;
     private ObjectNode featureProperties;
     private ObjectNode mapboxStyles;

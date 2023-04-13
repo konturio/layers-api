@@ -40,17 +40,20 @@
     </delete>
 
     <select id="updateStyleAndDisplayRules" resultType="io.kontur.layers.repository.model.ApplicationLayer">
-        with ins as (INSERT INTO apps_layers (app_id, layer_id, style_rule, display_rule, is_default)
-        VALUES (#{appId}, #{layerId}, #{styleRule}::jsonb, #{displayRule}::jsonb, false)
+        with ins as (INSERT INTO apps_layers (app_id, layer_id, style_rule, display_rule, style, popup_config is_default)
+        VALUES (#{appId}, #{layerId}, #{styleRule}::jsonb, #{displayRule}::jsonb, #{style}::jsonb, #{popupConfig}::jsonb, false)
         ON CONFLICT (app_id, layer_id)
-        DO UPDATE SET (style_rule, display_rule) = (EXCLUDED.style_rule, EXCLUDED.display_rule)
+        DO UPDATE SET (style_rule, display_rule, style, popup_config) =
+            (EXCLUDED.style_rule, EXCLUDED.display_rule, EXCLUDED.style, EXCLUDED.popup_config)
         RETURNING *)
         select
             app_id as appId,
             layer_id as layerId,
             is_default as isDefault,
             display_rule as displayRule,
-            style_rule as styleRule
+            style_rule as styleRule,
+            style as style,
+            popup_config as popupConfig
         from ins;
     </select>
 </mapper>

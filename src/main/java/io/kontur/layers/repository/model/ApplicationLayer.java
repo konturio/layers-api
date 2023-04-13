@@ -19,5 +19,7 @@ public class ApplicationLayer {
     private Boolean isDefault;
     private ObjectNode styleRule;
     private ObjectNode displayRule;
+    private ObjectNode style;
+    private ObjectNode popupConfig;
 
 }

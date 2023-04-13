@@ -205,8 +205,15 @@
                lrs.min_zoom                  as minZoom,
                lrs.max_zoom                  as maxZoom,
                <if test="appId != null">
-                   al.style_rule as styleRule,
                    al.display_rule as displayRule,
+                   coalesce(al.style_rule, lrs.style_rule) as styleRule,
+                   coalesce(al.style, lrs.style) as style,
+                   coalesce(al.popup_config, lrs.popup_config) as popupConfig,
+               </if>
+               <if test="appId == null">
+                   lrs.style_rule as styleRule,
+                   lrs.style as style,
+                   lrs.popup_config as popupConfig,
                </if>
                json_strip_nulls(json_build_object(
                    'name', gp."name",
