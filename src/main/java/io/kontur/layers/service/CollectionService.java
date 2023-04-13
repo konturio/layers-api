@@ -67,12 +67,12 @@ public class CollectionService {
         layers = layerMapper.getLayers(geometryString, omitLocalCollections, userName, limit, offset, ownershipFilter,
                 app != null ? app.getId() : null, app != null ? app.getShowAllPublicLayers() : true,
                 collectionIds.toArray(new String[0]));
-        if (layers != null && layers.size() >= limit) {
+        if (layers != null && (layers.size() >= limit || (offset > 0 && layers.size() == 0))) {
             numberMatched = layerMapper.getLayersTotal(geometryString, omitLocalCollections, userName, ownershipFilter,
                     app != null ? app.getId() : null, app != null ? app.getShowAllPublicLayers() : true,
                     collectionIds.toArray(new String[0]));
         } else if (layers != null) {
-            numberMatched = layers.size();
+            numberMatched = layers.size() + offset;
         }
 
         final List<Collection> collections = layers != null
