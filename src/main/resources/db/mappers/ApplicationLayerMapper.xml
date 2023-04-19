@@ -2,31 +2,31 @@
 <mapper namespace="io.kontur.layers.repository.ApplicationLayerMapper">
 
     <select id="getApplicationLayersRules" resultType="io.kontur.layers.repository.model.ApplicationLayer">
-        select app_id       as appId,
-               layer_id     as layerId,
-               is_default   as isDefault,
-               display_rule as displayRule,
-               style_rule   as styleRule
+        select app_id               as appId,
+               layer_id             as layerId,
+               is_default           as isDefault,
+               display_rule         as displayRule,
+               legend_style_config  as legendStyle
         from apps_layers
         where app_id = #{appId};
     </select>
 
     <select id="upsertLayers" resultType="io.kontur.layers.repository.model.ApplicationLayer">
-        with ins as (INSERT INTO apps_layers (app_id, layer_id, is_default, display_rule, style_rule)
+        with ins as (INSERT INTO apps_layers (app_id, layer_id, is_default, display_rule, legend_style_config)
             VALUES
             <foreach collection="layers" item="item" open="(" separator="),(" close=")">
-                #{appId}, #{item.layerId}, #{item.isDefault}, #{item.displayRule}::jsonb, #{item.styleRule}::jsonb
+                #{appId}, #{item.layerId}, #{item.isDefault}, #{item.displayRule}::jsonb, #{item.legendStyle}::jsonb
             </foreach>
         ON CONFLICT (app_id, layer_id)
-            DO UPDATE SET (is_default, display_rule, style_rule) =
-            (EXCLUDED.is_default, EXCLUDED.display_rule, EXCLUDED.style_rule)
+            DO UPDATE SET (is_default, display_rule, legend_style_config) =
+            (EXCLUDED.is_default, EXCLUDED.display_rule, EXCLUDED.legend_style_config)
         RETURNING *)
         select
             app_id as appId,
             layer_id as layerId,
             is_default as isDefault,
             display_rule as displayRule,
-            style_rule as styleRule
+            legend_style_config as legendStyle
         from ins;
     </select>
 
@@ -40,19 +40,19 @@
     </delete>
 
     <select id="updateStyleAndDisplayRules" resultType="io.kontur.layers.repository.model.ApplicationLayer">
-        with ins as (INSERT INTO apps_layers (app_id, layer_id, style_rule, display_rule, style, popup_config, is_default)
-        VALUES (#{appId}, #{layerId}, #{styleRule}::jsonb, #{displayRule}::jsonb, #{style}::jsonb, #{popupConfig}::jsonb, false)
+        with ins as (INSERT INTO apps_layers (app_id, layer_id, legend_style_config, display_rule, map_style_config, popup_config, is_default)
+        VALUES (#{appId}, #{layerId}, #{legendStyle}::jsonb, #{displayRule}::jsonb, #{mapStyle}::jsonb, #{popupConfig}::jsonb, false)
         ON CONFLICT (app_id, layer_id)
-        DO UPDATE SET (style_rule, display_rule, style, popup_config) =
-            (EXCLUDED.style_rule, EXCLUDED.display_rule, EXCLUDED.style, EXCLUDED.popup_config)
+        DO UPDATE SET (legend_style_config, display_rule, map_style_config, popup_config) =
+            (EXCLUDED.legend_style_config, EXCLUDED.display_rule, EXCLUDED.map_style_config, EXCLUDED.popup_config)
         RETURNING *)
         select
             app_id as appId,
             layer_id as layerId,
             is_default as isDefault,
             display_rule as displayRule,
-            style_rule as styleRule,
-            style as style,
+            legend_style_config as legendStyle,
+            map_style_config as mapStyle,
             popup_config as popupConfig
         from ins;
     </select>

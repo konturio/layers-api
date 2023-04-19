@@ -25,12 +25,11 @@ public class Layer {
     private String geometry;
     private String copyrights;
     private ObjectNode properties;
-    private ObjectNode styleRule;
-    private ObjectNode style;
+    private ObjectNode legendStyle;
+    private ObjectNode mapStyle;
     private ObjectNode popupConfig;
     private ObjectNode displayRule;
     private ObjectNode featureProperties;
-    private ObjectNode mapboxStyles;
     private LayersGroupProperties group;
     private LayersCategoryProperties category;
     private OffsetDateTime lastUpdated;

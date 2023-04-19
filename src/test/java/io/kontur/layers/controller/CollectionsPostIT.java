@@ -411,9 +411,9 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
 
         CollectionUpdateDto collection = buildCollectionCreateDtoN(1);
         collection.setAppId(app.getId());
-        final ObjectNode styleRule = new ObjectMapper().createObjectNode();
-        styleRule.put("rule1", "legendValue1");
-        collection.setStyleRule(styleRule);
+        final ObjectNode legendStyle = new ObjectMapper().createObjectNode();
+        legendStyle.put("rule1", "legendValue1");
+        collection.setLegendStyle(legendStyle);
 
         //WHEN
         String response = mockMvc.perform(post("/collections")
@@ -427,7 +427,7 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
         //THEN
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json, hasJsonPath("$.id", is("pubId_1")));
-        assertThat(json, hasJsonPath("$.styleRule.rule1", is("legendValue1")));
+        assertThat(json, hasJsonPath("$.legendStyle.rule1", is("legendValue1")));
     }
 
     @Test
@@ -470,9 +470,9 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
         final ObjectNode rule = new ObjectMapper().createObjectNode();
         rule.put("rule1", "legendValue1");
         collection.setDisplayRule(rule);
-        final ObjectNode styleRule = new ObjectMapper().createObjectNode();
-        styleRule.put("styleRule1", "styleRuleValue1");
-        collection.setStyleRule(styleRule);
+        final ObjectNode legendStyle = new ObjectMapper().createObjectNode();
+        legendStyle.put("styleRule1", "styleRuleValue1");
+        collection.setLegendStyle(legendStyle);
 
         //WHEN
         String response = mockMvc.perform(post("/collections")
@@ -487,7 +487,7 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json, hasJsonPath("$.id", is("pubId_1")));
         assertThat(json, hasJsonPath("$.displayRule.rule1", is("legendValue1")));
-        assertThat(json, hasJsonPath("$.styleRule.styleRule1", is("styleRuleValue1")));
+        assertThat(json, hasJsonPath("$.legendStyle.styleRule1", is("styleRuleValue1")));
     }
 
     @Test
@@ -496,9 +496,9 @@ public class CollectionsPostIT extends AbstractIntegrationTest {
         //GIVEN
         CollectionUpdateDto collection = buildCollectionCreateDtoN(1);
         collection.setAppId(UUID.randomUUID());
-        final ObjectNode styleRule = new ObjectMapper().createObjectNode();
-        styleRule.put("rule1", "legendValue1");
-        collection.setStyleRule(styleRule);
+        final ObjectNode legendStyle = new ObjectMapper().createObjectNode();
+        legendStyle.put("rule1", "legendValue1");
+        collection.setLegendStyle(legendStyle);
 
         //WHEN
         mockMvc.perform(post("/collections")

@@ -189,10 +189,9 @@ public class CollectionService {
                 .copyrights(layer.getCopyrights())
                 .properties(layer.getProperties())
                 .featureProperties(layer.getFeatureProperties())
-                .styleRule(layer.getStyleRule())
-                .style(layer.getStyle())
+                .legendStyle(layer.getLegendStyle())
+                .mapStyle(layer.getMapStyle())
                 .displayRule(layer.getDisplayRule())
-                .mapboxStyles(layer.getMapboxStyles())
                 .popupConfig(layer.getPopupConfig())
                 .group(layer.getGroup())
                 .category(layer.getCategory())
@@ -221,20 +220,20 @@ public class CollectionService {
 
     private void updateStyleRules(CollectionUpdateDto collection, Layer layer) {
         if (collection.getAppId() != null &&
-                (collection.getStyleRule() != null || collection.getDisplayRule() != null)) {
+                (collection.getLegendStyle() != null || collection.getDisplayRule() != null)) {
             applicationMapper.getApplicationOwnedOrPublic(collection.getAppId(),
                             AuthorizationUtils.getAuthenticatedUserName())
                     .orElseThrow(() -> new WebApplicationException(HttpStatus.BAD_REQUEST,
                             "Application with such id can not be found"));
 
             ApplicationLayer appLayer = applicationLayerMapper.updateStyleAndDisplayRules(
-                            collection.getAppId(), layer.getPublicId(), collection.getStyleRule(),
-                            collection.getDisplayRule(), collection.getStyle(), collection.getPopupConfig())
+                            collection.getAppId(), layer.getPublicId(), collection.getLegendStyle(),
+                            collection.getDisplayRule(), collection.getMapStyle(), collection.getPopupConfig())
                     .orElseThrow(() -> new WebApplicationException(HttpStatus.BAD_REQUEST,
                             "Wasn't able to update style or display rules"));
-            layer.setStyleRule(appLayer.getStyleRule());
+            layer.setLegendStyle(appLayer.getLegendStyle());
             layer.setDisplayRule(appLayer.getDisplayRule());
-            layer.setStyle(appLayer.getStyle());
+            layer.setMapStyle(appLayer.getMapStyle());
             layer.setPopupConfig(appLayer.getPopupConfig());
         }
     }

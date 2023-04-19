@@ -17,9 +17,9 @@ public class ApplicationLayer {
     private UUID appId;
     private String layerId;
     private Boolean isDefault;
-    private ObjectNode styleRule;
+    private ObjectNode legendStyle;
     private ObjectNode displayRule;
-    private ObjectNode style;
+    private ObjectNode mapStyle;
     private ObjectNode popupConfig;
 
 }

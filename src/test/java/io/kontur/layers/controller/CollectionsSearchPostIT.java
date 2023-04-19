@@ -484,7 +484,7 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json.read("$.collections"), hasSize(3));
         assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_1", "pubId_2", "pubId_3"));
-        assertThat(json.read("$.collections[*].styleRule"), not(empty()));
+        assertThat(json.read("$.collections[*].legendStyle"), not(empty()));
     }
 
     @Test
@@ -519,7 +519,7 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json.read("$.collections"), hasSize(1));
         assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_3"));
-        assertThat(json.read("$.collections[*].styleRule"), not(empty()));
+        assertThat(json.read("$.collections[*].legendStyle"), not(empty()));
     }
 
     @Test
@@ -555,7 +555,7 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json.read("$.collections"), hasSize(2));
         assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_1", "pubId_3"));
-        assertThat(json.read("$.collections[*].styleRule"), not(empty()));
+        assertThat(json.read("$.collections[*].legendStyle"), not(empty()));
     }
 
     @Test
@@ -614,6 +614,6 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
         final DocumentContext json = JsonPath.parse(response);
         assertThat(json.read("$.collections"), hasSize(2));
         assertThat(json.read("$.collections[*].id"), containsInAnyOrder("pubId_2", "pubId_3"));
-        assertThat(json.read("$.collections[*].styleRule"), not(empty()));
+        assertThat(json.read("$.collections[*].legendStyle"), not(empty()));
     }
 }

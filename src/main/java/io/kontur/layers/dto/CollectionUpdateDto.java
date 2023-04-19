@@ -30,12 +30,12 @@ public class CollectionUpdateDto {
     private ObjectNode properties;
     @JsonProperty("featureProperties")
     private ObjectNode featureProperties;
-    @JsonProperty("style")
-    private ObjectNode style;
+    @JsonProperty("mapStyle")
+    private ObjectNode mapStyle;
     @JsonProperty("popupConfig")
     private ObjectNode popupConfig;
-    @JsonProperty("styleRule")
-    private ObjectNode styleRule;
+    @JsonProperty("legendStyle")
+    private ObjectNode legendStyle;
     @JsonProperty("displayRule")
     private ObjectNode displayRule;
     @JsonProperty("appId")
