@@ -58,23 +58,26 @@ public class CollectionService {
         String userName = AuthorizationUtils.getAuthenticatedUserName();
         CollectionOwner ownershipFilter = StringUtils.isBlank(userName) ? CollectionOwner.ANY : collectionOwner;
         final List<Layer> layers;
-        int numberMatched;
+        int numberMatched = 0;
+        Application app = null;
         if (appId != null) {
-            Application app = applicationMapper.getApplicationOwnedOrPublic(appId, userName)
+            app = applicationMapper.getApplicationOwnedOrPublic(appId, userName)
                     .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND, "Application is not found"));
-
-            layers = layerMapper.getLayers(geometryString, omitLocalCollections, userName, limit, offset, ownershipFilter,
-                    app.getId(), app.getShowAllPublicLayers(), collectionIds.toArray(new String[0]));
+        }
+        layers = layerMapper.getLayers(geometryString, omitLocalCollections, userName, limit, offset, ownershipFilter,
+                app != null ? app.getId() : null, app != null ? app.getShowAllPublicLayers() : true,
+                collectionIds.toArray(new String[0]));
+        if (layers != null && (layers.size() >= limit || (offset > 0 && layers.size() == 0))) {
             numberMatched = layerMapper.getLayersTotal(geometryString, omitLocalCollections, userName, ownershipFilter,
-                    app.getId(), app.getShowAllPublicLayers(), collectionIds.toArray(new String[0]));
-        } else {
-            layers = layerMapper.getLayers(geometryString, omitLocalCollections, userName, limit, offset, ownershipFilter,
+                    app != null ? app.getId() : null, app != null ? app.getShowAllPublicLayers() : true,
                     collectionIds.toArray(new String[0]));
-            numberMatched = layerMapper.getLayersTotal(geometryString, omitLocalCollections, userName, ownershipFilter,
-                    collectionIds.toArray(new String[0]));
+        } else if (layers != null) {
+            numberMatched = layers.size() + offset;
         }
 
-        final List<Collection> collections = layers.stream().map(this::toCollection).collect(Collectors.toList());
+        final List<Collection> collections = layers != null
+                ? layers.stream().map(this::toCollection).collect(Collectors.toList())
+                : java.util.Collections.emptyList();
 
         final List<Link> links = new ArrayList<>();
 
@@ -186,9 +189,10 @@ public class CollectionService {
                 .copyrights(layer.getCopyrights())
                 .properties(layer.getProperties())
                 .featureProperties(layer.getFeatureProperties())
-                .styleRule(layer.getStyleRule())
+                .legendStyle(layer.getLegendStyle())
+                .mapStyle(layer.getMapStyle())
                 .displayRule(layer.getDisplayRule())
-                .mapboxStyles(layer.getMapboxStyles())
+                .popupConfig(layer.getPopupConfig())
                 .group(layer.getGroup())
                 .category(layer.getCategory())
                 .itemType(layer.getType())
@@ -216,19 +220,21 @@ public class CollectionService {
 
     private void updateStyleRules(CollectionUpdateDto collection, Layer layer) {
         if (collection.getAppId() != null &&
-                (collection.getStyleRule() != null || collection.getDisplayRule() != null)) {
+                (collection.getLegendStyle() != null || collection.getDisplayRule() != null)) {
             applicationMapper.getApplicationOwnedOrPublic(collection.getAppId(),
                             AuthorizationUtils.getAuthenticatedUserName())
                     .orElseThrow(() -> new WebApplicationException(HttpStatus.BAD_REQUEST,
                             "Application with such id can not be found"));
 
             ApplicationLayer appLayer = applicationLayerMapper.updateStyleAndDisplayRules(
-                            collection.getAppId(), layer.getPublicId(), collection.getStyleRule(),
-                            collection.getDisplayRule())
+                            collection.getAppId(), layer.getPublicId(), collection.getLegendStyle(),
+                            collection.getDisplayRule(), collection.getMapStyle(), collection.getPopupConfig())
                     .orElseThrow(() -> new WebApplicationException(HttpStatus.BAD_REQUEST,
                             "Wasn't able to update style or display rules"));
-            layer.setStyleRule(appLayer.getStyleRule());
+            layer.setLegendStyle(appLayer.getLegendStyle());
             layer.setDisplayRule(appLayer.getDisplayRule());
+            layer.setMapStyle(appLayer.getMapStyle());
+            layer.setPopupConfig(appLayer.getPopupConfig());
         }
     }
 

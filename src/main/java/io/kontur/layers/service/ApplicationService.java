@@ -58,7 +58,7 @@ public class ApplicationService {
                         ApplicationLayer applicationLayer = pair.getRight();
                         Collection collection = collectionService.toCollection(layer);
                         collection.setDisplayRule(applicationLayer.getDisplayRule());
-                        collection.setStyleRule(applicationLayer.getStyleRule());
+                        collection.setLegendStyle(applicationLayer.getLegendStyle());
                         return collection;
                     })
                     .toList();

@@ -15,8 +15,8 @@ import java.util.UUID;
 @Mapper
 public interface TestDataMapper {
 
-    @Select({"with ins as (insert into layers (public_id, name, description, geom, last_updated, source_updated, copyrights, properties, is_public, is_visible, owner, type, url, api_key, feature_properties, is_global, mapbox_styles) values ",
-            "(#{publicId},#{name},#{description},#{geometry}::geometry,#{lastUpdated},#{sourceLastUpdated},#{copyrights},#{properties}::jsonb,#{isPublic},#{isVisible},#{owner},#{type},#{url},#{apiKey},#{featureProperties}::jsonb,#{isGlobal},#{mapboxStyles}::jsonb) returning id) ",
+    @Select({"with ins as (insert into layers (public_id, name, description, geom, last_updated, source_updated, copyrights, properties, is_public, is_visible, owner, type, url, api_key, feature_properties, is_global) values ",
+            "(#{publicId},#{name},#{description},#{geometry}::geometry,#{lastUpdated},#{sourceLastUpdated},#{copyrights},#{properties}::jsonb,#{isPublic},#{isVisible},#{owner},#{type},#{url},#{apiKey},#{featureProperties}::jsonb,#{isGlobal}) returning id) ",
             "select * from ins"})
     long insertLayer(Layer layer);
 
@@ -38,8 +38,8 @@ public interface TestDataMapper {
             "select * from ins"})
     UUID insertApplication(Application app);
 
-    @Insert({"insert into apps_layers (app_id, layer_id, is_default, display_rule, style_rule) values " +
-            "(#{appId}, #{appLayer.layerId}, #{appLayer.isDefault}, #{appLayer.styleRule}::jsonb, " +
+    @Insert({"insert into apps_layers (app_id, layer_id, is_default, display_rule, legend_style_config) values " +
+            "(#{appId}, #{appLayer.layerId}, #{appLayer.isDefault}, #{appLayer.legendStyle}::jsonb, " +
             "#{appLayer.displayRule}::jsonb)"})
     void insertApplicationLayer(@Param("appLayer") ApplicationLayerDto appLayer, @Param("appId") UUID appId);
 }

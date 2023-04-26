@@ -1,0 +1,8 @@
+## Database Changelog
+databaseChangeLog:
+  - include:
+      relativeToChangelogFile: true
+      file: alter-layers-and-apps-layers-add-styles.sql
+  - include:
+      relativeToChangelogFile: true
+      file: alter-layers-remove-mapbox-styles.sql

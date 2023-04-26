@@ -28,6 +28,8 @@ public interface ApplicationLayerMapper {
     @Timed(value = "db.query", histogram = true)
     Optional<ApplicationLayer> updateStyleAndDisplayRules(@Param("appId") UUID appId,
                                                           @Param("layerId") String layerId,
-                                                          @Param("styleRule") ObjectNode styleRule,
-                                                          @Param("displayRule") ObjectNode displayRule);
+                                                          @Param("legendStyle") ObjectNode legendStyle,
+                                                          @Param("displayRule") ObjectNode displayRule,
+                                                          @Param("mapStyle") ObjectNode mapStyle,
+                                                          @Param("popupConfig") ObjectNode popupConfig);
 }

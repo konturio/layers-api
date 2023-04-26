@@ -12,7 +12,7 @@ public class ApplicationLayerDto {
 
     private String layerId;
     private Boolean isDefault;
-    private ObjectNode styleRule;
+    private ObjectNode legendStyle;
     private ObjectNode displayRule;
 
 }

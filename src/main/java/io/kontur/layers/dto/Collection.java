@@ -65,14 +65,17 @@ public class Collection {
     @JsonProperty("ownedByUser")
     private boolean ownedByUser;
 
-    @JsonProperty("styleRule")
-    private ObjectNode styleRule;
+    @JsonProperty("legendStyle")
+    private ObjectNode legendStyle;
+
+    @JsonProperty("mapStyle")
+    private ObjectNode mapStyle;
+
+    @JsonProperty("popupConfig")
+    private ObjectNode popupConfig;
 
     @JsonProperty("displayRule")
     private ObjectNode displayRule;
-
-    @JsonProperty("mapboxStyles")
-    private ObjectNode mapboxStyles;
 
     @JsonProperty("tileSize")
     private Integer tileSize;
