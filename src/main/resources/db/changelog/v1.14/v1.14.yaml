@@ -6,3 +6,6 @@ databaseChangeLog:
   - include:
       relativeToChangelogFile: true
       file: alter-layers-remove-mapbox-styles.sql
+  - include:
+      relativeToChangelogFile: true
+      file: update-apps-layers-set-is_default_false.sql
