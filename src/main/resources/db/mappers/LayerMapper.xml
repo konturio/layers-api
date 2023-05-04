@@ -207,7 +207,7 @@
                    al.display_rule as displayRule,
                    coalesce(nullif(al.legend_style_config, '{}'::jsonb), nullif(lrs.legend_style_config, '{}'::jsonb)) as legendStyle,
                    coalesce(nullif(al.map_style_config, '{}'::jsonb), nullif(lrs.map_style_config, '{}'::jsonb)) as mapStyle,
-                   coalesce(nullif(al.popup_config, '{}'::jsonb), nullif(lrs.popup_config, '{}'::jsonb)) as popupConfig,
+                   coalesce(al.popup_config, lrs.popup_config) as popupConfig,
                </if>
                <if test="appId == null">
                    lrs.legend_style_config as legendStyle,
