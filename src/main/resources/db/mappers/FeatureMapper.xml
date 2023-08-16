@@ -85,6 +85,7 @@
                <foreach collection="features" item="item" open="(" separator="),(" close=")">
                    #{item.featureId}, ${item.layerId}, #{item.properties}::jsonb, ST_GeomFromGeoJSON(#{item.geometry})
                </foreach>
+        ON CONFLICT (feature_id, layer_id) DO NOTHING)
         RETURNING *)
         select
             feature_id             as featureid,
