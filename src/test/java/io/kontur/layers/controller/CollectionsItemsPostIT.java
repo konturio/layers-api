@@ -192,7 +192,7 @@ public class CollectionsItemsPostIT extends AbstractIntegrationTest {
 
     @Test
     @WithMockUser("owner_1")
-    public void emptyIdIsGenerated_9028() throws Exception {
+    public void emptyIdReturnBadRequest() throws Exception {
         //GIVEN
         Layer layer = buildLayerN(1);
         testDataMapper.insertLayer(layer);
@@ -200,42 +200,13 @@ public class CollectionsItemsPostIT extends AbstractIntegrationTest {
         String updatedGeoJson = "{\"type\":\"FeatureCollection\",\"features\":[{\"id\":\"\",\"type\":\"Feature\",\"properties\":{\"prop1\":\"propValue1_updated\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.96484375,39.774769485295465]}}]}";
 
         //WHEN
-        String response = mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items")
+        mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items")
                         .contentType(APPLICATION_JSON)
                         .content(updatedGeoJson))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_GEO_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"msg\":\"Feature id is missing\"}"))
                 .andReturn().getResponse().getContentAsString();
-
-        //THEN
-        final DocumentContext json = JsonPath.parse(response);
-        assertThat(json, hasJsonPath("$.features", hasSize(1)));
-        assertThat(json, hasJsonPath("$.features[0].id", not(emptyOrNullString())));
-    }
-
-    @Test
-    @WithMockUser("owner_1")
-    public void emptyIdIsGenerated_9028_2() throws Exception {
-        //GIVEN
-        Layer layer = buildLayerN(1);
-        testDataMapper.insertLayer(layer);
-
-        String updatedGeoJson = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[29.135742187499996,53.30462107510271],[29.794921874999996,53.30462107510271],[29.794921874999996,54.03358633521085],[29.135742187499996,54.03358633521085],[29.135742187499996,53.30462107510271]]]}}]}";
-
-        //WHEN
-        String response = mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items")
-                        .contentType(APPLICATION_JSON)
-                        .content(updatedGeoJson))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_GEO_JSON))
-                .andReturn().getResponse().getContentAsString();
-
-        //THEN
-        final DocumentContext json = JsonPath.parse(response);
-        assertThat(json, hasJsonPath("$.features", hasSize(1)));
-        assertThat(json, hasJsonPath("$.features[0].id", not(emptyOrNullString())));
     }
 
     @Test
@@ -306,12 +277,16 @@ public class CollectionsItemsPostIT extends AbstractIntegrationTest {
         String updatedGeoJson = "{\"type\":\"FeatureCollection\",\"features\":[{\"id\":\"featureId_1\",\"type\":\"Feature\",\"properties\":{\"prop1\":\"propValue2_via_rest\"},\"geometry\":{\"type\":\"Point\",\"coordinates\":[8.96484375,39.774769485295465]}}]}";
 
         //WHEN
-        mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items")
+        String response = mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items")
                         .contentType(APPLICATION_JSON)
                         .content(updatedGeoJson))
                 .andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"msg\":\"Features can't be created due to id duplication: [featureId_1]\"}"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_GEO_JSON))
                 .andReturn().getResponse().getContentAsString();
+
+        //THEN
+        final DocumentContext json = JsonPath.parse(response);
+        assertThat(json, hasJsonPath("$.type", is("FeatureCollection")));
     }
 }
