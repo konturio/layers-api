@@ -105,7 +105,8 @@ public class FeatureService {
                 String.format("{%s}", c.getFieldName()),
                 Arrays.stream(c.getPattern())
                         .map(p -> p.replace("%", "\\%")
-                                .replace("_", "\\_").replace("*", "%")).toArray(String[]::new))
+                                .replace("_", "\\_").replace("*", "%"))
+                        .toArray(String[]::new))
         ).collect(Collectors.toList());
     }
 
@@ -156,16 +157,18 @@ public class FeatureService {
                     .numberReturned(0);
         }
 
-        validateIfAnyFeatureIdAlreadyExist(layer.getId(), fc);
+        List<LayerFeature> features = convertFeatureCollectionIntoLayerFeaturesWithIdValidation(fc, layer);
 
-        List<LayerFeature> features = convertFeatureCollectionIntoLayerFeaturesWithIdGeneration(fc, layer);
-
-        List<LayerFeature> result = new ArrayList<>(featureMapper.addFeatures(features));
+        List<LayerFeature> result = new ArrayList<>();
+        if (!features.isEmpty()) {
+            result = new ArrayList<>(featureMapper.addFeatures(features));
+        }
 
         return convertFeatures(collectionId, layer.getName(), result);
     }
 
-    private List<LayerFeature> convertFeatureCollectionIntoLayerFeaturesWithIdGeneration(FeatureCollection fc, Layer layer) {
+    private List<LayerFeature> convertFeatureCollectionIntoLayerFeaturesWithIdGeneration(FeatureCollection fc,
+                                                                                         Layer layer) {
         return Arrays.stream(fc.getFeatures())
                 .map(f -> new LayerFeature(layer.getId(),
                         getOrGenerateFeatureId(layer.getId(), f),
@@ -175,18 +178,22 @@ public class FeatureService {
                 .collect(Collectors.toList());
     }
 
-    private void validateIfAnyFeatureIdAlreadyExist(Long layerId, FeatureCollection fc) {
-        List<String> featuresIds = Arrays.stream(fc.getFeatures())
-                .filter(f -> f.getId() != null)
-                .map(f -> String.valueOf(f.getId()))
-                .toList();
-        if (CollectionUtils.isEmpty(featuresIds)) {
-            return;
-        }
-        List<String> existingIds = featureMapper.checkIfFeatureIdExists(layerId, featuresIds);
-        if (!existingIds.isEmpty()) {
-            throw new WebApplicationException(BAD_REQUEST, "Features can't be created due to id duplication: " + existingIds);
-        }
+    private List<LayerFeature> convertFeatureCollectionIntoLayerFeaturesWithIdValidation(FeatureCollection fc,
+                                                                                         Layer layer) {
+        return Arrays.stream(fc.getFeatures())
+                .map(f -> new LayerFeature(layer.getId(),
+                        // if feature id is missing return 400 Bad Request,
+                        // as ids for feature adding (e.g. live-sensor) are currently generated on FE side
+                        getFeatureIdOrThrowIfMissing(f),
+                        f.getGeometry(),
+                        f.getProperties() != null ? JsonUtil.writeObjectNode(f.getProperties()) : null,
+                        OffsetDateTime.now()))
+                // if feature id already recorded, do not insert this feature
+                // TODO replace with ON CONFLICT (feature_id, layer_id, zoom) DO NOTHING in FeatureMapper.addFeatures
+                //  after implementing #16500 and 16501
+                .filter(f -> featureMapper.checkIfFeatureIdExists(f.getLayerId(),
+                        Collections.singletonList(f.getFeatureId())).isEmpty())
+                .collect(Collectors.toList());
     }
 
     //TODO method is not thread safe and possibly slow due to DB check. Generate IDs on DB side instead?
@@ -198,6 +205,13 @@ public class FeatureService {
                     return newId;
                 }
             }
+        }
+        return String.valueOf(feature.getId());
+    }
+
+    private String getFeatureIdOrThrowIfMissing(Feature feature) {
+        if (feature.getId() == null || StringUtils.isBlank(String.valueOf(feature.getId()))) {
+            throw new WebApplicationException(BAD_REQUEST, "Feature id is missing");
         }
         return String.valueOf(feature.getId());
     }

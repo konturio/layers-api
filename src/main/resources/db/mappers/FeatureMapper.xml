@@ -82,9 +82,9 @@
     <select id="addFeatures" parameterType="java.util.List"  resultType="io.kontur.layers.repository.model.LayerFeature">
         with ins as (INSERT INTO layers_features (feature_id, layer_id, properties, geom)
         VALUES
-               <foreach collection="features" item="item" open="(" separator="),(" close=")">
-                   #{item.featureId}, ${item.layerId}, #{item.properties}::jsonb, ST_GeomFromGeoJSON(#{item.geometry})
-               </foreach>
+        <foreach collection="features" item="item" open="(" separator="),(" close=")">
+            #{item.featureId}, ${item.layerId}, #{item.properties}::jsonb, ST_GeomFromGeoJSON(#{item.geometry})
+        </foreach>
         RETURNING *)
         select
             feature_id             as featureid,
