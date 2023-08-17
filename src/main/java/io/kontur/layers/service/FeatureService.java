@@ -159,7 +159,10 @@ public class FeatureService {
 
         List<LayerFeature> features = convertFeatureCollectionIntoLayerFeaturesWithIdValidation(fc, layer);
 
-        List<LayerFeature> result = new ArrayList<>(featureMapper.addFeatures(features));
+        List<LayerFeature> result = new ArrayList<>();
+        if (!features.isEmpty()) {
+            result = new ArrayList<>(featureMapper.addFeatures(features));
+        }
 
         return convertFeatures(collectionId, layer.getName(), result);
     }
@@ -185,6 +188,11 @@ public class FeatureService {
                         f.getGeometry(),
                         f.getProperties() != null ? JsonUtil.writeObjectNode(f.getProperties()) : null,
                         OffsetDateTime.now()))
+                // if feature id already recorded, do not insert this feature
+                // TODO replace with ON CONFLICT (feature_id, layer_id, zoom) DO NOTHING in FeatureMapper.addFeatures
+                //  after implementing #16500 and 16501
+                .filter(f -> featureMapper.checkIfFeatureIdExists(f.getLayerId(),
+                        Collections.singletonList(f.getFeatureId())).isEmpty())
                 .collect(Collectors.toList());
     }
 
