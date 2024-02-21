@@ -10,7 +10,7 @@ plugins {
 }
 
 group = 'io.kontur'
-version = '1.15.0'
+version = '1.16.0'
 sourceCompatibility = '17'
 String imageTag = System.getenv("IMAGE_TAG") ?: 'latest'
 
