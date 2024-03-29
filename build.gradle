@@ -3,7 +3,6 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.14.RELEASE'
     id 'java'
     id 'jacoco'
-    id 'io.freefair.lombok' version '6.3.0'
     id 'com.google.cloud.tools.jib' version '3.3.0'
     id 'de.undercouch.download' version '5.1.2'
     id 'io.sentry.jvm.gradle' version '4.3.0'
@@ -11,7 +10,8 @@ plugins {
 
 group = 'io.kontur'
 version = '1.16.0'
-sourceCompatibility = '17'
+sourceCompatibility = '21'
+targetCompatibility = '21'
 String imageTag = System.getenv("IMAGE_TAG") ?: 'latest'
 
 repositories {
@@ -32,6 +32,10 @@ sentry {
 }
 
 dependencies {
+    //lombok
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+
     //model
     implementation 'org.wololo:jts2geojson:0.18.1'
     implementation 'org.locationtech.jts.io:jts-io-common:1.19.0'
@@ -91,7 +95,7 @@ test {
 
 jacocoTestReport {
     reports {
-        csv.enabled true
+        csv.required = true
         csv.destination file("${buildDir}/jacoco.csv")
     }
 }
