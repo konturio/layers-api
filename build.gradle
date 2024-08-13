@@ -6,15 +6,29 @@ plugins {
     id 'io.freefair.lombok' version '6.3.0'
     id 'com.google.cloud.tools.jib' version '3.3.0'
     id 'de.undercouch.download' version '5.1.2'
+    id 'io.sentry.jvm.gradle' version '4.3.0'
 }
 
 group = 'io.kontur'
-version = '1.15.0'
+version = '1.16.0'
 sourceCompatibility = '17'
 String imageTag = System.getenv("IMAGE_TAG") ?: 'latest'
 
 repositories {
     mavenCentral()
+}
+
+
+sentry {
+  // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
+  // This enables source context, allowing you to see your source
+  // code as part of your stack traces in Sentry.
+  includeSourceContext = true
+
+  org = System.getenv("SENTRY_ORG")
+  projectName = "layers-api"
+  authToken = System.getenv("SENTRY_AUTH_TOKEN")
+  includeSourceContext = System.getenv("SENTRY_AUTH_TOKEN") ? true : false
 }
 
 dependencies {
