@@ -44,4 +44,3 @@ public class DefaultApi {
         log.info("Host: {}", request.getHeader("Host"));
     }
 }
-}
