@@ -3,7 +3,6 @@ server:
     context-path: '/layers/v2'
   port: 8630
   shutdown: graceful
-  forward-headers-strategy: framework
 
 spring:
   datasource:
