@@ -59,7 +59,7 @@ jobs:
           echo "<h3>Docker image tag</h3> $IMAGE_TAG <br><br><br>" >> $GITHUB_STEP_SUMMARY
 
       - name: Uploading build and test artifacts
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: 'layers-api-${{needs.helper.outputs.CI_COMMIT_REF_SLUG}}'
