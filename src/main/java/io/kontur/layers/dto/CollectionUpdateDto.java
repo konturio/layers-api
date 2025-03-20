@@ -8,6 +8,7 @@ import org.wololo.geojson.Geometry;
 
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
+import java.util.List;
 
 @Data
 public class CollectionUpdateDto {
