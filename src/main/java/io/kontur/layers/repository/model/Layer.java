@@ -23,7 +23,7 @@ public class Layer {
     private String apiKey;
     private String type;
     private String geometry;
-    private String copyrights;
+    private List<String> copyrights;
     private ObjectNode properties;
     private ObjectNode legendStyle;
     private ObjectNode mapStyle;

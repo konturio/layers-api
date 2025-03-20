@@ -30,7 +30,7 @@ public class Collection {
     private String description;
 
     @JsonProperty("copyrights")
-    private String copyrights;
+    private List<String> copyrights;
 
     @JsonProperty("properties")
     private ObjectNode properties;

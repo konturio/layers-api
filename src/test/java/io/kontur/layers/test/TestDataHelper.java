@@ -36,7 +36,7 @@ public class TestDataHelper {
 
         return new Layer(null, "pubId_" + n, "name_" + n, "description_" + n, null, "apiKey", "feature",
                 String.format("SRID=4326;POLYGON((0 0, %1$d 0, %1$d %1$d, 0 %1$d, 0 0))", n),
-                "copyrights_" + n, props, null, null, null, null, featureProps, null, null,
+                List.of("copyrights_" + n), props, null, null, null, null, featureProps, null, null,
                 OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusSeconds(n),
                 OffsetDateTime.of(2020, 4, 15, 15, 0, 0, 0, offset()).plusSeconds(n),
                 null, null, true, true, false, null, null, null, "owner_" + n);
@@ -110,7 +110,7 @@ public class TestDataHelper {
         dto.setFeatureProperties(featureProps);
         dto.setGeometry(
                 JsonUtil.readJson(String.format("{\"type\":\"Point\",\"coordinates\":[0,%1$d]}", n), Geometry.class));
-        dto.setCopyrights("copyrights_" + n);
+        dto.setCopyrights(List.of("copyrights_" + n));
         dto.setTileSize(n);
         dto.setMinZoom(n);
         dto.setMaxZoom(n);

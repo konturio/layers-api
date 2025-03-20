@@ -63,7 +63,7 @@ public class CollectionsPutIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.id", is("pubId_0")));
         assertThat(json, hasJsonPath("$.title", is("name_1")));
         assertThat(json, hasJsonPath("$.description", is("description_1")));
-        assertThat(json, hasJsonPath("$.copyrights", is("copyrights_1")));
+        assertThat(json, hasJsonPath("$.copyrights", contains("copyrights_1")));
         assertThat(json, hasJsonPath("$.properties.prop1", is("propValue1_1")));
         assertThat(json, hasJsonPath("$.properties.prop2", is("propValue2_1")));
         assertThat(json, hasJsonPath("$.featureProperties.featureProp1", is("featureProperty_1")));
@@ -167,7 +167,8 @@ public class CollectionsPutIT extends AbstractIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
 
         //WHEN
-        String collectionString = "{\"description\":\"\",\"title\":\"test title\",\"itemType\":\"vector\",\"copyrights\":\"\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[98.3111572265625,68.32423359706064],[98.887939453125,68.32423359706064],[98.887939453125,68.52421309659984],[98.3111572265625,68.52421309659984]]]}}";
+        String collectionString = "{\"description\":\"\",\"title\":\"test title\",\"itemType\":\"vector\",\"copyrights\":[],\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[98.3111572265625,68.32423359706064],[98.887939453125,68.32423359706064],[98.887939453125,68.52421309659984],[98.3111572265625,68.52421309659984]]]}}";
+
 
         String json = mockMvc.perform(put("/collections/" + id)
                         .contentType(MediaType.APPLICATION_JSON)

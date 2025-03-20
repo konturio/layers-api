@@ -22,7 +22,7 @@ public class CollectionUpdateDto {
     @NotNull
     private Type itemType = Type.feature;
     @JsonProperty("copyrights")
-    private String copyrights;
+    private List<String> copyrights;
     @JsonProperty("geometry")
     @ValidGeoJSON
     private Geometry geometry;

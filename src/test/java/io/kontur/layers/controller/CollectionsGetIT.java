@@ -45,7 +45,7 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.id", is("pubId_1")));
         assertThat(json, hasJsonPath("$.title", is("name_1")));
         assertThat(json, hasJsonPath("$.description", is("description_1")));
-        assertThat(json, hasJsonPath("$.copyrights", is("copyrights_1")));
+        assertThat(json, hasJsonPath("$.copyrights", contains("copyrights_1")));
         assertThat(json, hasJsonPath("$.properties.prop1", is("propValue1_1")));
         assertThat(json, hasJsonPath("$.properties.prop2", is("propValue2_1")));
         assertThat(json, hasJsonPath("$.links[?(@.rel=='items' && @.type=='application/geo+json')].href",
