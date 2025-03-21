@@ -15,10 +15,18 @@ import java.util.UUID;
 @Mapper
 public interface TestDataMapper {
 
-    @Select({"with ins as (insert into layers (public_id, name, description, geom, last_updated, source_updated, copyrights, properties, is_public, is_visible, owner, type, url, api_key, feature_properties, is_global) values ",
-            "(#{publicId},#{name},#{description},#{geometry}::geometry,#{lastUpdated},#{sourceLastUpdated},#{copyrights}::jsonb,#{properties}::jsonb,#{isPublic},#{isVisible},#{owner},#{type},#{url},#{apiKey},#{featureProperties}::jsonb,#{isGlobal}) returning id) ",
-            "select * from ins"})
-    long insertLayer(Layer layer);
+    // @Select({"with ins as (insert into layers (public_id, name, description, geom, last_updated, source_updated, copyrights, properties, is_public, is_visible, owner, type, url, api_key, feature_properties, is_global) values ",
+    //         "(#{publicId},#{name},#{description},#{geometry}::geometry,#{lastUpdated},#{sourceLastUpdated},#{copyrights}::jsonb,#{properties}::jsonb,#{isPublic},#{isVisible},#{owner},#{type},#{url},#{apiKey},#{featureProperties}::jsonb,#{isGlobal}) returning id) ",
+    //         "select * from ins"})
+    // long insertLayer(Layer layer);
+
+    @Insert({
+    "insert into layers (public_id, name, description, geom, last_updated, source_updated, copyrights, properties, is_public, is_visible, owner, type, url, api_key, feature_properties, is_global) ",
+    "values (#{publicId}, #{name}, #{description}, #{geometry}::geometry, #{lastUpdated}, #{sourceLastUpdated}, ",
+    "#{copyrights, typeHandler=io.kontur.layers.util.ListToJsonTypeHandler}, #{properties}::jsonb, #{isPublic}, #{isVisible}, ",
+    "#{owner}, #{type}, #{url}, #{apiKey}, #{featureProperties}::jsonb, #{isGlobal})"})
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    void insertLayer(Layer layer);
 
     @Select({"with ins as (insert into layers_features (layer_id, feature_id, geom, properties, last_updated) values ",
             "(#{collectionId},#{feature.featureId},ST_GeomFromGeoJSON(#{feature.geometry}),#{feature.properties}::jsonb,#{feature.lastUpdated}) returning feature_id) ",
