@@ -49,7 +49,7 @@ jobs:
               sh gradlew --console plain "$t" \
                 || { \
                       tar --show-transformed-names --transform="s@^build/reports/tests/test@test_report@" -cvf - build/reports/tests/test/* | xz -1 > test-report-${{needs.helper.outputs.CI_COMMIT_REF_SLUG}}.tar.xz; \
-                      sh gradlew --console plain --info --stacktrace "$t" \
+                      sh gradlew --console plain --info "$t"; \
                       exit 1; \
                    }
           done
