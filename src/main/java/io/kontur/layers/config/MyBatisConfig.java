@@ -4,7 +4,7 @@ import io.kontur.layers.util.ListToJsonTypeHandler;
 import org.apache.ibatis.session.Configuration;
 import org.mybatis.spring.boot.autoconfigure.ConfigurationCustomizer;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration as SpringConfiguration;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
