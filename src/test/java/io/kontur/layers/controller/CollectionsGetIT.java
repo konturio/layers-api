@@ -74,7 +74,8 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
     public void spatialExtent3dMustBeCorrect() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildFeatureN(1, "POINT(0 1 1000)"));
         testDataMapper.insertFeature(id, buildFeatureN(2, "POINT(0 1 0)"));
         testDataMapper.insertFeature(id, buildFeatureN(3, "POINT(0 2 -2000)"));
@@ -97,7 +98,8 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
     public void spatialExtent2dMustBeCorrect() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildFeatureN(1, "POINT(0 2)"));
         testDataMapper.insertFeature(id, buildFeatureN(2, "POINT(0 1)"));
         testDataMapper.insertFeature(id, buildFeatureN(3, "POINT(-1 2)"));
@@ -119,7 +121,8 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
     public void temporalExtentMustBeCorrect() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         final LayerFeature feature1 = buildPolygonN(1);
         final LayerFeature feature2 = buildPolygonN(2);
         final LayerFeature feature3 = buildPolygonN(3);
@@ -144,7 +147,8 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
     public void singleItemTemporalExtentMustBeCorrect() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         final LayerFeature feature1 = buildPolygonN(1);
         testDataMapper.insertFeature(id, feature1);
         //WHEN

@@ -28,7 +28,8 @@ public class CollectionsItemsDeleteIT extends AbstractIntegrationTest {
     public void testDeleteItem() throws Exception {
         //GIVEN
         Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
 
         LayerFeature feature1 = buildPointN(1);
         String featureId = testDataMapper.insertFeature(id, feature1);
@@ -51,7 +52,8 @@ public class CollectionsItemsDeleteIT extends AbstractIntegrationTest {
     public void testDeleteItemDontOwn() throws Exception {
         //GIVEN
         Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
 
         LayerFeature feature1 = buildPointN(1);
         String featureId = testDataMapper.insertFeature(id, feature1);

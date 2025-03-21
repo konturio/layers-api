@@ -37,7 +37,8 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
     public void featuresShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
@@ -73,7 +74,8 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
     public void limitIsWorking() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         testDataMapper.insertFeature(id, buildPolygonN(2));
         testDataMapper.insertFeature(id, buildPolygonN(3));
@@ -96,7 +98,8 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
     public void offsetIsWorking() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         testDataMapper.insertFeature(id, buildPolygonN(2));
         testDataMapper.insertFeature(id, buildPolygonN(3));
@@ -136,7 +139,8 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
     public void geometryFilterIsWorking() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         testDataMapper.insertFeature(id, buildPolygonN(2));
         testDataMapper.insertFeature(id, buildPolygonN(3));
@@ -162,7 +166,8 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
@@ -186,7 +191,8 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
@@ -205,7 +211,8 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
@@ -224,7 +231,8 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         layer.setVisible(false);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         //THEN
@@ -261,7 +269,8 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
 
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
 
         testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_1", 1), app.getId());
 
@@ -291,7 +300,8 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
 
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
 
         testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_1", 1), app.getId());
 
@@ -316,7 +326,8 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
 
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", true);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
 
         testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_1", 1), app.getId());
 

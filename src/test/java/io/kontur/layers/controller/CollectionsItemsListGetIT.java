@@ -51,7 +51,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void featuresShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -92,7 +93,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void paginationShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         IntStream.rangeClosed(1, 25).forEach(i -> testDataMapper.insertFeature(id, buildPolygonN(i)));
         //WHEN
 
@@ -120,7 +122,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void noNextLinkIfNoMoreItems() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         IntStream.rangeClosed(1, 25).forEach(i -> testDataMapper.insertFeature(id, buildPolygonN(i)));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -144,7 +147,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void noPrevLinkIfAtStart() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         IntStream.rangeClosed(1, 25).forEach(i -> testDataMapper.insertFeature(id, buildPolygonN(i)));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -204,7 +208,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void limitShouldBeGreaterThan0() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -219,7 +224,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
 
     private String initForBboxTests() {
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         return layer.getPublicId();
     }
@@ -388,7 +394,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void bboxShouldRestrictResponseByGeometry() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         testDataMapper.insertFeature(id, buildPolygonN(3));
         testDataMapper.insertFeature(id, buildPolygonN(4));
@@ -410,7 +417,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void responseForInvalidQueryParamShouldBeCorrect() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -428,7 +436,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void serverLimit1500() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         IntStream.rangeClosed(0, 101).forEach(value -> {
             final List<LayerFeature> features = IntStream.rangeClosed(1, 1001)
                     .mapToObj(i -> buildFeatureN(value * 10000 + i, null))
@@ -454,7 +463,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void offsetShouldBePositive() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -472,7 +482,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void pointFeatureShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPointN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -491,7 +502,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void geometryCollectionFeatureShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildGeometryCollectionN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -514,7 +526,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void lineStringFeatureShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildLineStringN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -534,7 +547,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void multiLineStringFeatureShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildMultiLineStringN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -552,7 +566,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void multiPointFeatureShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildMultipointN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -570,7 +585,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void multiPolygonFeatureShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         final String wkt = "MULTIPOLYGON(((0 0,4 0,4 4,0 4,0 0),(1 1,2 1,2 2,1 2,1 1)), ((-1 -1,-1 -2,-2 -2,-2 -1,-1 -1)))";
         final OffsetDateTime lastUpdated = OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusMinutes(10);
         testDataMapper.insertFeature(id,
@@ -592,7 +608,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void nullFieldsMustBeSkipped() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildMultiPolygonN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -609,7 +626,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void nextLinkShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         IntStream.rangeClosed(1, 25).forEach(i -> testDataMapper.insertFeature(id, buildPolygonN(i)));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -636,7 +654,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void exactMatchPropertyFilterShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         testDataMapper.insertFeature(id, buildPolygonN(2));
         //WHEN
@@ -658,7 +677,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void sqlLikePatternEscaped() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
 
         final LayerFeature feature1 = buildPolygonN(1);
         ((ObjectNode) feature1.getProperties()).put("prop1", "xx%aa");
@@ -683,7 +703,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void fieldInPropFilterMustAppearNotMoreThenOnce() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -702,7 +723,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void propertyFiltersCombinedWithAnd() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         IntStream.rangeClosed(1, 21).forEach(i -> {
             testDataMapper.insertFeature(id, buildPolygonN(i));
         });
@@ -731,7 +753,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void wildcardPropertyFilterShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         IntStream.rangeClosed(1, 21).forEach(i -> {
             testDataMapper.insertFeature(id, buildPolygonN(i));
         });
@@ -757,7 +780,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void missingPropertyShouldNotBeIgnored() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         IntStream.rangeClosed(1, 21).forEach(i -> testDataMapper.insertFeature(id, buildPolygonN(i)));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -776,7 +800,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void dateTimeParameterShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         final LayerFeature feature1 = buildPolygonN(1);
         testDataMapper.insertFeature(id, feature1);
         final LayerFeature feature2 = buildPolygonN(2);
@@ -800,7 +825,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void dateTimeParameterOpenEndShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         final LayerFeature feature1 = buildPolygonN(1);
         testDataMapper.insertFeature(id, feature1);
         final LayerFeature feature2 = buildPolygonN(2);
@@ -824,7 +850,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void dateTimeParameterOpenStartShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         final LayerFeature feature1 = buildPolygonN(1);
         testDataMapper.insertFeature(id, feature1);
         final LayerFeature feature2 = buildPolygonN(2);
@@ -882,7 +909,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void dateTimeExactMatchShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         final LayerFeature feature1 = buildPolygonN(1);
         final OffsetDateTime someDate = OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset());
         feature1.setLastUpdated(someDate);
@@ -920,7 +948,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void emptyGeometryIsValidCase() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildFeatureN(1, null));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -938,7 +967,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void zCoordForBboxParam() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildFeatureN(1, "POINT(0 1 1000)"));
         testDataMapper.insertFeature(id, buildFeatureN(2, "POINT(0 1 0)"));
         testDataMapper.insertFeature(id, buildFeatureN(3, "POINT(0 2 -2000)"));
@@ -963,7 +993,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void emptyResponse() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
 
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -984,7 +1015,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -1006,7 +1038,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -1023,7 +1056,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
         //GIVEN
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final long id = testDataMapper.insertLayer(layer);
+        final testDataMapper.insertLayer(layer);
+long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
