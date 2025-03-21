@@ -14,7 +14,7 @@ public class MyBatisConfig {
     public ConfigurationCustomizer typeHandlerCustomizer() {
         return (org.apache.ibatis.session.Configuration config) -> {
             TypeHandlerRegistry registry = config.getTypeHandlerRegistry();
-            registry.register(List.class, ListToJsonTypeHandler.class);
+            registry.register(ListToJsonTypeHandler.class);
         };
     }
 }
