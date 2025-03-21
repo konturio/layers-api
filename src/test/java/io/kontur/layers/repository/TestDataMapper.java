@@ -16,7 +16,7 @@ import java.util.UUID;
 public interface TestDataMapper {
 
     @Select({"with ins as (insert into layers (public_id, name, description, geom, last_updated, source_updated, copyrights, properties, is_public, is_visible, owner, type, url, api_key, feature_properties, is_global) values ",
-            "(#{publicId},#{name},#{description},#{geometry}::geometry,#{lastUpdated},#{sourceLastUpdated},#{copyrights, typeHandler=io.kontur.layers.util.ListToJsonTypeHandler},#{properties}::jsonb,#{isPublic},#{isVisible},#{owner},#{type},#{url},#{apiKey},#{featureProperties}::jsonb,#{isGlobal}) returning id) ",
+            "(#{publicId},#{name},#{description},#{geometry}::geometry,#{lastUpdated},#{sourceLastUpdated},#{copyrights}::jsonb,#{properties}::jsonb,#{isPublic},#{isVisible},#{owner},#{type},#{url},#{apiKey},#{featureProperties}::jsonb,#{isGlobal}) returning id) ",
             "select * from ins"})
     long insertLayer(Layer layer);
 
