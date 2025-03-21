@@ -13,9 +13,10 @@ public class ListToJsonTypeHandler extends BaseTypeHandler<List<String>> {
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i,
-                                    List<String> parameter, JdbcType jdbcType) throws SQLException {
-        ps.setString(i, JsonUtil.writeJson(parameter));
+                                List<String> parameter, JdbcType jdbcType) throws SQLException {
+    ps.setObject(i, JsonUtil.writeJson(parameter), Types.OTHER);
     }
+
 
     @Override
     public List<String> getNullableResult(ResultSet rs, String columnName) throws SQLException {
