@@ -9,7 +9,7 @@ public class MyBatisConfig {
     @Bean
     public ConfigurationCustomizer typeHandlerCustomizer() {
     return configuration -> {
-        // Удалено — теперь используем только typeHandler=... в XML
+        // Removed — now we only use typeHandler=... in XML
     };
 }
 
