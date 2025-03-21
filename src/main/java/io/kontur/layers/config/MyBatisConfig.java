@@ -12,6 +12,4 @@ public class MyBatisConfig {
         // Removed — now we only use typeHandler=... in XML
     };
 }
-
-
 }
