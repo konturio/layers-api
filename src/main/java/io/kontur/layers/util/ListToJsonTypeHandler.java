@@ -1,7 +1,7 @@
 package io.kontur.layers.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import io.kontur.layers.util.JsonUtil; // ← вот он, нужный импорт
+import io.kontur.layers.util.JsonUtil;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
