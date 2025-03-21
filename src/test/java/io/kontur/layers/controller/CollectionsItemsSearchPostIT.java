@@ -37,8 +37,8 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
     public void featuresShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
@@ -74,8 +74,8 @@ long id = layer.getId();
     public void limitIsWorking() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         testDataMapper.insertFeature(id, buildPolygonN(2));
         testDataMapper.insertFeature(id, buildPolygonN(3));
@@ -98,8 +98,8 @@ long id = layer.getId();
     public void offsetIsWorking() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         testDataMapper.insertFeature(id, buildPolygonN(2));
         testDataMapper.insertFeature(id, buildPolygonN(3));
@@ -139,8 +139,8 @@ long id = layer.getId();
     public void geometryFilterIsWorking() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         testDataMapper.insertFeature(id, buildPolygonN(2));
         testDataMapper.insertFeature(id, buildPolygonN(3));
@@ -166,8 +166,8 @@ long id = layer.getId();
         //GIVEN
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
@@ -191,8 +191,8 @@ long id = layer.getId();
         //GIVEN
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
@@ -211,8 +211,8 @@ long id = layer.getId();
         //GIVEN
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
@@ -231,8 +231,8 @@ long id = layer.getId();
         //GIVEN
         final Layer layer = buildLayerN(1);
         layer.setVisible(false);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         //THEN
@@ -269,8 +269,8 @@ long id = layer.getId();
 
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
 
         testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_1", 1), app.getId());
 
@@ -300,8 +300,8 @@ long id = layer.getId();
 
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
 
         testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_1", 1), app.getId());
 
@@ -326,8 +326,8 @@ long id = layer.getId();
 
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", true);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
 
         testDataMapper.insertApplicationLayer(buildApplicationLayerDto("pubId_1", 1), app.getId());
 

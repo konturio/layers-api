@@ -51,8 +51,8 @@ public class CollectionsItemsListGetIT extends AbstractIntegrationTest {
     public void featuresShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -93,8 +93,8 @@ long id = layer.getId();
     public void paginationShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         IntStream.rangeClosed(1, 25).forEach(i -> testDataMapper.insertFeature(id, buildPolygonN(i)));
         //WHEN
 
@@ -122,8 +122,8 @@ long id = layer.getId();
     public void noNextLinkIfNoMoreItems() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         IntStream.rangeClosed(1, 25).forEach(i -> testDataMapper.insertFeature(id, buildPolygonN(i)));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -147,8 +147,8 @@ long id = layer.getId();
     public void noPrevLinkIfAtStart() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         IntStream.rangeClosed(1, 25).forEach(i -> testDataMapper.insertFeature(id, buildPolygonN(i)));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -208,8 +208,8 @@ long id = layer.getId();
     public void limitShouldBeGreaterThan0() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -224,8 +224,8 @@ long id = layer.getId();
 
     private String initForBboxTests() {
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         return layer.getPublicId();
     }
@@ -394,8 +394,8 @@ long id = layer.getId();
     public void bboxShouldRestrictResponseByGeometry() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         testDataMapper.insertFeature(id, buildPolygonN(3));
         testDataMapper.insertFeature(id, buildPolygonN(4));
@@ -417,8 +417,8 @@ long id = layer.getId();
     public void responseForInvalidQueryParamShouldBeCorrect() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -436,8 +436,8 @@ long id = layer.getId();
     public void serverLimit1500() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         IntStream.rangeClosed(0, 101).forEach(value -> {
             final List<LayerFeature> features = IntStream.rangeClosed(1, 1001)
                     .mapToObj(i -> buildFeatureN(value * 10000 + i, null))
@@ -463,8 +463,8 @@ long id = layer.getId();
     public void offsetShouldBePositive() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -482,8 +482,8 @@ long id = layer.getId();
     public void pointFeatureShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPointN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -502,8 +502,8 @@ long id = layer.getId();
     public void geometryCollectionFeatureShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildGeometryCollectionN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -526,8 +526,8 @@ long id = layer.getId();
     public void lineStringFeatureShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildLineStringN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -547,8 +547,8 @@ long id = layer.getId();
     public void multiLineStringFeatureShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildMultiLineStringN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -566,8 +566,8 @@ long id = layer.getId();
     public void multiPointFeatureShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildMultipointN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -585,8 +585,8 @@ long id = layer.getId();
     public void multiPolygonFeatureShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         final String wkt = "MULTIPOLYGON(((0 0,4 0,4 4,0 4,0 0),(1 1,2 1,2 2,1 2,1 1)), ((-1 -1,-1 -2,-2 -2,-2 -1,-1 -1)))";
         final OffsetDateTime lastUpdated = OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusMinutes(10);
         testDataMapper.insertFeature(id,
@@ -608,8 +608,8 @@ long id = layer.getId();
     public void nullFieldsMustBeSkipped() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildMultiPolygonN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -626,8 +626,8 @@ long id = layer.getId();
     public void nextLinkShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         IntStream.rangeClosed(1, 25).forEach(i -> testDataMapper.insertFeature(id, buildPolygonN(i)));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -654,8 +654,8 @@ long id = layer.getId();
     public void exactMatchPropertyFilterShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         testDataMapper.insertFeature(id, buildPolygonN(2));
         //WHEN
@@ -677,8 +677,8 @@ long id = layer.getId();
     public void sqlLikePatternEscaped() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
 
         final LayerFeature feature1 = buildPolygonN(1);
         ((ObjectNode) feature1.getProperties()).put("prop1", "xx%aa");
@@ -703,8 +703,8 @@ long id = layer.getId();
     public void fieldInPropFilterMustAppearNotMoreThenOnce() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -723,8 +723,8 @@ long id = layer.getId();
     public void propertyFiltersCombinedWithAnd() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         IntStream.rangeClosed(1, 21).forEach(i -> {
             testDataMapper.insertFeature(id, buildPolygonN(i));
         });
@@ -753,8 +753,8 @@ long id = layer.getId();
     public void wildcardPropertyFilterShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         IntStream.rangeClosed(1, 21).forEach(i -> {
             testDataMapper.insertFeature(id, buildPolygonN(i));
         });
@@ -780,8 +780,8 @@ long id = layer.getId();
     public void missingPropertyShouldNotBeIgnored() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         IntStream.rangeClosed(1, 21).forEach(i -> testDataMapper.insertFeature(id, buildPolygonN(i)));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -800,8 +800,8 @@ long id = layer.getId();
     public void dateTimeParameterShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         final LayerFeature feature1 = buildPolygonN(1);
         testDataMapper.insertFeature(id, feature1);
         final LayerFeature feature2 = buildPolygonN(2);
@@ -825,8 +825,8 @@ long id = layer.getId();
     public void dateTimeParameterOpenEndShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         final LayerFeature feature1 = buildPolygonN(1);
         testDataMapper.insertFeature(id, feature1);
         final LayerFeature feature2 = buildPolygonN(2);
@@ -850,8 +850,8 @@ long id = layer.getId();
     public void dateTimeParameterOpenStartShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         final LayerFeature feature1 = buildPolygonN(1);
         testDataMapper.insertFeature(id, feature1);
         final LayerFeature feature2 = buildPolygonN(2);
@@ -909,8 +909,8 @@ long id = layer.getId();
     public void dateTimeExactMatchShouldWork() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         final LayerFeature feature1 = buildPolygonN(1);
         final OffsetDateTime someDate = OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset());
         feature1.setLastUpdated(someDate);
@@ -948,8 +948,8 @@ long id = layer.getId();
     public void emptyGeometryIsValidCase() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildFeatureN(1, null));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items")
@@ -967,8 +967,8 @@ long id = layer.getId();
     public void zCoordForBboxParam() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildFeatureN(1, "POINT(0 1 1000)"));
         testDataMapper.insertFeature(id, buildFeatureN(2, "POINT(0 1 0)"));
         testDataMapper.insertFeature(id, buildFeatureN(3, "POINT(0 2 -2000)"));
@@ -993,8 +993,8 @@ long id = layer.getId();
     public void emptyResponse() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
 
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -1015,8 +1015,8 @@ long id = layer.getId();
         //GIVEN
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         String json = mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -1038,8 +1038,8 @@ long id = layer.getId();
         //GIVEN
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))
@@ -1056,8 +1056,8 @@ long id = layer.getId();
         //GIVEN
         final Layer layer = buildLayerN(1);
         ReflectionTestUtils.setField(layer, "isPublic", false);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(1));
         //WHEN
         mockMvc.perform(get("/collections/" + layer.getPublicId() + "/items"))

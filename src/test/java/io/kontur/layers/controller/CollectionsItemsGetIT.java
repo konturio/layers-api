@@ -32,8 +32,8 @@ public class CollectionsItemsGetIT extends AbstractIntegrationTest {
     public void featuresShouldMatchSpec() throws Exception {
         //GIVEN
         final Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         final LayerFeature feature = buildPolygonN(1);
         testDataMapper.insertFeature(id, feature);
         //WHEN
@@ -93,8 +93,8 @@ long id = layer.getId();
         //GIVEN
         final Layer layer = buildLayerN(1);
         layer.setVisible(false);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
         final LayerFeature feature = buildPolygonN(1);
         testDataMapper.insertFeature(id, feature);
         //WHEN

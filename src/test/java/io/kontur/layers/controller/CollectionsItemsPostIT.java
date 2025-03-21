@@ -37,8 +37,8 @@ public class CollectionsItemsPostIT extends AbstractIntegrationTest {
     public void testPostItems() throws Exception {
         //GIVEN
         Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
 
         testDataMapper.insertFeature(id, buildPointN(1));
 
@@ -79,8 +79,8 @@ long id = layer.getId();
     public void testPostAndGetItems() throws Exception {
         //GIVEN
         Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
 
         testDataMapper.insertFeature(id, buildPointN(1));
 
@@ -216,8 +216,8 @@ long id = layer.getId();
     public void addFeaturesWithInvalidGeometry_8985() throws Exception {
         //GIVEN
         Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
 
         String geoJson = "{\"type\":\"FeatureCollection\",\"features\":[{\"type\":\"Feature\",\"id\":\"feature_id4\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[29.135742187499996,53.30462107510271],[29.794921874999996,53.30462107510271],[29.794921874999996,54.03358633521085],[29.135742187499996,54.03358633521085],[29.135742187499996,54.30462107510271]]]}}]}";
 
@@ -240,8 +240,8 @@ long id = layer.getId();
     public void testPostEmptyItems() throws Exception {
         //GIVEN
         Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
 
         testDataMapper.insertFeature(id, buildPointN(1));
         testDataMapper.insertFeature(id, buildPointN(10));
@@ -274,8 +274,8 @@ long id = layer.getId();
     public void testPostExistingItems() throws Exception {
         //GIVEN
         Layer layer = buildLayerN(1);
-        final testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        testDataMapper.insertLayer(layer);
+        final long id = layer.getId();
 
         testDataMapper.insertFeature(id, buildPointN(1));
 

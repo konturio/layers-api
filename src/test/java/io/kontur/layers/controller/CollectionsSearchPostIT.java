@@ -232,7 +232,7 @@ public class CollectionsSearchPostIT extends AbstractIntegrationTest {
         Layer layer = buildLayerN(2);
         ReflectionTestUtils.setField(layer, "geometry", null);
         testDataMapper.insertLayer(layer);
-long id = layer.getId();
+        long id = layer.getId();
         testDataMapper.insertFeature(id, buildPolygonN(3));
 
         testDataMapper.insertLayer(buildLayerN(3));
