@@ -1,17 +1,26 @@
 <!DOCTYPE mapper     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.kontur.layers.repository.LayerMapper">
 
-    <select id="getOwnedLayer" resultType="io.kontur.layers.repository.model.Layer">
+    <resultMap id="LayerResultMap" type="io.kontur.layers.repository.model.Layer">
+        <id property="id" column="id"/>
+        <result property="publicId" column="public_id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="copyrights" column="copyrights" typeHandler="io.kontur.layers.util.ListToJsonTypeHandler"/>
+        <result property="properties" column="properties"/>
+        <result property="lastUpdated" column="last_updated"/>
+        <result property="sourceLastUpdated" column="source_updated"/>
+    </resultMap>
+
+    <select id="getOwnedLayer" resultMap="LayerResultMap">
         select id,
-               public_id as publicid,
-               name as name,
+               public_id,
+               name,
                description,
                copyrights,
                properties,
-               group_id,
-               category_id,
-               last_updated as lastupdated,
-               source_updated as sourcelastupdated
+               last_updated,
+               source_updated
         from layers
         where owner = #{userName} and public_id = #{publicId} and is_visible
         for update
