@@ -105,7 +105,8 @@ public class CollectionsItemsPutIT extends AbstractIntegrationTest {
         testDataMapper.insertFeature(id, buildPointN(50));
 
         Layer layer2 = buildLayerN(2);
-        final long layerId2 = testDataMapper.insertLayer(layer2);
+        testDataMapper.insertLayer(layer2);
+        final long layerId2 = layer2.getId();
         testDataMapper.insertFeature(layerId2, buildPointN(10));
 
 

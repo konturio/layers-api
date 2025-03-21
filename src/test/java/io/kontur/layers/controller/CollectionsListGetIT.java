@@ -73,11 +73,16 @@ public class CollectionsListGetIT extends AbstractIntegrationTest {
         final LayerFeature f3 = buildPolygonN(3);
         final LayerFeature f4 = buildPolygonN(4);
 
-        final long id1 = testDataMapper.insertLayer(buildLayerN(1));
+        Layer layer1 = buildLayerN(1);
+        testDataMapper.insertLayer(layer1);
+        final long id1 = layer1.getId();
         testDataMapper.insertFeature(id1, f1);
         testDataMapper.insertFeature(id1, f2);
 
-        final long id2 = testDataMapper.insertLayer(buildLayerN(2));
+        Layer layer2 = buildLayerN(2);
+        testDataMapper.insertLayer(layer2);
+        final long id2 = layer2.getId();
+
         testDataMapper.insertFeature(id2, f3);
         testDataMapper.insertFeature(id2, f4);
         //WHEN
