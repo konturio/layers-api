@@ -6,5 +6,5 @@ ALTER TABLE layers
 ALTER COLUMN copyrights SET DATA TYPE jsonb 
 USING CASE 
     WHEN copyrights IS NULL THEN '[]'::jsonb 
-    ELSE TO_JSONB(copyrights::text) 
+    ELSE jsonb_build_array(copyrights::text) 
 END;
