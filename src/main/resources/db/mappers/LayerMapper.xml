@@ -241,7 +241,7 @@
                                          copyrights, properties, is_public, owner, is_visible, group_id, feature_properties,
                                          tile_size, min_zoom, max_zoom)
             values (#{publicId}, #{name}, #{description}, #{url}, #{apiKey}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated},
-                    #{sourceLastUpdated}, #{copyrights}, #{properties}::jsonb, #{isPublic}, #{owner}, true,
+                    #{sourceLastUpdated}, #{copyrights}::jsonb, #{properties}::jsonb, #{isPublic}, #{owner}, true,
                     (select id from layers_group_properties where name = 'user_layers'), #{featureProperties}::jsonb,
                     #{tileSize}, #{minZoom}, #{maxZoom})
             returning *)
@@ -284,7 +284,7 @@
                                         copyrights, properties, is_public, feature_properties, tile_size, min_zoom,
                                         max_zoom) =
                 (#{name}, #{description}, #{url}, #{apiKey}, #{type}, ST_GeomFromGeoJSON(#{geometry}), #{lastUpdated}, #{sourceLastUpdated},
-                 #{copyrights}, #{properties}::jsonb, #{isPublic}, #{featureProperties}::jsonb, #{tileSize},
+                 #{copyrights}::jsonb, #{properties}::jsonb, #{isPublic}, #{featureProperties}::jsonb, #{tileSize},
                  #{minZoom}, #{maxZoom})
             where public_id = #{publicId} and owner = #{owner}
             returning *)

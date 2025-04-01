@@ -1,6 +1,7 @@
 package io.kontur.layers.repository.model;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.kontur.layers.dto.DateTimeRange;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,7 +24,7 @@ public class Layer {
     private String apiKey;
     private String type;
     private String geometry;
-    private ObjectNode copyrights;
+    private ArrayNode copyrights;
     private ObjectNode properties;
     private ObjectNode legendStyle;
     private ObjectNode mapStyle;

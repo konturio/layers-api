@@ -2,6 +2,7 @@ package io.kontur.layers.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.kontur.layers.repository.model.LayersCategoryProperties;
 import io.kontur.layers.repository.model.LayersGroupProperties;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,7 +31,7 @@ public class Collection {
     private String description;
 
     @JsonProperty("copyrights")
-    private ObjectNode copyrights;
+    private ArrayNode copyrights;
 
     @JsonProperty("properties")
     private ObjectNode properties;

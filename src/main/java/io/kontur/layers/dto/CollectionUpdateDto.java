@@ -2,6 +2,7 @@ package io.kontur.layers.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.kontur.layers.dto.validation.ValidGeoJSON;
 import lombok.Data;
 import org.wololo.geojson.Geometry;
@@ -22,7 +23,7 @@ public class CollectionUpdateDto {
     @NotNull
     private Type itemType = Type.feature;
     @JsonProperty("copyrights")
-    private ObjectNode copyrights;
+    private ArrayNode copyrights;
     @JsonProperty("geometry")
     @ValidGeoJSON
     private Geometry geometry;
