@@ -28,22 +28,22 @@ public class TestDataHelper {
     private static GeoJSONWriter geoJSONWriter = new GeoJSONWriter();
 
     public static Layer buildLayerN(int n) {
-    final ObjectNode props = objectMapper.createObjectNode();
-    props.put("prop1", "propValue1_" + n);
-    props.put("prop2", "propValue2_" + n);
+        final ObjectNode props = objectMapper.createObjectNode();
+        props.put("prop1", "propValue1_" + n);
+        props.put("prop2", "propValue2_" + n);
 
-    final ObjectNode featureProps = objectMapper.createObjectNode();
-    featureProps.put("featureProp1", "featureProperty_" + n);
+        final ObjectNode featureProps = objectMapper.createObjectNode();
+        featureProps.put("featureProp1", "featureProperty_" + n);
 
-    final ArrayNode copyrights = objectMapper.createArrayNode();
-    copyrights.add("copyrights_" + n);
+        final ArrayNode copyrights = objectMapper.createArrayNode();
+        copyrights.add("copyrights_" + n);
 
-    return new Layer(null, "pubId_" + n, "name_" + n, "description_" + n, null, "apiKey", "feature",
-            String.format("SRID=4326;POLYGON((0 0, %1$d 0, %1$d %1$d, 0 %1$d, 0 0))", n),
-            copyrights, props, null, null, null, null, featureProps, null, null,
-            OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusSeconds(n),
-            OffsetDateTime.of(2020, 4, 15, 15, 0, 0, 0, offset()).plusSeconds(n),
-            null, null, true, true, false, null, null, null, "owner_" + n);
+        return new Layer(null, "pubId_" + n, "name_" + n, "description_" + n, null, "apiKey", "feature",
+                String.format("SRID=4326;POLYGON((0 0, %1$d 0, %1$d %1$d, 0 %1$d, 0 0))", n),
+                copyrights, props, null, null, null, null, featureProps, null, null,
+                OffsetDateTime.of(2020, 4, 15, 15, 30, 0, 0, offset()).plusSeconds(n),
+                OffsetDateTime.of(2020, 4, 15, 15, 0, 0, 0, offset()).plusSeconds(n),
+                null, null, true, true, false, null, null, null, "owner_" + n);
     }
 
     public static LayerFeature buildPointN(int n) {
