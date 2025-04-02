@@ -22,7 +22,7 @@
 
     <select id="insertApplication" resultType="io.kontur.layers.repository.model.Application">
         with ins as (INSERT INTO apps (id, show_all_public_layers, is_public, owner)
-            VALUES (#{id}, ${showAllPublicLayers}, #{isPublic}, #{owner})
+            VALUES (#{id}, #{showAllPublicLayers}, #{isPublic}, #{owner})
             RETURNING *)
         select id,
                show_all_public_layers as showAllPublicLayers,
@@ -33,7 +33,7 @@
 
     <select id="updateApplication" resultType="io.kontur.layers.repository.model.Application">
         with upd as (UPDATE apps SET (show_all_public_layers, is_public) =
-                (${showAllPublicLayers}, #{isPublic}) WHERE id = #{id} and owner = #{owner}
+                (#{showAllPublicLayers}, #{isPublic}) WHERE id = #{id} and owner = #{owner}
             RETURNING *)
         select id,
                show_all_public_layers as showAllPublicLayers,
