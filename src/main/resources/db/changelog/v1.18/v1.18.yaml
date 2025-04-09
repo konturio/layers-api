@@ -1,0 +1,5 @@
+## Database Changelog
+databaseChangeLog:
+  - include:
+      relativeToChangelogFile: true
+      file: alter-layers-change-copyrights-field-type-to-jsonb.sql
