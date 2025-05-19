@@ -337,4 +337,27 @@ public class CollectionsItemsSearchPostIT extends AbstractIntegrationTest {
         assertThat(json, hasJsonPath("$.features", hasSize(1)));
         assertThat(json, hasJsonPath("$.features[0].id", is("featureId_2")));
     }
+
+    @Test
+    @DisplayName("order desc should return features in reverse order")
+    public void orderDescShouldReturnReversed() throws Exception {
+        //GIVEN
+        final Layer layer = buildLayerN(1);
+        final long id = testDataMapper.insertLayer(layer);
+        testDataMapper.insertFeature(id, buildPolygonN(1));
+        testDataMapper.insertFeature(id, buildPolygonN(2));
+        testDataMapper.insertFeature(id, buildPolygonN(3));
+        //WHEN
+        String json = mockMvc.perform(post("/collections/" + layer.getPublicId() + "/items/search")
+                        .contentType(APPLICATION_JSON)
+                        .content("{\"order\":\"DESC\"}"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_GEO_JSON))
+                .andReturn().getResponse().getContentAsString();
+        //THEN
+        assertThat(json, hasJsonPath("$.features[0].id", is("featureId_3")));
+        assertThat(json, hasJsonPath("$.features[1].id", is("featureId_2")));
+        assertThat(json, hasJsonPath("$.features[2].id", is("featureId_1")));
+    }
 }

@@ -105,7 +105,7 @@ public class CollectionsItemsApi {
         int lmt = Math.min(limit == null ? COLLECTION_ITEMS_DEFAULT_LIMIT : limit, COLLECTION_ITEMS_LIMIT);
         Optional<FeatureCollectionGeoJSON> fc = featureService.getFeatureCollection(collectionId, lmt, offset,
                 null, bbox != null ? bbox : java.util.Collections.emptyList(),
-                datetime, getCriteriaList(), true, null);
+                datetime, getCriteriaList(), true, null, SortOrder.ASC);
         return ResponseEntity.ok(fc.orElse(new FeatureCollectionGeoJSON()));
     }
 
@@ -132,7 +132,8 @@ public class CollectionsItemsApi {
                 itemsSearchDto.getDatetime(),
                 getCriteriaList(),
                 false,
-                itemsSearchDto.getAppId());
+                itemsSearchDto.getAppId(),
+                itemsSearchDto.getOrder());
         return ResponseEntity.ok(fc.orElse(new FeatureCollectionGeoJSON()));
     }
 

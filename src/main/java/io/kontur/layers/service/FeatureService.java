@@ -58,7 +58,8 @@ public class FeatureService {
             DateTimeRange dateTimeRange,
             List<FeaturePropertiesFilter> propFilterList,
             boolean includeLinks,
-            UUID appId) {
+            UUID appId,
+            SortOrder order) {
         List<FeaturePropertiesFilter> list = convertAdditionalPropertiesIntoFilterList(propFilterList);
         String geometryString = geometry != null ? JsonUtil.writeJson(geometry) : null;
 
@@ -77,7 +78,7 @@ public class FeatureService {
                 .orElse(null);
 
         List<LayerFeature> features = featureMapper.getFeatures(collectionId, limit, offset, geometryString, bbox,
-                dateTimeRange, list);
+                dateTimeRange, list, order);
         FeatureCollectionGeoJSON fc = convertFeatures(collectionId, title, features)
                 .numberMatched(numberMatched);
 
