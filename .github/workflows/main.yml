@@ -42,7 +42,7 @@ jobs:
 
       - name: Checking and building with Gradle
         env:
-          IMAGE_TAG: ${{ github.ref_name }}.${{ steps.get-cloned.outputs.SHA }}.${{ github.run_attempt }}
+          IMAGE_TAG: ${{ needs.helper.outputs.CI_COMMIT_REF_SLUG }}.${{ steps.get-cloned.outputs.SHA }}.${{ github.run_attempt }}
         run: |-
           set -x
           for t in check build jib; do
