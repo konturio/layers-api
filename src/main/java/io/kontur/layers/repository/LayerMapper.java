@@ -81,4 +81,7 @@ public interface LayerMapper {
     @Timed(value = "db.query", histogram = true)
     List<Layer> getApplicationLayers(@Param("appId") UUID appId,
                                      @Param("getDefaultOnly") boolean getDefaultOnly);
+
+    @Timed(value = "db.query", histogram = true)
+    boolean layerExists(@Param("publicId") String publicId);
 }

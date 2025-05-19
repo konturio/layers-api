@@ -72,7 +72,7 @@ public class CollectionsItemsDeleteIT extends AbstractIntegrationTest {
         //WHEN
         mockMvc.perform(delete("/collections/whatever/items/xxx"))
                 .andDo(print())
-                .andExpect(status().isUnauthorized())
+                .andExpect(status().isForbidden())
                 .andReturn().getResponse().getContentAsString();
     }
 }

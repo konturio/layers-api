@@ -388,4 +388,8 @@
                     </if>
               );
     </select>
+
+    <select id="layerExists" resultType="boolean">
+        select exists(select 1 from layers where public_id = #{publicId} and is_visible)
+    </select>
 </mapper>
