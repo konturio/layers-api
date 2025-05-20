@@ -19,6 +19,6 @@ public enum SortOrder {
 
     @JsonValue
     public String toValue() {
-        return name().toLowerCase(); // Возвращает "asc" или "desc"
+        return name().toLowerCase();
     }
 }
