@@ -77,12 +77,12 @@
             )
         </foreach>
         <choose>
-            <when test="order == 'ASC'">
-                order by feature_id ASC
-            </when>
             <when test="order == 'DESC'">
                 order by feature_id DESC
             </when>
+            <otherwise>
+                order by feature_id ASC
+            </otherwise>
         </choose>
         limit #{limit} offset #{offset}
     </select>
