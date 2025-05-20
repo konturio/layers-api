@@ -11,9 +11,9 @@ public enum SortOrder {
     public static SortOrder fromValue(String value) {
         if (value == null) return ASC;
         switch (value.toLowerCase()) {
+            case "asc": return ASC;
             case "desc": return DESC;
-            case "asc":
-            default: return ASC;
+            default: throw new IllegalArgumentException("Invalid sort order: " + value);
         }
     }
 
