@@ -76,7 +76,15 @@
             </foreach>
             )
         </foreach>
-        order by feature_id ${order} limit #{limit} offset #{offset}
+        <choose>
+            <when test="order == 'ASC'">
+                order by feature_id ASC
+            </when>
+            <when test="order == 'DESC'">
+                order by feature_id DESC
+            </when>
+        </choose>
+        limit #{limit} offset #{offset}
     </select>
 
     <select id="addFeatures" parameterType="java.util.List"  resultType="io.kontur.layers.repository.model.LayerFeature">
