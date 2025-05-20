@@ -84,7 +84,7 @@
                 order by feature_id ASC
             </otherwise>
         </choose>
-        limit #{limit} offset #{offset}
+            limit #{limit} offset #{offset}
     </select>
 
     <select id="addFeatures" parameterType="java.util.List"  resultType="io.kontur.layers.repository.model.LayerFeature">
