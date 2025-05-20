@@ -13,7 +13,6 @@ public enum SortOrder {
         switch (value.toLowerCase()) {
             case "asc": return ASC;
             case "desc": return DESC;
-            default: throw new IllegalArgumentException("Invalid sort order: " + value);
         }
     }
 
