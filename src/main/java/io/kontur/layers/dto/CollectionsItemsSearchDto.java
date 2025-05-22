@@ -8,6 +8,8 @@ import org.wololo.geojson.Geometry;
 import javax.validation.constraints.Min;
 import java.util.UUID;
 
+import io.kontur.layers.dto.SortOrder;
+
 @Getter
 @Setter
 public class CollectionsItemsSearchDto {
@@ -20,4 +22,5 @@ public class CollectionsItemsSearchDto {
     @Min(0)
     private Integer offset = 0;
     private DateTimeRange datetime;
+    private SortOrder order = SortOrder.ASC;
 }
