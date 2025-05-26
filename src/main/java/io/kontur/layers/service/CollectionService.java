@@ -9,6 +9,7 @@ import io.kontur.layers.dto.*;
 import io.kontur.layers.repository.ApplicationLayerMapper;
 import io.kontur.layers.repository.ApplicationMapper;
 import io.kontur.layers.repository.LayerMapper;
+import io.kontur.layers.repository.LayerAccessMapper;
 import io.kontur.layers.repository.model.Application;
 import io.kontur.layers.repository.model.ApplicationLayer;
 import io.kontur.layers.repository.model.Layer;
@@ -39,14 +40,17 @@ public class CollectionService {
     private final LinkFactory linkFactory;
     private final ApplicationMapper applicationMapper;
     private final ApplicationLayerMapper applicationLayerMapper;
+    private final LayerAccessMapper layerAccessMapper;
 
     public CollectionService(LayerMapper layerMapper,
                              LinkFactory linkFactory, ApplicationMapper applicationMapper,
-                             ApplicationLayerMapper applicationLayerMapper) {
+                             ApplicationLayerMapper applicationLayerMapper,
+                             LayerAccessMapper layerAccessMapper) {
         this.layerMapper = layerMapper;
         this.linkFactory = linkFactory;
         this.applicationMapper = applicationMapper;
         this.applicationLayerMapper = applicationLayerMapper;
+        this.layerAccessMapper = layerAccessMapper;
     }
 
     @Transactional(readOnly = true)
@@ -266,6 +270,16 @@ public class CollectionService {
 
         }
         return extent;
+    }
+
+    @Transactional
+    public void grantAccess(String collectionId, String userName) {
+        layerAccessMapper.grantAccess(collectionId, userName);
+    }
+
+    @Transactional
+    public void revokeAccess(String collectionId, String userName) {
+        layerAccessMapper.revokeAccess(collectionId, userName);
     }
 
     private boolean isUserOwnsLayer(Layer layer) {

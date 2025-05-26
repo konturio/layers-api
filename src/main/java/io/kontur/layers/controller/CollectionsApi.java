@@ -125,4 +125,20 @@ public class CollectionsApi {
         collectionService.deleteCollection(collectionId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
+    @PutMapping("/{collectionId}/access/{userName}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity grantAccess(@PathVariable("collectionId") String collectionId,
+                                      @PathVariable("userName") String userName) {
+        collectionService.grantAccess(collectionId, userName);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @DeleteMapping("/{collectionId}/access/{userName}")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity revokeAccess(@PathVariable("collectionId") String collectionId,
+                                       @PathVariable("userName") String userName) {
+        collectionService.revokeAccess(collectionId, userName);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
