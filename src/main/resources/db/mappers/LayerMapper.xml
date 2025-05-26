@@ -48,10 +48,13 @@
                 and owner = #{userName}
             </when>
             <when test='collectionOwner.name().equals("NOT_ME")'>
-                and is_public and owner != #{userName}
+                and (is_public
+                     or exists (select 1 from layers_access la where la.layer_id = l.public_id and la.user_name = #{userName}))
+                and owner != #{userName}
             </when>
             <when test="userName != null">
-                and (is_public or owner = #{userName})
+                and (is_public or owner = #{userName}
+                     or exists (select 1 from layers_access la where la.layer_id = l.public_id and la.user_name = #{userName}))
             </when>
             <otherwise>
                 and is_public
@@ -87,10 +90,13 @@
                     and owner = #{userName}
                 </when>
                 <when test='collectionOwner.name().equals("NOT_ME")'>
-                    and is_public and owner != #{userName}
+                    and (is_public
+                         or exists (select 1 from layers_access la where la.layer_id = l.public_id and la.user_name = #{userName}))
+                    and owner != #{userName}
                 </when>
                 <when test="userName != null">
-                    and (is_public or owner = #{userName})
+                    and (is_public or owner = #{userName}
+                         or exists (select 1 from layers_access la where la.layer_id = l.public_id and la.user_name = #{userName}))
                 </when>
                 <otherwise>
                     and is_public
@@ -133,10 +139,13 @@
                            and owner = #{userName}
                        </when>
                        <when test='collectionOwner.name().equals("NOT_ME")'>
-                           and is_public and owner != #{userName}
+                           and (is_public
+                                or exists (select 1 from layers_access la where la.layer_id = l.public_id and la.user_name = #{userName}))
+                           and owner != #{userName}
                        </when>
                        <when test="userName != null">
-                           and (is_public or owner = #{userName})
+                           and (is_public or owner = #{userName}
+                                or exists (select 1 from layers_access la where la.layer_id = l.public_id and la.user_name = #{userName}))
                        </when>
                        <otherwise>
                            and is_public
@@ -172,10 +181,13 @@
                             and owner = #{userName}
                         </when>
                         <when test='collectionOwner.name().equals("NOT_ME")'>
-                            and is_public and owner != #{userName}
+                            and (is_public
+                                 or exists (select 1 from layers_access la where la.layer_id = l.public_id and la.user_name = #{userName}))
+                            and owner != #{userName}
                         </when>
                         <when test="userName != null">
-                            and (is_public or owner = #{userName})
+                            and (is_public or owner = #{userName}
+                                 or exists (select 1 from layers_access la where la.layer_id = l.public_id and la.user_name = #{userName}))
                         </when>
                         <otherwise>
                             and is_public

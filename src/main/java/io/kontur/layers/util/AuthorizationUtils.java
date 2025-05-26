@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.GrantedAuthority;
 
 public class AuthorizationUtils {
 
@@ -29,6 +30,23 @@ public class AuthorizationUtils {
                         authentication.getPrincipal().getClass().getName()));
                 throw new WebApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, Error.error("Can't authorize"));
         }
+    }
+
+    public static boolean hasRole(String role) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
+            return false;
+        }
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if (role.equalsIgnoreCase(authority.getAuthority())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isSuperAdmin() {
+        return hasRole("superadmin") || hasRole("ROLE_SUPERADMIN");
     }
 
 }
