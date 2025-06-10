@@ -103,8 +103,12 @@ public class CollectionService {
 
     @Transactional(readOnly = true)
     public Optional<Collection> getCollection(String collectionId) {
-        return layerMapper.getLayer(collectionId, AuthorizationUtils.getAuthenticatedUserName())
-                .map(this::toCollection);
+        String user = AuthorizationUtils.getAuthenticatedUserName();
+        Optional<Layer> layer = layerMapper.getLayer(collectionId, user);
+        if (layer.isEmpty() && user == null) {
+            throw new WebApplicationException(HttpStatus.FORBIDDEN, "authorization token required");
+        }
+        return layer.map(this::toCollection);
     }
 
     @Transactional

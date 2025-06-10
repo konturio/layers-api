@@ -52,12 +52,14 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Object> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex,
-                                                                            WebRequest request) {
+                                                                           WebRequest request) {
         String msg = "invalid field value";
         if (ex.getCause() instanceof NumberFormatException) {
             msg = "invalid numeric value";
         }
-        return new ResponseEntity<>(Error.objectError(null, Error.fieldError(ex.getName(), Error.error(msg))),
+        return new ResponseEntity<>(
+                Error.objectError("incorrect request parameter",
+                        Error.fieldError(ex.getName(), Error.error(msg))),
                 BAD_REQUEST);
     }
 
@@ -69,10 +71,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         String fieldName = "";
         if (ex.getCause() instanceof MismatchedInputException) {
             fieldName = getInvalidFormatExceptionFieldName((MismatchedInputException) ex.getCause());
+            msg = ex.getMostSpecificCause().getMessage();
         } else if (ex.getCause() instanceof JsonParseException) {
-            return new ResponseEntity<>(Error.error(ex.getCause().getMessage()), BAD_REQUEST);
+            msg = ex.getMostSpecificCause().getMessage();
+            return new ResponseEntity<>(Error.error("invalid request body: " + msg), BAD_REQUEST);
         }
-        return new ResponseEntity<>(Error.objectError(null, Error.fieldError(fieldName, Error.error(msg))),
+        return new ResponseEntity<>(Error.objectError("incorrect request body",
+                        Error.fieldError(fieldName, Error.error(msg))),
                 BAD_REQUEST);
     }
 
@@ -93,7 +98,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
-        return new ResponseEntity<>(Error.error(ex.getMessage()), UNAUTHORIZED);
+        return new ResponseEntity<>(Error.error(ex.getMessage()), FORBIDDEN);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
