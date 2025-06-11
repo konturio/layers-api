@@ -3,6 +3,7 @@ databaseChangeLog:
   - include:
       relativeToChangelogFile: true
 <<<<<<< HEAD
+<<<<<<< HEAD
       file: create-index-layers-features-layer-id.sql
 =======
       file: create-index-layers-features-layer-resolution.sql
