@@ -43,6 +43,6 @@ public abstract class AbstractIntegrationTest {
                 .execute(status ->
                         JdbcTestUtils.deleteFromTables(jdbcTemplate, "apps_layers", "apps",
                                 "layers", "layers_features", "layers_group_properties", "layers_category_properties",
-                                "layers_dependencies"));
+                                "layers_dependencies", "layers_access"));
     }
 }
