@@ -1,6 +1,7 @@
 package io.kontur.layers.controller;
 
 import io.kontur.layers.dto.ApplicationDto;
+import io.kontur.layers.dto.ApplicationLayerDto;
 import io.kontur.layers.dto.ApplicationUpdateDto;
 import io.kontur.layers.service.ApplicationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,6 +54,20 @@ public class ApplicationsApi {
             @PathVariable("applicationId") UUID applicationId,
             @RequestBody @Valid ApplicationUpdateDto body) {
         ApplicationDto result = applicationService.updateApplication(applicationId, body);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/{applicationId}/layers")
+    @Operation(summary = "Add layer to application", tags = {"Applications"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Updated application.",
+                    content = @Content(schema = @Schema(implementation = ApplicationDto.class)))})
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity addLayer(
+            @Parameter(in = ParameterIn.PATH, description = "local identifier of an application", required = true)
+            @PathVariable("applicationId") UUID applicationId,
+            @RequestBody @Valid ApplicationLayerDto body) {
+        ApplicationDto result = applicationService.addLayer(applicationId, body);
         return ResponseEntity.ok(result);
     }
 

@@ -93,6 +93,33 @@ public class ApplicationService {
     }
 
     @Transactional
+    public ApplicationDto addLayer(UUID appId, ApplicationLayerDto layer) {
+        String userName = AuthorizationUtils.getAuthenticatedUserName();
+        if (userName == null) {
+            throw new WebApplicationException(HttpStatus.UNAUTHORIZED, "Unauthorized access is forbidden");
+        }
+
+        Application application = applicationMapper.getApplication(appId)
+                .orElseThrow(() -> new WebApplicationException(HttpStatus.NOT_FOUND,
+                        "Application with such id can not be found"));
+
+        if (!userName.equals(application.getOwner())) {
+            throw new WebApplicationException(HttpStatus.BAD_REQUEST, "Application with such id already exists");
+        }
+
+        List<Layer> layers = layerMapper.getLayers(null, false, userName, 1, 0,
+                CollectionOwner.ANY, layer.getLayerId());
+        if (layers.isEmpty()) {
+            throw new WebApplicationException(HttpStatus.BAD_REQUEST,
+                    String.format("Unable to find requested layers: %s", layer.getLayerId()));
+        }
+
+        applicationLayerMapper.upsertLayers(appId, List.of(layer));
+
+        return getApplication(appId, true);
+    }
+
+    @Transactional
     public void deleteApplication(UUID appId) {
         Application app = applicationMapper.deleteApplication(appId,
                 AuthorizationUtils.getAuthenticatedUserName());
