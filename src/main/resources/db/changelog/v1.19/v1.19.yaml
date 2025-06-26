@@ -2,4 +2,8 @@
 databaseChangeLog:
   - include:
       relativeToChangelogFile: true
+<<<<<<< HEAD
       file: create-index-layers-features-layer-id.sql
+=======
+      file: create-index-layers-features-layer-resolution.sql
+>>>>>>> 088f412 (Add index on layers_features resolution)
