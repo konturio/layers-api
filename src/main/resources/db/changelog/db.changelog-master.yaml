@@ -31,4 +31,3 @@ databaseChangeLog:
   - include:
       - relativeToChangelogFile: true
       - file: v1.20/v1.20.yaml
-
