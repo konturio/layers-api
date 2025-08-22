@@ -65,15 +65,20 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
                                                                   HttpHeaders headers, HttpStatus status,
                                                                   WebRequest request) {
-        String msg = "invalid field value";
-        String fieldName = "";
-        if (ex.getCause() instanceof MismatchedInputException) {
-            fieldName = getInvalidFormatExceptionFieldName((MismatchedInputException) ex.getCause());
-        } else if (ex.getCause() instanceof JsonParseException) {
-            return new ResponseEntity<>(Error.error(ex.getCause().getMessage()), BAD_REQUEST);
+        Throwable cause = ex.getMostSpecificCause();
+        if (cause instanceof JsonParseException) {
+            return new ResponseEntity<>(Error.error("invalid JSON: " + cause.getMessage()), BAD_REQUEST);
+        } else if (cause instanceof MismatchedInputException) {
+            String fieldName = getInvalidFormatExceptionFieldName((MismatchedInputException) cause);
+            String message = cause.getMessage();
+            if (fieldName == null || fieldName.isBlank()) {
+                return new ResponseEntity<>(Error.error(message), BAD_REQUEST);
+            }
+            return new ResponseEntity<>(Error.objectError(null,
+                    Error.fieldError(fieldName, Error.error(message))), BAD_REQUEST);
         }
-        return new ResponseEntity<>(Error.objectError(null, Error.fieldError(fieldName, Error.error(msg))),
-                BAD_REQUEST);
+        String message = cause != null ? cause.getMessage() : "invalid request body";
+        return new ResponseEntity<>(Error.error(message), BAD_REQUEST);
     }
 
     private String getInvalidFormatExceptionFieldName(MismatchedInputException ex) {
