@@ -83,7 +83,7 @@
         with ins as (INSERT INTO layers_features (feature_id, layer_id, properties, geom)
         VALUES
         <foreach collection="features" item="item" open="(" separator="),(" close=")">
-            #{item.featureId}, ${item.layerId}, #{item.properties}::jsonb, ST_GeomFromGeoJSON(#{item.geometry})
+            #{item.featureId}, #{item.layerId}, #{item.properties}::jsonb, ST_GeomFromGeoJSON(#{item.geometry})
         </foreach>
         RETURNING *)
         select
@@ -99,7 +99,7 @@
         with ins as (INSERT INTO layers_features (feature_id, layer_id, properties, geom)
         VALUES
                <foreach collection="features" item="item" open="(" separator="),(" close=")">
-                   #{item.featureId}, ${item.layerId}, #{item.properties}::jsonb, ST_GeomFromGeoJSON(#{item.geometry})
+                   #{item.featureId}, #{item.layerId}, #{item.properties}::jsonb, ST_GeomFromGeoJSON(#{item.geometry})
                </foreach>
         ON CONFLICT (feature_id, layer_id, zoom) DO UPDATE SET (feature_id, layer_id, properties, geom, last_updated) =
             (EXCLUDED.feature_id, EXCLUDED.layer_id, EXCLUDED.properties, EXCLUDED.geom, now())
