@@ -70,7 +70,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         if (ex.getCause() instanceof MismatchedInputException) {
             fieldName = getInvalidFormatExceptionFieldName((MismatchedInputException) ex.getCause());
         } else if (ex.getCause() instanceof JsonParseException) {
-            return new ResponseEntity<>(Error.error(ex.getCause().getMessage()), BAD_REQUEST);
+            return new ResponseEntity<>(Error.error("body is not valid JSON"), BAD_REQUEST);
         }
         return new ResponseEntity<>(Error.objectError(null, Error.fieldError(fieldName, Error.error(msg))),
                 BAD_REQUEST);
@@ -93,7 +93,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
-        return new ResponseEntity<>(Error.error(ex.getMessage()), UNAUTHORIZED);
+        return new ResponseEntity<>(Error.error(ex.getMessage()), FORBIDDEN);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

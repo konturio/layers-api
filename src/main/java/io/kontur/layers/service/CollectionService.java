@@ -103,8 +103,16 @@ public class CollectionService {
 
     @Transactional(readOnly = true)
     public Optional<Collection> getCollection(String collectionId) {
-        return layerMapper.getLayer(collectionId, AuthorizationUtils.getAuthenticatedUserName())
-                .map(this::toCollection);
+        String userName = AuthorizationUtils.getAuthenticatedUserName();
+        Optional<Layer> layer = layerMapper.getLayer(collectionId, userName);
+        if (layer.isEmpty()) {
+            if (userName == null && layerMapper.layerExists(collectionId)) {
+                throw new WebApplicationException(HttpStatus.FORBIDDEN,
+                        Error.error("access forbidden"));
+            }
+            return Optional.empty();
+        }
+        return layer.map(this::toCollection);
     }
 
     @Transactional

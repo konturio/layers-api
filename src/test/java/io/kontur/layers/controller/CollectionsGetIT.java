@@ -176,6 +176,21 @@ public class CollectionsGetIT extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("private collection without auth should respond with 403")
+    public void privateCollectionWithoutAuth() throws Exception {
+        //GIVEN
+        final Layer layer = buildLayerN(2);
+        layer.setPublic(false);
+        testDataMapper.insertLayer(layer);
+
+        //WHEN THEN
+        mockMvc.perform(get("/collections/" + layer.getPublicId()))
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(content().contentType(APPLICATION_JSON));
+    }
+
+    @Test
     @DisplayName("url to tiles is present for tiles layers")
     public void returnLinkToTiles_8626() throws Exception {
         //GIVEN
